@@ -1,0 +1,208 @@
+Name                           Last Name                      Age                            Country                        Disease
+                      
+John                           Rodriguez                      19                             Spain                          Diabetes                      
+Elena                          Paul                           23                             France                         Influenza                     
+Jimmys                         Paul                           6                              France                         Mental-Issue                  
+Elena                          Black                          18                             Bulgaria                       Mental-Issue                  
+Nick                           Rodriguez                      70                             Greece                         Covid                         
+Nick                           Garcia                         59                             France                         Influenza                     
+Jimmys                         White                          71                             France                         Mental-Issue                  
+Jimmys                         Paul                           63                             Greece                         Covid                         
+Nick                           Rodriguez                      81                             Albania                        Heart-Disease                 
+Victoria                       Smith                          26                             Greece                         Diabetes                      
+Nick                           Paul                           47                             Bulgaria                       Kidney-Failure                
+Elena                          Paul                           18                             Bulgaria                       Covid                         
+Elena                          White                          33                             Spain                          Covid                         
+Jimmys                         Smith                          14                             France                         Covid                         
+Elena                          Black                          16                             Spain                          Kidney-Failure                
+John                           Paul                           53                             Spain                          Influenza                     
+John                           White                          62                             France                         Heart-Disease                 
+Victoria                       Garcia                         38                             France                         Heart-Disease                 
+John                           Garcia                         10                             Greece                         Influenza                     
+Nick                           Rodriguez                      31                             Spain                          Kidney-Failure                
+Nick                           Rodriguez                      83                             Spain                          Influenza                     
+Elena                          Garcia                         1                              Bulgaria                       Influenza                     
+John                           Paul                           29                             Spain                          Diabetes                      
+Jimmys                         White                          6                              Spain                          Mental-Issue                  
+Nick                           Rodriguez                      18                             Greece                         Mental-Issue                  
+Elena                          Paul                           7                              Bulgaria                       Heart-Disease                 
+Victoria                       Paul                           81                             Bulgaria                       Mental-Issue                  
+John                           Paul                           22                             France                         Influenza                     
+Anastasia                      Black                          28                             Finland                        Heart-Disease                 
+Victoria                       White                          39                             Greece                         Heart-Disease                 
+Nick                           Rodriguez                      18                             Greece                         Diabetes                      
+Jimmys                         Paul                           90                             France                         Influenza                     
+John                           Smith                          53                             Finland                        Kidney-Failure                
+Anastasia                      Rodriguez                      3                              France                         Mental-Issue                  
+Victoria                       Garcia                         58                             Bulgaria                       Diabetes                      
+Jimmys                         Garcia                         57                             France                         Influenza                     
+Elena                          Garcia                         60                             Greece                         Mental-Issue                  
+Anastasia                      Smith                          47                             Finland                        Covid                         
+John                           White                          85                             Spain                          Mental-Issue                  
+John                           Garcia                         16                             Spain                          Heart-Disease                 
+Anastasia                      Garcia                         6                              Spain                          Mental-Issue                  
+Elena                          Black                          11                             Greece                         Diabetes                      
+Nick                           White                          69                             Finland                        Covid                         
+Jimmys                         White                          19                             Finland                        Mental-Issue                  
+Nick                           Paul                           32                             France                         Covid                         
+Jimmys                         Garcia                         70                             Spain                          Diabetes                      
+Victoria                       Black                          48                             Albania                        Heart-Disease                 
+Victoria                       White                          30                             France                         Covid                         
+Victoria                       Rodriguez                      8                              Greece                         Covid                         
+John                           White                          33                             Bulgaria                       Covid                         
+John                           White                          51                             France                         Diabetes                      
+Nick                           White                          11                             Spain                          Kidney-Failure                
+Victoria                       Smith                          51                             Greece                         Diabetes                      
+John                           Garcia                         79                             Finland                        Covid                         
+Victoria                       Rodriguez                      52                             Bulgaria                       Influenza                     
+Anastasia                      Smith                          82                             Greece                         Diabetes                      
+Elena                          Smith                          2                              Spain                          Heart-Disease                 
+John                           Paul                           79                             France                         Influenza                     
+John                           Rodriguez                      71                             France                         Heart-Disease                 
+Nick                           Smith                          41                             Finland                        Kidney-Failure                
+Nick                           Smith                          60                             Greece                         Mental-Issue                  
+Anastasia                      Garcia                         30                             Bulgaria                       Covid                         
+Anastasia                      Garcia                         6                              Albania                        Covid                         
+Victoria                       Garcia                         15                             Spain                          Influenza                     
+John                           Garcia                         57                             Spain                          Diabetes                      
+Jimmys                         Smith                          93                             France                         Influenza                     
+Elena                          Rodriguez                      62                             Bulgaria                       Covid                         
+John                           Paul                           55                             Finland                        Mental-Issue                  
+John                           Black                          53                             France                         Kidney-Failure                
+Victoria                       Paul                           22                             France                         Covid                         
+Anastasia                      Black                          30                             Bulgaria                       Influenza                     
+Elena                          Garcia                         68                             Spain                          Heart-Disease                 
+Nick                           Black                          56                             France                         Mental-Issue                  
+Nick                           Paul                           82                             France                         Diabetes                      
+Anastasia                      Garcia                         3                              Spain                          Diabetes                      
+Jimmys                         Rodriguez                      22                             France                         Kidney-Failure                
+Anastasia                      Smith                          67                             Spain                          Diabetes                      
+John                           Garcia                         5                              Spain                          Mental-Issue                  
+John                           Black                          66                             Spain                          Covid                         
+Victoria                       Rodriguez                      64                             Albania                        Diabetes                      
+Nick                           White                          42                             Finland                        Covid                         
+Nick                           Smith                          14                             Albania                        Diabetes                      
+John                           Paul                           78                             Bulgaria                       Diabetes                      
+Jimmys                         Black                          84                             Finland                        Covid                         
+Nick                           Black                          19                             Bulgaria                       Influenza                     
+John                           White                          51                             Albania                        Covid                         
+Jimmys                         White                          50                             Bulgaria                       Mental-Issue                  
+Jimmys                         Paul                           47                             Albania                        Heart-Disease                 
+Nick                           Paul                           6                              Bulgaria                       Heart-Disease                 
+John                           Paul                           94                             Finland                        Heart-Disease                 
+Anastasia                      Garcia                         72                             Bulgaria                       Heart-Disease                 
+Elena                          Black                          92                             Greece                         Covid                         
+Jimmys                         Rodriguez                      0                              Greece                         Diabetes                      
+John                           White                          80                             Finland                        Covid                         
+Elena                          Paul                           84                             Albania                        Diabetes                      
+Nick                           Black                          67                             France                         Diabetes                      
+Anastasia                      White                          70                             Finland                        Mental-Issue                  
+Elena                          Smith                          27                             Spain                          Diabetes                      
+Elena                          Smith                          99                             France                         Diabetes                      
+Anastasia                      Garcia                         4                              Spain                          Mental-Issue                  
+
+
+Name                           Last Name                      Age                            Country                        Disease
+                      
+John                           *                              [0 - 100]                      Western Europe                 Diabetes                      
+Elena                          *                              [0 - 100]                      Western Europe                 Influenza                     
+Jimmys                         *                              [0 - 100]                      Western Europe                 Mental-Issue                  
+Elena                          *                              [0 - 100]                      Balkans                        Mental-Issue                  
+Nick                           *                              [0 - 100]                      Balkans                        Covid                         
+Nick                           *                              [0 - 100]                      Western Europe                 Influenza                     
+Jimmys                         *                              [0 - 100]                      Western Europe                 Mental-Issue                  
+Jimmys                         *                              [0 - 100]                      Balkans                        Covid                         
+Nick                           *                              [0 - 100]                      Balkans                        Heart-Disease                 
+Victoria                       *                              [0 - 100]                      Balkans                        Diabetes                      
+Nick                           *                              [0 - 100]                      Balkans                        Kidney-Failure                
+Elena                          *                              [0 - 100]                      Balkans                        Covid                         
+Elena                          *                              [0 - 100]                      Western Europe                 Covid                         
+Jimmys                         *                              [0 - 100]                      Western Europe                 Covid                         
+Elena                          *                              [0 - 100]                      Western Europe                 Kidney-Failure                
+John                           *                              [0 - 100]                      Western Europe                 Influenza                     
+John                           *                              [0 - 100]                      Western Europe                 Heart-Disease                 
+Victoria                       *                              [0 - 100]                      Western Europe                 Heart-Disease                 
+John                           *                              [0 - 100]                      Balkans                        Influenza                     
+Nick                           *                              [0 - 100]                      Western Europe                 Kidney-Failure                
+Nick                           *                              [0 - 100]                      Western Europe                 Influenza                     
+Elena                          *                              [0 - 100]                      Balkans                        Influenza                     
+John                           *                              [0 - 100]                      Western Europe                 Diabetes                      
+Jimmys                         *                              [0 - 100]                      Western Europe                 Mental-Issue                  
+Nick                           *                              [0 - 100]                      Balkans                        Mental-Issue                  
+Elena                          *                              [0 - 100]                      Balkans                        Heart-Disease                 
+Victoria                       *                              [0 - 100]                      Balkans                        Mental-Issue                  
+John                           *                              [0 - 100]                      Western Europe                 Influenza                     
+Anastasia                      *                              [0 - 100]                      Northern Europe                Heart-Disease                 
+Victoria                       *                              [0 - 100]                      Balkans                        Heart-Disease                 
+Nick                           *                              [0 - 100]                      Balkans                        Diabetes                      
+Jimmys                         *                              [0 - 100]                      Western Europe                 Influenza                     
+John                           *                              [0 - 100]                      Northern Europe                Kidney-Failure                
+Anastasia                      *                              [0 - 100]                      Western Europe                 Mental-Issue                  
+Victoria                       *                              [0 - 100]                      Balkans                        Diabetes                      
+Jimmys                         *                              [0 - 100]                      Western Europe                 Influenza                     
+Elena                          *                              [0 - 100]                      Balkans                        Mental-Issue                  
+Anastasia                      *                              [0 - 100]                      Northern Europe                Covid                         
+John                           *                              [0 - 100]                      Western Europe                 Mental-Issue                  
+John                           *                              [0 - 100]                      Western Europe                 Heart-Disease                 
+Anastasia                      *                              [0 - 100]                      Western Europe                 Mental-Issue                  
+Elena                          *                              [0 - 100]                      Balkans                        Diabetes                      
+Nick                           *                              [0 - 100]                      Northern Europe                Covid                         
+Jimmys                         *                              [0 - 100]                      Northern Europe                Mental-Issue                  
+Nick                           *                              [0 - 100]                      Western Europe                 Covid                         
+Jimmys                         *                              [0 - 100]                      Western Europe                 Diabetes                      
+Victoria                       *                              [0 - 100]                      Balkans                        Heart-Disease                 
+Victoria                       *                              [0 - 100]                      Western Europe                 Covid                         
+Victoria                       *                              [0 - 100]                      Balkans                        Covid                         
+John                           *                              [0 - 100]                      Balkans                        Covid                         
+John                           *                              [0 - 100]                      Western Europe                 Diabetes                      
+Nick                           *                              [0 - 100]                      Western Europe                 Kidney-Failure                
+Victoria                       *                              [0 - 100]                      Balkans                        Diabetes                      
+John                           *                              [0 - 100]                      Northern Europe                Covid                         
+Victoria                       *                              [0 - 100]                      Balkans                        Influenza                     
+Anastasia                      *                              [0 - 100]                      Balkans                        Diabetes                      
+Elena                          *                              [0 - 100]                      Western Europe                 Heart-Disease                 
+John                           *                              [0 - 100]                      Western Europe                 Influenza                     
+John                           *                              [0 - 100]                      Western Europe                 Heart-Disease                 
+Nick                           *                              [0 - 100]                      Northern Europe                Kidney-Failure                
+Nick                           *                              [0 - 100]                      Balkans                        Mental-Issue                  
+Anastasia                      *                              [0 - 100]                      Balkans                        Covid                         
+Anastasia                      *                              [0 - 100]                      Balkans                        Covid                         
+Victoria                       *                              [0 - 100]                      Western Europe                 Influenza                     
+John                           *                              [0 - 100]                      Western Europe                 Diabetes                      
+Jimmys                         *                              [0 - 100]                      Western Europe                 Influenza                     
+Elena                          *                              [0 - 100]                      Balkans                        Covid                         
+John                           *                              [0 - 100]                      Northern Europe                Mental-Issue                  
+John                           *                              [0 - 100]                      Western Europe                 Kidney-Failure                
+Victoria                       *                              [0 - 100]                      Western Europe                 Covid                         
+Anastasia                      *                              [0 - 100]                      Balkans                        Influenza                     
+Elena                          *                              [0 - 100]                      Western Europe                 Heart-Disease                 
+Nick                           *                              [0 - 100]                      Western Europe                 Mental-Issue                  
+Nick                           *                              [0 - 100]                      Western Europe                 Diabetes                      
+Anastasia                      *                              [0 - 100]                      Western Europe                 Diabetes                      
+Jimmys                         *                              [0 - 100]                      Western Europe                 Kidney-Failure                
+Anastasia                      *                              [0 - 100]                      Western Europe                 Diabetes                      
+John                           *                              [0 - 100]                      Western Europe                 Mental-Issue                  
+John                           *                              [0 - 100]                      Western Europe                 Covid                         
+Victoria                       *                              [0 - 100]                      Balkans                        Diabetes                      
+Nick                           *                              [0 - 100]                      Northern Europe                Covid                         
+Nick                           *                              [0 - 100]                      Balkans                        Diabetes                      
+John                           *                              [0 - 100]                      Balkans                        Diabetes                      
+Jimmys                         *                              [0 - 100]                      Northern Europe                Covid                         
+Nick                           *                              [0 - 100]                      Balkans                        Influenza                     
+John                           *                              [0 - 100]                      Balkans                        Covid                         
+Jimmys                         *                              [0 - 100]                      Balkans                        Mental-Issue                  
+Jimmys                         *                              [0 - 100]                      Balkans                        Heart-Disease                 
+Nick                           *                              [0 - 100]                      Balkans                        Heart-Disease                 
+John                           *                              [0 - 100]                      Northern Europe                Heart-Disease                 
+Anastasia                      *                              [0 - 100]                      Balkans                        Heart-Disease                 
+Elena                          *                              [0 - 100]                      Balkans                        Covid                         
+Jimmys                         *                              [0 - 100]                      Balkans                        Diabetes                      
+John                           *                              [0 - 100]                      Northern Europe                Covid                         
+Elena                          *                              [0 - 100]                      Balkans                        Diabetes                      
+Nick                           *                              [0 - 100]                      Western Europe                 Diabetes                      
+Anastasia                      *                              [0 - 100]                      Northern Europe                Mental-Issue                  
+Elena                          *                              [0 - 100]                      Western Europe                 Diabetes                      
+Elena                          *                              [0 - 100]                      Western Europe                 Diabetes                      
+Anastasia                      *                              [0 - 100]                      Western Europe                 Mental-Issue                  
+
+
