@@ -1,0 +1,101 @@
+name,last_name,city,country,age,credit_score,balance,defaulted
+Eric,Fields,Blacktown,Belarus,38,415,1985,no
+Kelly,Cline,West Troy,Djibouti,79,186,3244,no
+Christopher,Underwood,South Adam,Liberia,82,628,1516,yes
+Mary,Gomez,Port Taraside,Macao,74,681,3997,yes
+Shannon,Patton,New Jessica,Ghana,62,96,4253,no
+Crystal,Greer,West Patriciachester,Bhutan,39,56,2584,no
+Jennifer,Taylor,New Jenniferview,South Georgia and the South Sandwich Islands,45,501,3522,no
+Jean,Carpenter,Heatherville,Tuvalu,43,542,4833,no
+Benjamin,Phillips,North Claire,Vanuatu,69,262,1128,no
+Matthew,Obrien,New Danaborough,Madagascar,62,341,1885,no
+Andrea,Mcdonald,South Carlos,Pitcairn Islands,81,523,3138,no
+Margaret,Joyce,Bridgesmouth,Holy See (Vatican City State),42,117,4925,no
+Elizabeth,Davis,Johnsonland,Gibraltar,76,59,181,yes
+Charles,Turner,Walkerberg,Croatia,31,214,2482,yes
+Laura,Deleon,Johnsonside,Botswana,81,494,3319,no
+Brandon,Miller,Donaldsonview,Monaco,58,7,3019,no
+Angie,Sanders,Lopezmouth,Grenada,26,5,4022,yes
+Jason,Davis,Ramirezfurt,Vanuatu,40,149,1246,no
+Kyle,Harris,Amandafort,Saint Pierre and Miquelon,83,150,3228,no
+Jacqueline,Lewis,South Victoria,Malta,57,798,3770,no
+Melissa,Castro,New Lindahaven,Niue,19,422,2638,yes
+Jennifer,Munoz,Timothyhaven,North Macedonia,65,194,2700,no
+Lori,Gomez,Williamsmouth,Jersey,56,532,4324,yes
+Lauren,Thompson,New Stacey,Nauru,44,777,5018,no
+Veronica,Jones,West Patrick,French Southern Territories,44,752,337,no
+Deborah,Horton,West Caitlin,Falkland Islands (Malvinas),75,383,2251,no
+Danny,Pierce,New Taylorside,Georgia,70,487,3769,yes
+Jessica,Roberts,Carrville,France,21,570,2767,no
+George,Bell,Alyssaland,Jersey,21,499,1632,no
+Kevin,Jones,Fitzgeraldmouth,Estonia,56,741,2008,no
+Allison,West,Trevinobury,Philippines,49,257,4015,yes
+Stanley,Joseph,Hessmouth,Eritrea,78,412,5188,no
+William,Stewart,East Austin,Germany,58,473,4802,no
+Marilyn,Brewer,South Lorimouth,Lao People's Democratic Republic,63,763,2807,yes
+Angelica,Guerrero,Port Frederickhaven,Cyprus,36,683,4022,no
+Cheryl,Lopez,Port Franciscoburgh,New Caledonia,25,7,3103,no
+Kyle,Coleman,Mooreport,Uruguay,83,353,2159,yes
+Janet,Cooper,Brucebury,Montserrat,66,140,2486,no
+Sherry,Phelps,Webbburgh,Cook Islands,50,6,2928,yes
+Steven,Mckenzie,Tateberg,Sweden,56,533,2050,yes
+Gary,Moore,Lake Lisa,Saint Barthelemy,71,663,2571,no
+Sheena,Stafford,South Kellyside,Isle of Man,69,231,1729,no
+Andrea,Ryan,Lake Lucasfort,Oman,82,315,1001,no
+Shane,Lopez,South Katherinemouth,Central African Republic,88,594,2668,no
+Joseph,Sloan,Youngberg,Cook Islands,58,405,2632,no
+Rebecca,Montgomery,North Christopher,Turkmenistan,26,258,2315,no
+Jessica,Copeland,East Meganmouth,Austria,88,264,2218,yes
+Kayla,Russell,Bentleyport,Tajikistan,50,559,3587,yes
+Daniel,Anderson,Kimchester,Yemen,84,368,2553,no
+Dakota,Anderson,Lake Rodneyton,British Virgin Islands,25,296,2556,no
+James,Obrien,West Christophershire,Uzbekistan,65,182,3239,no
+Robert,Hoover,Barbaraland,Argentina,54,274,1321,no
+Rita,Rhodes,New Jamie,Saint Martin,65,553,1118,no
+Curtis,Smith,Philipmouth,Greece,57,711,4579,no
+Tracey,Mcmahon,Sarabury,Faroe Islands,61,156,4466,no
+Anthony,Carson,Mooreburgh,Bahrain,35,784,889,no
+Rachel,Cook,West Morganburgh,Equatorial Guinea,67,545,3278,no
+Hannah,Donaldson,North Danieltown,United States Virgin Islands,69,30,2393,no
+Jonathan,Brown,Moorefort,Chile,56,246,2559,no
+Alex,Hood,Anitastad,Vietnam,32,272,4866,no
+Donna,Mitchell,Melindabury,Azerbaijan,48,8,3628,no
+Gregory,Gibson,Gonzaleschester,Saudi Arabia,78,636,4148,no
+Kenneth,Hawkins,East Victoriaton,Brazil,47,336,4262,no
+Danielle,Blair,Soniaview,New Caledonia,55,742,3096,no
+Angelica,Morris,Port Susan,Hungary,87,411,4815,no
+Erin,Hernandez,Nicolemouth,Costa Rica,51,402,3245,no
+Maria,Baker,Terriborough,Swaziland,23,705,-480,no
+Hannah,Little,Lake Valerieville,Luxembourg,74,607,2128,no
+Todd,Williams,East Mariastad,Anguilla,23,513,560,yes
+George,Little,New Feliciatown,Timor-Leste,39,12,1943,no
+Kirsten,Davis,North Brooke,Switzerland,42,34,3641,yes
+Karen,Marshall,Brookebury,Korea,72,168,4591,no
+Christopher,Hernandez,South Cathystad,Argentina,85,173,2125,no
+Brandon,Mcconnell,North Travisfurt,Malta,55,411,1915,yes
+Joseph,Jones,Christopherport,Nigeria,61,192,1141,yes
+Elizabeth,Powell,Vickiefurt,Korea,70,468,1877,no
+Katie,Herman,East Laura,Equatorial Guinea,59,185,1083,no
+William,Wilson,South Elizabeth,Mayotte,83,67,3531,no
+Donald,Deleon,West Jamie,Aruba,50,541,1710,no
+David,Christensen,Meganborough,Slovenia,72,595,2422,yes
+Michael,Guzman,North Karenview,Australia,58,328,2892,no
+Heidi,Rose,East Allisonmouth,Slovenia,61,755,4059,yes
+Elizabeth,Rivera,Morenoshire,Tuvalu,64,543,2586,no
+Kimberly,Fisher,Carlberg,Syrian Arab Republic,60,116,2224,no
+Steven,Holt,Wattsmouth,Egypt,67,700,2025,yes
+Stephanie,Barr,Kennedybury,New Caledonia,57,260,3305,yes
+Jeanne,White,Ashleyside,Estonia,46,19,3399,no
+Kenneth,Hobbs,West Catherineview,Estonia,22,702,1378,no
+Shane,Smith,New Brandon,Gambia,57,454,1474,no
+Debbie,Newman,Port Dustin,Saint Martin,86,89,3218,no
+Katherine,Mendez,Lake Jenniferport,Wallis and Futuna,60,82,898,no
+Monica,Martinez,East Joseph,Canada,39,152,2907,no
+Emily,Lamb,East Richard,Svalbard & Jan Mayen Islands,41,377,2838,no
+Kevin,Stokes,Port Stephaniemouth,Yemen,79,336,2752,no
+Donald,Stewart,South Rhonda,Tuvalu,47,460,3686,yes
+Xavier,Weaver,Rasmussenberg,El Salvador,27,206,4720,no
+Danielle,Melton,Port Juliaborough,Falkland Islands (Malvinas),79,431,-35,no
+Jennifer,Peters,East Andrealand,Togo,71,393,3494,yes
+Amanda,Powers,New Frederick,Guadeloupe,68,140,2002,yes
+Anthony,Quinn,Port Crystalport,Armenia,24,167,3311,yes
