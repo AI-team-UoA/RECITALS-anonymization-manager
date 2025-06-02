@@ -11,7 +11,7 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
-public class DifferentialPrivacyExample {
+public class DDisclosurePrivacyExample {
     public static void main(String[] args) {
         try {
             /* Loads the data. */
