@@ -12,6 +12,8 @@
     "native-country"
   ],
   "k": 10,
+  "l": false,
+  "t": false,
   "supp_level": 50,
   "hierarchies": {
     "age": "hierarchies/age.csv",
