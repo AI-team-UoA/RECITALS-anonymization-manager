@@ -40,7 +40,7 @@ And for $t$-closeness:
 The provided templates use the `adult.csv` dataset [1] and use the values used in ANJANA's official examples [2]. To use a specific template, pass it as a CLI argument to the `wrapper.py` script, like so:
 
 ``` shell
-$ python ./wrapper.py templates/t-closeness.json
+$ python ./wrapper.py sample_templates/t-closeness.json
 ```
 
 ## References
