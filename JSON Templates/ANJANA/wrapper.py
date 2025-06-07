@@ -21,8 +21,8 @@ data = pd.read_csv(values['data'])
 quasi_ident = values['quasi_ident']
 ident = values['ident']
 k = values['k']
-l = values['l']
-t = values['t']
+l = values.get('l')
+t = values.get('t')
 supp_level = values['supp_level']
 sens_att = values.get('sens_att')
 
@@ -47,11 +47,11 @@ for col in cols:
 start = time.time()
 
 data_anon = k_anonymity(data, ident, quasi_ident, k, supp_level, hierarchies)
-if not l == False:
+if not l == None:
     data_anon = l_diversity(
         data_anon, ident, quasi_ident, sens_att, k, l, supp_level, hierarchies
     )
-    if not t == False:
+    if not t == None:
         data_anon = t_closeness(
             data_anon, ident, quasi_ident, sens_att, k, t, supp_level, hierarchies
         )
@@ -63,12 +63,12 @@ print(
     f"Value of k calculated: "
     f"\t{pycanon.anonymity.k_anonymity(data_anon, quasi_ident)}"
 )
-if not l == False:
+if not l == None:
     print(
         f"Value of l-diversity: "
         f"\t{pycanon.anonymity.l_diversity(data_anon, quasi_ident, [sens_att])}"
     )
-    if not t == False:
+    if not t == None:
         print(
             f"Value of t-closeness: "
             f"\t{pycanon.anonymity.t_closeness(data_anon, quasi_ident, [sens_att])}"
