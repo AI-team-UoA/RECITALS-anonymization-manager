@@ -20,7 +20,7 @@ pip install -r requirements.txt
 Each template has the necessary attributes for ANJANA to function. Namely, it *must* include:
 
 1. `data`: The path to the dataset (csv files only for now).
-2. `ident`: The identifier's column name.
+2. `ident`: A list of column names of the dataset's identifiers.
 3. `quasi_ident`: A list of column names of the dataset's QAs.
 4. `supp_level`: The suppression level for ANJANA (float between 0 and 100).
 5. `hierarchies`: A dictionary with QAs as keys and the path to the corresponding hierarchy csv file as value.
