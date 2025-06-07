@@ -1,0 +1,19 @@
+{
+  "data": "path/to/dataset",
+  "ident": [
+    "id_column1",
+    "id_column2"
+  ],
+  "quasi_ident": [
+    "qi_column1",
+    "qi_column2"
+  ],
+    "sens_att": "sensitive_attribute",
+  "k": 5,
+  "l_div": 2,
+  "supp_level": 50.0,
+  "hierarchies": {
+    "qi_column1": "path/to/hierarchy_dictionary_csv",
+    "qi_column2": "path/to/hierarchy_dictionary_csv"
+  }
+}
