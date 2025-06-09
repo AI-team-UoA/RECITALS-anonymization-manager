@@ -31,18 +31,12 @@ hierarchies = {
     for key, value in values['hierarchies'].items()
 }
 
-# TODO: remove this somehow
+# Strip whitespace from column names
 data.columns = data.columns.str.strip()
-cols = [
-    'workclass',
-    'education',
-    'marital-status',
-    'occupation',
-    'sex',
-    'native-country',
-]
-for col in cols:
-    data[col] = data[col].str.strip()
+
+# Strip whitespace from all string (object) columns
+str_cols = data.select_dtypes(include=["object", "string"]).columns
+data[str_cols] = data[str_cols].apply(lambda col: col.str.strip())
 
 start = time.time()
 
