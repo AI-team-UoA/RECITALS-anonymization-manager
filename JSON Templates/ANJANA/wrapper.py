@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from anjana.anonymity import k_anonymity, l_diversity, t_closeness
 import pycanon
@@ -6,29 +7,29 @@ import json
 import argparse
 
 # Set up the argument parser
-parser = argparse.ArgumentParser(description='Load hierarchies from a JSON file.')
-parser.add_argument('json_file', type=str, help='Path to the JSON file')
+parser = argparse.ArgumentParser(description="Load hierarchies from a JSON file.")
+parser.add_argument("json_file", type=str, help="Path to the JSON file")
 
 # Parse the command line arguments
 args = parser.parse_args()
 json_file_path = args.json_file
 
 # Template file reading
-with open(json_file_path, 'r') as file:
+with open(json_file_path, "r") as file:
     values = json.load(file)
 
-data = pd.read_csv(values['data'])
-quasi_ident = values['quasi_ident']
-ident = values['ident']
-k = values['k']
-l = values.get('l')
-t = values.get('t')
-supp_level = values['supp_level']
-sens_att = values.get('sens_att')
+data = pd.read_csv(values["data"])
+quasi_ident = values["quasi_ident"]
+ident = values["ident"]
+k = values["k"]
+l = values.get("l")
+t = values.get("t")
+supp_level = values["supp_level"]
+sens_att = values.get("sens_att")
 
 hierarchies = {
     key: dict(pd.read_csv(value, header=None))
-    for key, value in values['hierarchies'].items()
+    for key, value in values["hierarchies"].items()
 }
 
 # Strip whitespace from column names
@@ -52,10 +53,9 @@ if not l == None:
 
 end = time.time()
 
-print(f"Elapsed time: {end-start}")
+print(f"Elapsed time: {end - start}")
 print(
-    f"Value of k calculated: "
-    f"\t{pycanon.anonymity.k_anonymity(data_anon, quasi_ident)}"
+    f"Value of k calculated: \t{pycanon.anonymity.k_anonymity(data_anon, quasi_ident)}"
 )
 if not l == None:
     print(
@@ -67,4 +67,23 @@ if not l == None:
             f"Value of t-closeness: "
             f"\t{pycanon.anonymity.t_closeness(data_anon, quasi_ident, [sens_att])}"
         )
-        
+
+# Create the output directory if it doesn't exist
+output_dir = "anonymized_data"
+os.makedirs(output_dir, exist_ok=True)
+
+# Create the output file path
+base_name = os.path.splitext(os.path.basename(values["data"]))[0]
+filename = f"{base_name}_k{k}"
+
+if l is not None:
+    filename += f"_l{l}"
+
+if t is not None:
+    filename += f"_t{t}"
+
+filename += ".csv"
+output_file_name = os.path.join(output_dir, filename)
+data_anon.to_csv(output_file_name, index=False)
+
+print(f"Anonymized data saved to: {output_file_name}")
