@@ -1,0 +1,26 @@
+{
+  "data": "data/adult.csv",
+  "sens_att": "salary-class",
+  "ident": [
+    "race"
+  ],
+  "quasi_ident": [
+    "age",
+    "education",
+    "marital-status",
+    "occupation",
+    "sex",
+    "native-country"
+  ],
+  "k": 10,
+  "l": 2,
+  "supp_level": 50,
+  "hierarchies": {
+    "age": "hierarchies/age.csv",
+    "education": "hierarchies/education.csv",
+    "marital-status": "hierarchies/marital.csv",
+    "occupation": "hierarchies/occupation.csv",
+    "sex": "hierarchies/sex.csv",
+    "native-country": "hierarchies/country.csv"
+  }
+}
