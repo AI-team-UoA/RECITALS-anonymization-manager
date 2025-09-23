@@ -1,0 +1,35 @@
+[project]
+name = "anonymization-manager"
+version = "0.1.0"
+description = "Anonymization component for the RECITALS platform"
+readme = "README.md"
+authors = [
+    { name = "Georgios Stamoulis", email = "gstam@di.uoa.gr" },
+    { name = "Konstantinos Chousos", email = "kchousos@di.uoa.gr" },
+    { name = "Dimitris Pavlou", email = "dpavlou@di.uoa.gr" },
+]
+requires-python = ">=3.10,<3.13"
+dependencies = []
+
+[project.scripts]
+anonymization-manager = "anonymization_manager:main"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.13.1",
+]
+docs = [
+    "pdoc>=15.0.4",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/anonymization_manager"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 79
+[tool.ruff.lint.pydocstyle]
+convention = "google"

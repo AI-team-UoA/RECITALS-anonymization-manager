@@ -1,0 +1,30 @@
+   {
+       "data" : "path/to/data",
+
+       "identifiers" : {
+           "ids" : ["identifier1", "identifier2", "identifier3"],
+           "qids" : ["qidentifier1", "qidentifier2", "qidentifier3"],
+           "satts" : ["sidentifier1", "sidentifier2", "sidentifier3"],
+           "iatts" : ["iidentifier1", "iidentifier2", "iidentifier3"]
+       },
+
+       "hierarchies" : {
+           "h1":"path/to/h1", 
+           "h2":"path/to/h2",
+           "h3":"path/to/h3"  
+       },
+
+       "parameters" : {
+           "k": 10,
+           "l": 2,
+           "t": 0.5,
+       },
+
+       "suppresion" : {
+           "level" : 50,
+       },
+
+       "anonymized_data" : "path/to/anonymized_data",
+
+       "backend": "ARX | ANJANA",
+   }

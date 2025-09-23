@@ -1,1 +1,1 @@
-# RECITALS-anonymization-manager
+# RECITALS Anonymization Manager
