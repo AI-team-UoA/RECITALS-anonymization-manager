@@ -26,5 +26,5 @@
 
        "anonymized_data" : "path/to/anonymized_data",
 
-       "backend": "ARX | ANJANA",
+       "backend": "arx | anjana",
    }
