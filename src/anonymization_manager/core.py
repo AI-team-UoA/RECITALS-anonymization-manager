@@ -22,13 +22,13 @@ class AnonymizationConfig:
         and the path to the CSV hierarchies as data.
     Parameters (dict[float]): A dictionary with all necessary parameters
         for the desired anonymity models (k for k-anonymity, l for
-        l-diversity, t for t-closeness)
+        l-diversity, t for t-closeness).
     suppression (int, optional): The percentage of suppression to be
-        applied. Defaults to TBD
+        applied. Defaults to TBD.
     anonymized_data (str, optional): The path for the resulting dataset.
-        Defaults to "./results/<dataset>_k-<k>_l-<l>_t-<t>.<extension>"
+        Defaults to "./results/<dataset>_k-<k>_l-<l>_t-<t>.<extension>".
     backend (str, optional): The backend library to be used, between
-        ARX and ANJANA. Defaults to TBD
+        ARX and ANJANA. Defaults to TBD.
     """
 
     data: str
@@ -64,10 +64,10 @@ class AnonymizationManager:
         Create an AnonymizationManager instance from a JSON configuration file.
 
         Args:
-            json (str): The path to the JSON template
+            json (str): The path to the JSON template.
 
         Returns:
-            AnonymizationManager: An AnonymizationManager instance
+            AnonymizationManager: An AnonymizationManager instance.
         """
         ...
 

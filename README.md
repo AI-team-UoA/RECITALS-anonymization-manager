@@ -18,4 +18,4 @@
 
 - Each function is documented by a docstring following the Google format
 - All docstring descriptions end with a period (.)
-- Parameter descriptions in docstrings do not end with a period
+- Parameter descriptions in docstrings also end with a period
