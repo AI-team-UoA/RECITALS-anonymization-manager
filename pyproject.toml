@@ -9,13 +9,16 @@ authors = [
     { name = "Dimitris Pavlou", email = "dpavlou@di.uoa.gr" },
 ]
 requires-python = ">=3.10,<3.13"
-dependencies = []
+dependencies = [
+    "anjana>=1.1.0",
+]
 
 [project.scripts]
 anonymization-manager = "anonymization_manager:main"
 
 [dependency-groups]
 dev = [
+    "basedpyright>=1.31.4",
     "ruff>=0.13.1",
 ]
 docs = [
