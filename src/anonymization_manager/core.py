@@ -68,7 +68,7 @@ class AnonymizationManager:
                 a structure similar to the following:
 
                 ```json
-                   {
+                {
                     "data" : "path/to/data",
 
                     "identifiers" : {
