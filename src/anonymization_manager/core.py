@@ -56,8 +56,6 @@ class AnonymizationManager:
                 identifiers, hierarchies, parameters, suppression, output path,
                 and backend.
         """
-
-        self.config = config
         ...
 
     @classmethod
