@@ -64,7 +64,41 @@ class AnonymizationManager:
         Create an AnonymizationManager instance from a JSON configuration file.
 
         Args:
-            json (str): The path to the JSON template.
+            json (str): The path to the JSON template. This json file must follow
+                a structure similar to the following:
+
+                ```json
+                   {
+                    "data" : "path/to/data",
+
+                    "identifiers" : {
+                        "ids" : ["identifier1", "identifier2", "identifier3"],
+                        "qids" : ["qidentifier1", "qidentifier2", "qidentifier3"],
+                        "satts" : ["sidentifier1", "sidentifier2", "sidentifier3"],
+                        "iatts" : ["iidentifier1", "iidentifier2", "iidentifier3"]
+                    },
+
+                    "hierarchies" : {
+                        "h1":"path/to/h1",
+                        "h2":"path/to/h2",
+                        "h3":"path/to/h3"
+                    },
+
+                    "parameters" : {
+                        "k": 10,
+                        "l": 2,
+                        "t": 0.5,
+                    },
+
+                    "suppresion" : {
+                        "level" : 50,
+                    },
+
+                    "anonymized_data" : "path/to/anonymized_data",
+
+                    "backend": "arx | anjana",
+                }
+                ```
 
         Returns:
             AnonymizationManager: An AnonymizationManager instance.

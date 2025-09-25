@@ -140,53 +140,87 @@ anonymization_manager    </h1>
 </span><span id="AnonymizationManager-65"><a href="#AnonymizationManager-65"><span class="linenos"> 65</span></a><span class="sd">        Create an AnonymizationManager instance from a JSON configuration file.</span>
 </span><span id="AnonymizationManager-66"><a href="#AnonymizationManager-66"><span class="linenos"> 66</span></a>
 </span><span id="AnonymizationManager-67"><a href="#AnonymizationManager-67"><span class="linenos"> 67</span></a><span class="sd">        Args:</span>
-</span><span id="AnonymizationManager-68"><a href="#AnonymizationManager-68"><span class="linenos"> 68</span></a><span class="sd">            json (str): The path to the JSON template.</span>
-</span><span id="AnonymizationManager-69"><a href="#AnonymizationManager-69"><span class="linenos"> 69</span></a>
-</span><span id="AnonymizationManager-70"><a href="#AnonymizationManager-70"><span class="linenos"> 70</span></a><span class="sd">        Returns:</span>
-</span><span id="AnonymizationManager-71"><a href="#AnonymizationManager-71"><span class="linenos"> 71</span></a><span class="sd">            AnonymizationManager: An AnonymizationManager instance.</span>
-</span><span id="AnonymizationManager-72"><a href="#AnonymizationManager-72"><span class="linenos"> 72</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager-73"><a href="#AnonymizationManager-73"><span class="linenos"> 73</span></a>        <span class="o">...</span>
+</span><span id="AnonymizationManager-68"><a href="#AnonymizationManager-68"><span class="linenos"> 68</span></a><span class="sd">            json (str): The path to the JSON template. This json file must follow</span>
+</span><span id="AnonymizationManager-69"><a href="#AnonymizationManager-69"><span class="linenos"> 69</span></a><span class="sd">                a structure similar to the following:</span>
+</span><span id="AnonymizationManager-70"><a href="#AnonymizationManager-70"><span class="linenos"> 70</span></a>
+</span><span id="AnonymizationManager-71"><a href="#AnonymizationManager-71"><span class="linenos"> 71</span></a><span class="sd">                ```json</span>
+</span><span id="AnonymizationManager-72"><a href="#AnonymizationManager-72"><span class="linenos"> 72</span></a><span class="sd">                   {</span>
+</span><span id="AnonymizationManager-73"><a href="#AnonymizationManager-73"><span class="linenos"> 73</span></a><span class="sd">                    &quot;data&quot; : &quot;path/to/data&quot;,</span>
 </span><span id="AnonymizationManager-74"><a href="#AnonymizationManager-74"><span class="linenos"> 74</span></a>
-</span><span id="AnonymizationManager-75"><a href="#AnonymizationManager-75"><span class="linenos"> 75</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_config</span><span class="p">:</span> <span class="n">AnonymizationConfig</span><span class="p">):</span>
-</span><span id="AnonymizationManager-76"><a href="#AnonymizationManager-76"><span class="linenos"> 76</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager-77"><a href="#AnonymizationManager-77"><span class="linenos"> 77</span></a><span class="sd">        Given a new anonymization configuration, update the current workflow.</span>
-</span><span id="AnonymizationManager-78"><a href="#AnonymizationManager-78"><span class="linenos"> 78</span></a>
-</span><span id="AnonymizationManager-79"><a href="#AnonymizationManager-79"><span class="linenos"> 79</span></a><span class="sd">        Args:</span>
-</span><span id="AnonymizationManager-80"><a href="#AnonymizationManager-80"><span class="linenos"> 80</span></a><span class="sd">            config (AnonymizationConfig): Configuration object with dataset,</span>
-</span><span id="AnonymizationManager-81"><a href="#AnonymizationManager-81"><span class="linenos"> 81</span></a><span class="sd">                identifiers, hierarchies, parameters, suppression, output path,</span>
-</span><span id="AnonymizationManager-82"><a href="#AnonymizationManager-82"><span class="linenos"> 82</span></a><span class="sd">                and backend.</span>
-</span><span id="AnonymizationManager-83"><a href="#AnonymizationManager-83"><span class="linenos"> 83</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager-84"><a href="#AnonymizationManager-84"><span class="linenos"> 84</span></a>        <span class="o">...</span>
-</span><span id="AnonymizationManager-85"><a href="#AnonymizationManager-85"><span class="linenos"> 85</span></a>
-</span><span id="AnonymizationManager-86"><a href="#AnonymizationManager-86"><span class="linenos"> 86</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">anonymize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="AnonymizationManager-87"><a href="#AnonymizationManager-87"><span class="linenos"> 87</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager-88"><a href="#AnonymizationManager-88"><span class="linenos"> 88</span></a><span class="sd">        Executes the anonymization pipeline based on the class instance&#39;s</span>
-</span><span id="AnonymizationManager-89"><a href="#AnonymizationManager-89"><span class="linenos"> 89</span></a><span class="sd">        specified parameters.</span>
-</span><span id="AnonymizationManager-90"><a href="#AnonymizationManager-90"><span class="linenos"> 90</span></a>
-</span><span id="AnonymizationManager-91"><a href="#AnonymizationManager-91"><span class="linenos"> 91</span></a><span class="sd">        Returns:</span>
-</span><span id="AnonymizationManager-92"><a href="#AnonymizationManager-92"><span class="linenos"> 92</span></a><span class="sd">            int: Return code. 0 means anonymization workflow finished correctly.</span>
-</span><span id="AnonymizationManager-93"><a href="#AnonymizationManager-93"><span class="linenos"> 93</span></a><span class="sd">                -1 Means an error occurred.</span>
-</span><span id="AnonymizationManager-94"><a href="#AnonymizationManager-94"><span class="linenos"> 94</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager-95"><a href="#AnonymizationManager-95"><span class="linenos"> 95</span></a>        <span class="o">...</span>
-</span><span id="AnonymizationManager-96"><a href="#AnonymizationManager-96"><span class="linenos"> 96</span></a>
-</span><span id="AnonymizationManager-97"><a href="#AnonymizationManager-97"><span class="linenos"> 97</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_anonymized_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="AnonymizationManager-98"><a href="#AnonymizationManager-98"><span class="linenos"> 98</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager-99"><a href="#AnonymizationManager-99"><span class="linenos"> 99</span></a><span class="sd">        Get the anonymized dataset in memory.</span>
-</span><span id="AnonymizationManager-100"><a href="#AnonymizationManager-100"><span class="linenos">100</span></a>
-</span><span id="AnonymizationManager-101"><a href="#AnonymizationManager-101"><span class="linenos">101</span></a><span class="sd">        Returns:</span>
-</span><span id="AnonymizationManager-102"><a href="#AnonymizationManager-102"><span class="linenos">102</span></a><span class="sd">            Any: The anonymized dataset as a pandas DataFrame.</span>
-</span><span id="AnonymizationManager-103"><a href="#AnonymizationManager-103"><span class="linenos">103</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager-104"><a href="#AnonymizationManager-104"><span class="linenos">104</span></a>        <span class="o">...</span>
-</span><span id="AnonymizationManager-105"><a href="#AnonymizationManager-105"><span class="linenos">105</span></a>
-</span><span id="AnonymizationManager-106"><a href="#AnonymizationManager-106"><span class="linenos">106</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_transformations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-</span><span id="AnonymizationManager-107"><a href="#AnonymizationManager-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager-108"><a href="#AnonymizationManager-108"><span class="linenos">108</span></a><span class="sd">        Retrieve transformation levels applied for each quasi-identifier.</span>
-</span><span id="AnonymizationManager-109"><a href="#AnonymizationManager-109"><span class="linenos">109</span></a>
-</span><span id="AnonymizationManager-110"><a href="#AnonymizationManager-110"><span class="linenos">110</span></a><span class="sd">        Returns:</span>
-</span><span id="AnonymizationManager-111"><a href="#AnonymizationManager-111"><span class="linenos">111</span></a><span class="sd">            dict[str, int]: A dictionary with the QIs and their respective</span>
-</span><span id="AnonymizationManager-112"><a href="#AnonymizationManager-112"><span class="linenos">112</span></a><span class="sd">                transformation level.</span>
-</span><span id="AnonymizationManager-113"><a href="#AnonymizationManager-113"><span class="linenos">113</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager-114"><a href="#AnonymizationManager-114"><span class="linenos">114</span></a>        <span class="o">...</span>
+</span><span id="AnonymizationManager-75"><a href="#AnonymizationManager-75"><span class="linenos"> 75</span></a><span class="sd">                    &quot;identifiers&quot; : {</span>
+</span><span id="AnonymizationManager-76"><a href="#AnonymizationManager-76"><span class="linenos"> 76</span></a><span class="sd">                        &quot;ids&quot; : [&quot;identifier1&quot;, &quot;identifier2&quot;, &quot;identifier3&quot;],</span>
+</span><span id="AnonymizationManager-77"><a href="#AnonymizationManager-77"><span class="linenos"> 77</span></a><span class="sd">                        &quot;qids&quot; : [&quot;qidentifier1&quot;, &quot;qidentifier2&quot;, &quot;qidentifier3&quot;],</span>
+</span><span id="AnonymizationManager-78"><a href="#AnonymizationManager-78"><span class="linenos"> 78</span></a><span class="sd">                        &quot;satts&quot; : [&quot;sidentifier1&quot;, &quot;sidentifier2&quot;, &quot;sidentifier3&quot;],</span>
+</span><span id="AnonymizationManager-79"><a href="#AnonymizationManager-79"><span class="linenos"> 79</span></a><span class="sd">                        &quot;iatts&quot; : [&quot;iidentifier1&quot;, &quot;iidentifier2&quot;, &quot;iidentifier3&quot;]</span>
+</span><span id="AnonymizationManager-80"><a href="#AnonymizationManager-80"><span class="linenos"> 80</span></a><span class="sd">                    },</span>
+</span><span id="AnonymizationManager-81"><a href="#AnonymizationManager-81"><span class="linenos"> 81</span></a>
+</span><span id="AnonymizationManager-82"><a href="#AnonymizationManager-82"><span class="linenos"> 82</span></a><span class="sd">                    &quot;hierarchies&quot; : {</span>
+</span><span id="AnonymizationManager-83"><a href="#AnonymizationManager-83"><span class="linenos"> 83</span></a><span class="sd">                        &quot;h1&quot;:&quot;path/to/h1&quot;,</span>
+</span><span id="AnonymizationManager-84"><a href="#AnonymizationManager-84"><span class="linenos"> 84</span></a><span class="sd">                        &quot;h2&quot;:&quot;path/to/h2&quot;,</span>
+</span><span id="AnonymizationManager-85"><a href="#AnonymizationManager-85"><span class="linenos"> 85</span></a><span class="sd">                        &quot;h3&quot;:&quot;path/to/h3&quot;</span>
+</span><span id="AnonymizationManager-86"><a href="#AnonymizationManager-86"><span class="linenos"> 86</span></a><span class="sd">                    },</span>
+</span><span id="AnonymizationManager-87"><a href="#AnonymizationManager-87"><span class="linenos"> 87</span></a>
+</span><span id="AnonymizationManager-88"><a href="#AnonymizationManager-88"><span class="linenos"> 88</span></a><span class="sd">                    &quot;parameters&quot; : {</span>
+</span><span id="AnonymizationManager-89"><a href="#AnonymizationManager-89"><span class="linenos"> 89</span></a><span class="sd">                        &quot;k&quot;: 10,</span>
+</span><span id="AnonymizationManager-90"><a href="#AnonymizationManager-90"><span class="linenos"> 90</span></a><span class="sd">                        &quot;l&quot;: 2,</span>
+</span><span id="AnonymizationManager-91"><a href="#AnonymizationManager-91"><span class="linenos"> 91</span></a><span class="sd">                        &quot;t&quot;: 0.5,</span>
+</span><span id="AnonymizationManager-92"><a href="#AnonymizationManager-92"><span class="linenos"> 92</span></a><span class="sd">                    },</span>
+</span><span id="AnonymizationManager-93"><a href="#AnonymizationManager-93"><span class="linenos"> 93</span></a>
+</span><span id="AnonymizationManager-94"><a href="#AnonymizationManager-94"><span class="linenos"> 94</span></a><span class="sd">                    &quot;suppresion&quot; : {</span>
+</span><span id="AnonymizationManager-95"><a href="#AnonymizationManager-95"><span class="linenos"> 95</span></a><span class="sd">                        &quot;level&quot; : 50,</span>
+</span><span id="AnonymizationManager-96"><a href="#AnonymizationManager-96"><span class="linenos"> 96</span></a><span class="sd">                    },</span>
+</span><span id="AnonymizationManager-97"><a href="#AnonymizationManager-97"><span class="linenos"> 97</span></a>
+</span><span id="AnonymizationManager-98"><a href="#AnonymizationManager-98"><span class="linenos"> 98</span></a><span class="sd">                    &quot;anonymized_data&quot; : &quot;path/to/anonymized_data&quot;,</span>
+</span><span id="AnonymizationManager-99"><a href="#AnonymizationManager-99"><span class="linenos"> 99</span></a>
+</span><span id="AnonymizationManager-100"><a href="#AnonymizationManager-100"><span class="linenos">100</span></a><span class="sd">                    &quot;backend&quot;: &quot;arx | anjana&quot;,</span>
+</span><span id="AnonymizationManager-101"><a href="#AnonymizationManager-101"><span class="linenos">101</span></a><span class="sd">                }</span>
+</span><span id="AnonymizationManager-102"><a href="#AnonymizationManager-102"><span class="linenos">102</span></a><span class="sd">                ```</span>
+</span><span id="AnonymizationManager-103"><a href="#AnonymizationManager-103"><span class="linenos">103</span></a>
+</span><span id="AnonymizationManager-104"><a href="#AnonymizationManager-104"><span class="linenos">104</span></a><span class="sd">        Returns:</span>
+</span><span id="AnonymizationManager-105"><a href="#AnonymizationManager-105"><span class="linenos">105</span></a><span class="sd">            AnonymizationManager: An AnonymizationManager instance.</span>
+</span><span id="AnonymizationManager-106"><a href="#AnonymizationManager-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager-107"><a href="#AnonymizationManager-107"><span class="linenos">107</span></a>        <span class="o">...</span>
+</span><span id="AnonymizationManager-108"><a href="#AnonymizationManager-108"><span class="linenos">108</span></a>
+</span><span id="AnonymizationManager-109"><a href="#AnonymizationManager-109"><span class="linenos">109</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_config</span><span class="p">:</span> <span class="n">AnonymizationConfig</span><span class="p">):</span>
+</span><span id="AnonymizationManager-110"><a href="#AnonymizationManager-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager-111"><a href="#AnonymizationManager-111"><span class="linenos">111</span></a><span class="sd">        Given a new anonymization configuration, update the current workflow.</span>
+</span><span id="AnonymizationManager-112"><a href="#AnonymizationManager-112"><span class="linenos">112</span></a>
+</span><span id="AnonymizationManager-113"><a href="#AnonymizationManager-113"><span class="linenos">113</span></a><span class="sd">        Args:</span>
+</span><span id="AnonymizationManager-114"><a href="#AnonymizationManager-114"><span class="linenos">114</span></a><span class="sd">            config (AnonymizationConfig): Configuration object with dataset,</span>
+</span><span id="AnonymizationManager-115"><a href="#AnonymizationManager-115"><span class="linenos">115</span></a><span class="sd">                identifiers, hierarchies, parameters, suppression, output path,</span>
+</span><span id="AnonymizationManager-116"><a href="#AnonymizationManager-116"><span class="linenos">116</span></a><span class="sd">                and backend.</span>
+</span><span id="AnonymizationManager-117"><a href="#AnonymizationManager-117"><span class="linenos">117</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager-118"><a href="#AnonymizationManager-118"><span class="linenos">118</span></a>        <span class="o">...</span>
+</span><span id="AnonymizationManager-119"><a href="#AnonymizationManager-119"><span class="linenos">119</span></a>
+</span><span id="AnonymizationManager-120"><a href="#AnonymizationManager-120"><span class="linenos">120</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">anonymize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="AnonymizationManager-121"><a href="#AnonymizationManager-121"><span class="linenos">121</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager-122"><a href="#AnonymizationManager-122"><span class="linenos">122</span></a><span class="sd">        Executes the anonymization pipeline based on the class instance&#39;s</span>
+</span><span id="AnonymizationManager-123"><a href="#AnonymizationManager-123"><span class="linenos">123</span></a><span class="sd">        specified parameters.</span>
+</span><span id="AnonymizationManager-124"><a href="#AnonymizationManager-124"><span class="linenos">124</span></a>
+</span><span id="AnonymizationManager-125"><a href="#AnonymizationManager-125"><span class="linenos">125</span></a><span class="sd">        Returns:</span>
+</span><span id="AnonymizationManager-126"><a href="#AnonymizationManager-126"><span class="linenos">126</span></a><span class="sd">            int: Return code. 0 means anonymization workflow finished correctly.</span>
+</span><span id="AnonymizationManager-127"><a href="#AnonymizationManager-127"><span class="linenos">127</span></a><span class="sd">                -1 Means an error occurred.</span>
+</span><span id="AnonymizationManager-128"><a href="#AnonymizationManager-128"><span class="linenos">128</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager-129"><a href="#AnonymizationManager-129"><span class="linenos">129</span></a>        <span class="o">...</span>
+</span><span id="AnonymizationManager-130"><a href="#AnonymizationManager-130"><span class="linenos">130</span></a>
+</span><span id="AnonymizationManager-131"><a href="#AnonymizationManager-131"><span class="linenos">131</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_anonymized_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="AnonymizationManager-132"><a href="#AnonymizationManager-132"><span class="linenos">132</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager-133"><a href="#AnonymizationManager-133"><span class="linenos">133</span></a><span class="sd">        Get the anonymized dataset in memory.</span>
+</span><span id="AnonymizationManager-134"><a href="#AnonymizationManager-134"><span class="linenos">134</span></a>
+</span><span id="AnonymizationManager-135"><a href="#AnonymizationManager-135"><span class="linenos">135</span></a><span class="sd">        Returns:</span>
+</span><span id="AnonymizationManager-136"><a href="#AnonymizationManager-136"><span class="linenos">136</span></a><span class="sd">            Any: The anonymized dataset as a pandas DataFrame.</span>
+</span><span id="AnonymizationManager-137"><a href="#AnonymizationManager-137"><span class="linenos">137</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager-138"><a href="#AnonymizationManager-138"><span class="linenos">138</span></a>        <span class="o">...</span>
+</span><span id="AnonymizationManager-139"><a href="#AnonymizationManager-139"><span class="linenos">139</span></a>
+</span><span id="AnonymizationManager-140"><a href="#AnonymizationManager-140"><span class="linenos">140</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_transformations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+</span><span id="AnonymizationManager-141"><a href="#AnonymizationManager-141"><span class="linenos">141</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager-142"><a href="#AnonymizationManager-142"><span class="linenos">142</span></a><span class="sd">        Retrieve transformation levels applied for each quasi-identifier.</span>
+</span><span id="AnonymizationManager-143"><a href="#AnonymizationManager-143"><span class="linenos">143</span></a>
+</span><span id="AnonymizationManager-144"><a href="#AnonymizationManager-144"><span class="linenos">144</span></a><span class="sd">        Returns:</span>
+</span><span id="AnonymizationManager-145"><a href="#AnonymizationManager-145"><span class="linenos">145</span></a><span class="sd">            dict[str, int]: A dictionary with the QIs and their respective</span>
+</span><span id="AnonymizationManager-146"><a href="#AnonymizationManager-146"><span class="linenos">146</span></a><span class="sd">                transformation level.</span>
+</span><span id="AnonymizationManager-147"><a href="#AnonymizationManager-147"><span class="linenos">147</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager-148"><a href="#AnonymizationManager-148"><span class="linenos">148</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -243,18 +277,52 @@ and backend.</li>
 
     </div>
     <a class="headerlink" href="#AnonymizationManager.from_json"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AnonymizationManager.from_json-62"><a href="#AnonymizationManager.from_json-62"><span class="linenos">62</span></a>    <span class="nd">@classmethod</span>
-</span><span id="AnonymizationManager.from_json-63"><a href="#AnonymizationManager.from_json-63"><span class="linenos">63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="AnonymizationManager.from_json-64"><a href="#AnonymizationManager.from_json-64"><span class="linenos">64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager.from_json-65"><a href="#AnonymizationManager.from_json-65"><span class="linenos">65</span></a><span class="sd">        Create an AnonymizationManager instance from a JSON configuration file.</span>
-</span><span id="AnonymizationManager.from_json-66"><a href="#AnonymizationManager.from_json-66"><span class="linenos">66</span></a>
-</span><span id="AnonymizationManager.from_json-67"><a href="#AnonymizationManager.from_json-67"><span class="linenos">67</span></a><span class="sd">        Args:</span>
-</span><span id="AnonymizationManager.from_json-68"><a href="#AnonymizationManager.from_json-68"><span class="linenos">68</span></a><span class="sd">            json (str): The path to the JSON template.</span>
-</span><span id="AnonymizationManager.from_json-69"><a href="#AnonymizationManager.from_json-69"><span class="linenos">69</span></a>
-</span><span id="AnonymizationManager.from_json-70"><a href="#AnonymizationManager.from_json-70"><span class="linenos">70</span></a><span class="sd">        Returns:</span>
-</span><span id="AnonymizationManager.from_json-71"><a href="#AnonymizationManager.from_json-71"><span class="linenos">71</span></a><span class="sd">            AnonymizationManager: An AnonymizationManager instance.</span>
-</span><span id="AnonymizationManager.from_json-72"><a href="#AnonymizationManager.from_json-72"><span class="linenos">72</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager.from_json-73"><a href="#AnonymizationManager.from_json-73"><span class="linenos">73</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AnonymizationManager.from_json-62"><a href="#AnonymizationManager.from_json-62"><span class="linenos"> 62</span></a>    <span class="nd">@classmethod</span>
+</span><span id="AnonymizationManager.from_json-63"><a href="#AnonymizationManager.from_json-63"><span class="linenos"> 63</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">json</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="AnonymizationManager.from_json-64"><a href="#AnonymizationManager.from_json-64"><span class="linenos"> 64</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager.from_json-65"><a href="#AnonymizationManager.from_json-65"><span class="linenos"> 65</span></a><span class="sd">        Create an AnonymizationManager instance from a JSON configuration file.</span>
+</span><span id="AnonymizationManager.from_json-66"><a href="#AnonymizationManager.from_json-66"><span class="linenos"> 66</span></a>
+</span><span id="AnonymizationManager.from_json-67"><a href="#AnonymizationManager.from_json-67"><span class="linenos"> 67</span></a><span class="sd">        Args:</span>
+</span><span id="AnonymizationManager.from_json-68"><a href="#AnonymizationManager.from_json-68"><span class="linenos"> 68</span></a><span class="sd">            json (str): The path to the JSON template. This json file must follow</span>
+</span><span id="AnonymizationManager.from_json-69"><a href="#AnonymizationManager.from_json-69"><span class="linenos"> 69</span></a><span class="sd">                a structure similar to the following:</span>
+</span><span id="AnonymizationManager.from_json-70"><a href="#AnonymizationManager.from_json-70"><span class="linenos"> 70</span></a>
+</span><span id="AnonymizationManager.from_json-71"><a href="#AnonymizationManager.from_json-71"><span class="linenos"> 71</span></a><span class="sd">                ```json</span>
+</span><span id="AnonymizationManager.from_json-72"><a href="#AnonymizationManager.from_json-72"><span class="linenos"> 72</span></a><span class="sd">                   {</span>
+</span><span id="AnonymizationManager.from_json-73"><a href="#AnonymizationManager.from_json-73"><span class="linenos"> 73</span></a><span class="sd">                    &quot;data&quot; : &quot;path/to/data&quot;,</span>
+</span><span id="AnonymizationManager.from_json-74"><a href="#AnonymizationManager.from_json-74"><span class="linenos"> 74</span></a>
+</span><span id="AnonymizationManager.from_json-75"><a href="#AnonymizationManager.from_json-75"><span class="linenos"> 75</span></a><span class="sd">                    &quot;identifiers&quot; : {</span>
+</span><span id="AnonymizationManager.from_json-76"><a href="#AnonymizationManager.from_json-76"><span class="linenos"> 76</span></a><span class="sd">                        &quot;ids&quot; : [&quot;identifier1&quot;, &quot;identifier2&quot;, &quot;identifier3&quot;],</span>
+</span><span id="AnonymizationManager.from_json-77"><a href="#AnonymizationManager.from_json-77"><span class="linenos"> 77</span></a><span class="sd">                        &quot;qids&quot; : [&quot;qidentifier1&quot;, &quot;qidentifier2&quot;, &quot;qidentifier3&quot;],</span>
+</span><span id="AnonymizationManager.from_json-78"><a href="#AnonymizationManager.from_json-78"><span class="linenos"> 78</span></a><span class="sd">                        &quot;satts&quot; : [&quot;sidentifier1&quot;, &quot;sidentifier2&quot;, &quot;sidentifier3&quot;],</span>
+</span><span id="AnonymizationManager.from_json-79"><a href="#AnonymizationManager.from_json-79"><span class="linenos"> 79</span></a><span class="sd">                        &quot;iatts&quot; : [&quot;iidentifier1&quot;, &quot;iidentifier2&quot;, &quot;iidentifier3&quot;]</span>
+</span><span id="AnonymizationManager.from_json-80"><a href="#AnonymizationManager.from_json-80"><span class="linenos"> 80</span></a><span class="sd">                    },</span>
+</span><span id="AnonymizationManager.from_json-81"><a href="#AnonymizationManager.from_json-81"><span class="linenos"> 81</span></a>
+</span><span id="AnonymizationManager.from_json-82"><a href="#AnonymizationManager.from_json-82"><span class="linenos"> 82</span></a><span class="sd">                    &quot;hierarchies&quot; : {</span>
+</span><span id="AnonymizationManager.from_json-83"><a href="#AnonymizationManager.from_json-83"><span class="linenos"> 83</span></a><span class="sd">                        &quot;h1&quot;:&quot;path/to/h1&quot;,</span>
+</span><span id="AnonymizationManager.from_json-84"><a href="#AnonymizationManager.from_json-84"><span class="linenos"> 84</span></a><span class="sd">                        &quot;h2&quot;:&quot;path/to/h2&quot;,</span>
+</span><span id="AnonymizationManager.from_json-85"><a href="#AnonymizationManager.from_json-85"><span class="linenos"> 85</span></a><span class="sd">                        &quot;h3&quot;:&quot;path/to/h3&quot;</span>
+</span><span id="AnonymizationManager.from_json-86"><a href="#AnonymizationManager.from_json-86"><span class="linenos"> 86</span></a><span class="sd">                    },</span>
+</span><span id="AnonymizationManager.from_json-87"><a href="#AnonymizationManager.from_json-87"><span class="linenos"> 87</span></a>
+</span><span id="AnonymizationManager.from_json-88"><a href="#AnonymizationManager.from_json-88"><span class="linenos"> 88</span></a><span class="sd">                    &quot;parameters&quot; : {</span>
+</span><span id="AnonymizationManager.from_json-89"><a href="#AnonymizationManager.from_json-89"><span class="linenos"> 89</span></a><span class="sd">                        &quot;k&quot;: 10,</span>
+</span><span id="AnonymizationManager.from_json-90"><a href="#AnonymizationManager.from_json-90"><span class="linenos"> 90</span></a><span class="sd">                        &quot;l&quot;: 2,</span>
+</span><span id="AnonymizationManager.from_json-91"><a href="#AnonymizationManager.from_json-91"><span class="linenos"> 91</span></a><span class="sd">                        &quot;t&quot;: 0.5,</span>
+</span><span id="AnonymizationManager.from_json-92"><a href="#AnonymizationManager.from_json-92"><span class="linenos"> 92</span></a><span class="sd">                    },</span>
+</span><span id="AnonymizationManager.from_json-93"><a href="#AnonymizationManager.from_json-93"><span class="linenos"> 93</span></a>
+</span><span id="AnonymizationManager.from_json-94"><a href="#AnonymizationManager.from_json-94"><span class="linenos"> 94</span></a><span class="sd">                    &quot;suppresion&quot; : {</span>
+</span><span id="AnonymizationManager.from_json-95"><a href="#AnonymizationManager.from_json-95"><span class="linenos"> 95</span></a><span class="sd">                        &quot;level&quot; : 50,</span>
+</span><span id="AnonymizationManager.from_json-96"><a href="#AnonymizationManager.from_json-96"><span class="linenos"> 96</span></a><span class="sd">                    },</span>
+</span><span id="AnonymizationManager.from_json-97"><a href="#AnonymizationManager.from_json-97"><span class="linenos"> 97</span></a>
+</span><span id="AnonymizationManager.from_json-98"><a href="#AnonymizationManager.from_json-98"><span class="linenos"> 98</span></a><span class="sd">                    &quot;anonymized_data&quot; : &quot;path/to/anonymized_data&quot;,</span>
+</span><span id="AnonymizationManager.from_json-99"><a href="#AnonymizationManager.from_json-99"><span class="linenos"> 99</span></a>
+</span><span id="AnonymizationManager.from_json-100"><a href="#AnonymizationManager.from_json-100"><span class="linenos">100</span></a><span class="sd">                    &quot;backend&quot;: &quot;arx | anjana&quot;,</span>
+</span><span id="AnonymizationManager.from_json-101"><a href="#AnonymizationManager.from_json-101"><span class="linenos">101</span></a><span class="sd">                }</span>
+</span><span id="AnonymizationManager.from_json-102"><a href="#AnonymizationManager.from_json-102"><span class="linenos">102</span></a><span class="sd">                ```</span>
+</span><span id="AnonymizationManager.from_json-103"><a href="#AnonymizationManager.from_json-103"><span class="linenos">103</span></a>
+</span><span id="AnonymizationManager.from_json-104"><a href="#AnonymizationManager.from_json-104"><span class="linenos">104</span></a><span class="sd">        Returns:</span>
+</span><span id="AnonymizationManager.from_json-105"><a href="#AnonymizationManager.from_json-105"><span class="linenos">105</span></a><span class="sd">            AnonymizationManager: An AnonymizationManager instance.</span>
+</span><span id="AnonymizationManager.from_json-106"><a href="#AnonymizationManager.from_json-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager.from_json-107"><a href="#AnonymizationManager.from_json-107"><span class="linenos">107</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -263,7 +331,42 @@ and backend.</li>
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>json (str):</strong>  The path to the JSON template.</li>
+<li><p><strong>json (str):</strong>  The path to the JSON template. This json file must follow
+a structure similar to the following:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="w">   </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;data&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;path/to/data&quot;</span><span class="p">,</span>
+
+<span class="w">    </span><span class="nt">&quot;identifiers&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;ids&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;identifier1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;identifier2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;identifier3&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;qids&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;qidentifier1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;qidentifier2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;qidentifier3&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;satts&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;sidentifier1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;sidentifier2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;sidentifier3&quot;</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">&quot;iatts&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;iidentifier1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;iidentifier2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;iidentifier3&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+
+<span class="w">    </span><span class="nt">&quot;hierarchies&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;h1&quot;</span><span class="p">:</span><span class="s2">&quot;path/to/h1&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;h2&quot;</span><span class="p">:</span><span class="s2">&quot;path/to/h2&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;h3&quot;</span><span class="p">:</span><span class="s2">&quot;path/to/h3&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+
+<span class="w">    </span><span class="nt">&quot;parameters&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;k&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;l&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;t&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+
+<span class="w">    </span><span class="nt">&quot;suppresion&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;level&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+
+<span class="w">    </span><span class="nt">&quot;anonymized_data&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;path/to/anonymized_data&quot;</span><span class="p">,</span>
+
+<span class="w">    </span><span class="nt">&quot;backend&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arx | anjana&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre>
+</div></li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
@@ -286,16 +389,16 @@ and backend.</li>
 
     </div>
     <a class="headerlink" href="#AnonymizationManager.update_config"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AnonymizationManager.update_config-75"><a href="#AnonymizationManager.update_config-75"><span class="linenos">75</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_config</span><span class="p">:</span> <span class="n">AnonymizationConfig</span><span class="p">):</span>
-</span><span id="AnonymizationManager.update_config-76"><a href="#AnonymizationManager.update_config-76"><span class="linenos">76</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager.update_config-77"><a href="#AnonymizationManager.update_config-77"><span class="linenos">77</span></a><span class="sd">        Given a new anonymization configuration, update the current workflow.</span>
-</span><span id="AnonymizationManager.update_config-78"><a href="#AnonymizationManager.update_config-78"><span class="linenos">78</span></a>
-</span><span id="AnonymizationManager.update_config-79"><a href="#AnonymizationManager.update_config-79"><span class="linenos">79</span></a><span class="sd">        Args:</span>
-</span><span id="AnonymizationManager.update_config-80"><a href="#AnonymizationManager.update_config-80"><span class="linenos">80</span></a><span class="sd">            config (AnonymizationConfig): Configuration object with dataset,</span>
-</span><span id="AnonymizationManager.update_config-81"><a href="#AnonymizationManager.update_config-81"><span class="linenos">81</span></a><span class="sd">                identifiers, hierarchies, parameters, suppression, output path,</span>
-</span><span id="AnonymizationManager.update_config-82"><a href="#AnonymizationManager.update_config-82"><span class="linenos">82</span></a><span class="sd">                and backend.</span>
-</span><span id="AnonymizationManager.update_config-83"><a href="#AnonymizationManager.update_config-83"><span class="linenos">83</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager.update_config-84"><a href="#AnonymizationManager.update_config-84"><span class="linenos">84</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AnonymizationManager.update_config-109"><a href="#AnonymizationManager.update_config-109"><span class="linenos">109</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_config</span><span class="p">:</span> <span class="n">AnonymizationConfig</span><span class="p">):</span>
+</span><span id="AnonymizationManager.update_config-110"><a href="#AnonymizationManager.update_config-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager.update_config-111"><a href="#AnonymizationManager.update_config-111"><span class="linenos">111</span></a><span class="sd">        Given a new anonymization configuration, update the current workflow.</span>
+</span><span id="AnonymizationManager.update_config-112"><a href="#AnonymizationManager.update_config-112"><span class="linenos">112</span></a>
+</span><span id="AnonymizationManager.update_config-113"><a href="#AnonymizationManager.update_config-113"><span class="linenos">113</span></a><span class="sd">        Args:</span>
+</span><span id="AnonymizationManager.update_config-114"><a href="#AnonymizationManager.update_config-114"><span class="linenos">114</span></a><span class="sd">            config (AnonymizationConfig): Configuration object with dataset,</span>
+</span><span id="AnonymizationManager.update_config-115"><a href="#AnonymizationManager.update_config-115"><span class="linenos">115</span></a><span class="sd">                identifiers, hierarchies, parameters, suppression, output path,</span>
+</span><span id="AnonymizationManager.update_config-116"><a href="#AnonymizationManager.update_config-116"><span class="linenos">116</span></a><span class="sd">                and backend.</span>
+</span><span id="AnonymizationManager.update_config-117"><a href="#AnonymizationManager.update_config-117"><span class="linenos">117</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager.update_config-118"><a href="#AnonymizationManager.update_config-118"><span class="linenos">118</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -323,16 +426,16 @@ and backend.</li>
 
     </div>
     <a class="headerlink" href="#AnonymizationManager.anonymize"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AnonymizationManager.anonymize-86"><a href="#AnonymizationManager.anonymize-86"><span class="linenos">86</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">anonymize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="AnonymizationManager.anonymize-87"><a href="#AnonymizationManager.anonymize-87"><span class="linenos">87</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager.anonymize-88"><a href="#AnonymizationManager.anonymize-88"><span class="linenos">88</span></a><span class="sd">        Executes the anonymization pipeline based on the class instance&#39;s</span>
-</span><span id="AnonymizationManager.anonymize-89"><a href="#AnonymizationManager.anonymize-89"><span class="linenos">89</span></a><span class="sd">        specified parameters.</span>
-</span><span id="AnonymizationManager.anonymize-90"><a href="#AnonymizationManager.anonymize-90"><span class="linenos">90</span></a>
-</span><span id="AnonymizationManager.anonymize-91"><a href="#AnonymizationManager.anonymize-91"><span class="linenos">91</span></a><span class="sd">        Returns:</span>
-</span><span id="AnonymizationManager.anonymize-92"><a href="#AnonymizationManager.anonymize-92"><span class="linenos">92</span></a><span class="sd">            int: Return code. 0 means anonymization workflow finished correctly.</span>
-</span><span id="AnonymizationManager.anonymize-93"><a href="#AnonymizationManager.anonymize-93"><span class="linenos">93</span></a><span class="sd">                -1 Means an error occurred.</span>
-</span><span id="AnonymizationManager.anonymize-94"><a href="#AnonymizationManager.anonymize-94"><span class="linenos">94</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager.anonymize-95"><a href="#AnonymizationManager.anonymize-95"><span class="linenos">95</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AnonymizationManager.anonymize-120"><a href="#AnonymizationManager.anonymize-120"><span class="linenos">120</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">anonymize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="AnonymizationManager.anonymize-121"><a href="#AnonymizationManager.anonymize-121"><span class="linenos">121</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager.anonymize-122"><a href="#AnonymizationManager.anonymize-122"><span class="linenos">122</span></a><span class="sd">        Executes the anonymization pipeline based on the class instance&#39;s</span>
+</span><span id="AnonymizationManager.anonymize-123"><a href="#AnonymizationManager.anonymize-123"><span class="linenos">123</span></a><span class="sd">        specified parameters.</span>
+</span><span id="AnonymizationManager.anonymize-124"><a href="#AnonymizationManager.anonymize-124"><span class="linenos">124</span></a>
+</span><span id="AnonymizationManager.anonymize-125"><a href="#AnonymizationManager.anonymize-125"><span class="linenos">125</span></a><span class="sd">        Returns:</span>
+</span><span id="AnonymizationManager.anonymize-126"><a href="#AnonymizationManager.anonymize-126"><span class="linenos">126</span></a><span class="sd">            int: Return code. 0 means anonymization workflow finished correctly.</span>
+</span><span id="AnonymizationManager.anonymize-127"><a href="#AnonymizationManager.anonymize-127"><span class="linenos">127</span></a><span class="sd">                -1 Means an error occurred.</span>
+</span><span id="AnonymizationManager.anonymize-128"><a href="#AnonymizationManager.anonymize-128"><span class="linenos">128</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager.anonymize-129"><a href="#AnonymizationManager.anonymize-129"><span class="linenos">129</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -360,14 +463,14 @@ specified parameters.</p>
 
     </div>
     <a class="headerlink" href="#AnonymizationManager.get_anonymized_data"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AnonymizationManager.get_anonymized_data-97"><a href="#AnonymizationManager.get_anonymized_data-97"><span class="linenos"> 97</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_anonymized_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="AnonymizationManager.get_anonymized_data-98"><a href="#AnonymizationManager.get_anonymized_data-98"><span class="linenos"> 98</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager.get_anonymized_data-99"><a href="#AnonymizationManager.get_anonymized_data-99"><span class="linenos"> 99</span></a><span class="sd">        Get the anonymized dataset in memory.</span>
-</span><span id="AnonymizationManager.get_anonymized_data-100"><a href="#AnonymizationManager.get_anonymized_data-100"><span class="linenos">100</span></a>
-</span><span id="AnonymizationManager.get_anonymized_data-101"><a href="#AnonymizationManager.get_anonymized_data-101"><span class="linenos">101</span></a><span class="sd">        Returns:</span>
-</span><span id="AnonymizationManager.get_anonymized_data-102"><a href="#AnonymizationManager.get_anonymized_data-102"><span class="linenos">102</span></a><span class="sd">            Any: The anonymized dataset as a pandas DataFrame.</span>
-</span><span id="AnonymizationManager.get_anonymized_data-103"><a href="#AnonymizationManager.get_anonymized_data-103"><span class="linenos">103</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager.get_anonymized_data-104"><a href="#AnonymizationManager.get_anonymized_data-104"><span class="linenos">104</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AnonymizationManager.get_anonymized_data-131"><a href="#AnonymizationManager.get_anonymized_data-131"><span class="linenos">131</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_anonymized_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="AnonymizationManager.get_anonymized_data-132"><a href="#AnonymizationManager.get_anonymized_data-132"><span class="linenos">132</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager.get_anonymized_data-133"><a href="#AnonymizationManager.get_anonymized_data-133"><span class="linenos">133</span></a><span class="sd">        Get the anonymized dataset in memory.</span>
+</span><span id="AnonymizationManager.get_anonymized_data-134"><a href="#AnonymizationManager.get_anonymized_data-134"><span class="linenos">134</span></a>
+</span><span id="AnonymizationManager.get_anonymized_data-135"><a href="#AnonymizationManager.get_anonymized_data-135"><span class="linenos">135</span></a><span class="sd">        Returns:</span>
+</span><span id="AnonymizationManager.get_anonymized_data-136"><a href="#AnonymizationManager.get_anonymized_data-136"><span class="linenos">136</span></a><span class="sd">            Any: The anonymized dataset as a pandas DataFrame.</span>
+</span><span id="AnonymizationManager.get_anonymized_data-137"><a href="#AnonymizationManager.get_anonymized_data-137"><span class="linenos">137</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager.get_anonymized_data-138"><a href="#AnonymizationManager.get_anonymized_data-138"><span class="linenos">138</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
@@ -393,15 +496,15 @@ specified parameters.</p>
 
     </div>
     <a class="headerlink" href="#AnonymizationManager.get_transformations"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="AnonymizationManager.get_transformations-106"><a href="#AnonymizationManager.get_transformations-106"><span class="linenos">106</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_transformations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-</span><span id="AnonymizationManager.get_transformations-107"><a href="#AnonymizationManager.get_transformations-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager.get_transformations-108"><a href="#AnonymizationManager.get_transformations-108"><span class="linenos">108</span></a><span class="sd">        Retrieve transformation levels applied for each quasi-identifier.</span>
-</span><span id="AnonymizationManager.get_transformations-109"><a href="#AnonymizationManager.get_transformations-109"><span class="linenos">109</span></a>
-</span><span id="AnonymizationManager.get_transformations-110"><a href="#AnonymizationManager.get_transformations-110"><span class="linenos">110</span></a><span class="sd">        Returns:</span>
-</span><span id="AnonymizationManager.get_transformations-111"><a href="#AnonymizationManager.get_transformations-111"><span class="linenos">111</span></a><span class="sd">            dict[str, int]: A dictionary with the QIs and their respective</span>
-</span><span id="AnonymizationManager.get_transformations-112"><a href="#AnonymizationManager.get_transformations-112"><span class="linenos">112</span></a><span class="sd">                transformation level.</span>
-</span><span id="AnonymizationManager.get_transformations-113"><a href="#AnonymizationManager.get_transformations-113"><span class="linenos">113</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="AnonymizationManager.get_transformations-114"><a href="#AnonymizationManager.get_transformations-114"><span class="linenos">114</span></a>        <span class="o">...</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AnonymizationManager.get_transformations-140"><a href="#AnonymizationManager.get_transformations-140"><span class="linenos">140</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_transformations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+</span><span id="AnonymizationManager.get_transformations-141"><a href="#AnonymizationManager.get_transformations-141"><span class="linenos">141</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager.get_transformations-142"><a href="#AnonymizationManager.get_transformations-142"><span class="linenos">142</span></a><span class="sd">        Retrieve transformation levels applied for each quasi-identifier.</span>
+</span><span id="AnonymizationManager.get_transformations-143"><a href="#AnonymizationManager.get_transformations-143"><span class="linenos">143</span></a>
+</span><span id="AnonymizationManager.get_transformations-144"><a href="#AnonymizationManager.get_transformations-144"><span class="linenos">144</span></a><span class="sd">        Returns:</span>
+</span><span id="AnonymizationManager.get_transformations-145"><a href="#AnonymizationManager.get_transformations-145"><span class="linenos">145</span></a><span class="sd">            dict[str, int]: A dictionary with the QIs and their respective</span>
+</span><span id="AnonymizationManager.get_transformations-146"><a href="#AnonymizationManager.get_transformations-146"><span class="linenos">146</span></a><span class="sd">                transformation level.</span>
+</span><span id="AnonymizationManager.get_transformations-147"><a href="#AnonymizationManager.get_transformations-147"><span class="linenos">147</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="AnonymizationManager.get_transformations-148"><a href="#AnonymizationManager.get_transformations-148"><span class="linenos">148</span></a>        <span class="o">...</span>
 </span></pre></div>
 
 
