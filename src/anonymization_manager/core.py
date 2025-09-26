@@ -61,7 +61,8 @@ class AnonymizationManager:
     @classmethod
     def from_json(cls, json: str):
         """
-        Create an AnonymizationManager instance from a JSON configuration file.
+        Create an AnonymizationManager instance from a JSON configuration file/
+        workflow template.
 
         Args:
             json (str): The path to the JSON template. This json file must follow
@@ -99,6 +100,9 @@ class AnonymizationManager:
                     "backend": "arx | anjana",
                 }
                 ```
+
+                Depending on the given parameters (i.e. $k$, $l$ and/or $t$), the
+                corresponding models will be applied, in a $k \\to l \\to t$ order.
 
         Returns:
             AnonymizationManager: An AnonymizationManager instance.
