@@ -7,7 +7,7 @@ rm -rf build
 mkdir build
 
 echo "Compiling Java classes..."
-javac -cp "arx_dependencies/libarx-3.9.1.jar:arx_dependencies/py4j0.10.9.9.jar" ARXAdapterServer.java
+javac -cp "arx_dependencies/libarx-3.9.1.jar" JavaArxAdapter.java
 
 echo "Copying classes to build folder..."
 cp *.class build/
@@ -20,7 +20,7 @@ done
 cd ..
 
 echo "Creating fat JAR..."
-jar cfm arx.jar manifest.txt -C build .
-mv arx.jar ..
+jar cfm arx_adapter_javaside.jar manifest.txt -C build .
+mv arx_adapter_javaside.jar ../src/anonymization_manager/adapters/arx/
 echo "Done! You can now run:"
-echo "java -jar arx.jar anonymization_manager.ARXAdapterServer"
+echo "java -jar arx_adapter_javaside.jar anonymization_manager.JavaArxAdapter"

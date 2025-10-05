@@ -8,7 +8,8 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from anonymization_manager.adapters import anjana, arx
+from anonymization_manager.adapters import anjana
+from anonymization_manager.adapters.arx import arx_adapter
 
 
 @dataclass
@@ -62,7 +63,7 @@ class AnonymizationManager:
         self.config: AnonymizationConfig = config
         if self.config.backend == "arx":
             ...
-            self.adapter = arx
+            self.adapter = arx_adapter
             ...
         else:
             ...
