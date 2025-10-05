@@ -2,7 +2,6 @@
 The public-facing API of the Anonymization Manager component, part of the open
 source RECITALS platform.
 """
-
 from dataclasses import dataclass
 
 import pandas as pd
