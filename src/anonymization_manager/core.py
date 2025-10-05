@@ -2,9 +2,13 @@
 The public-facing API of the Anonymization Manager component, part of the open
 source RECITALS platform.
 """
+
+import json
 from dataclasses import dataclass
 
 import pandas as pd
+
+from anonymization_manager.adapters import anjana, arx
 
 
 @dataclass
@@ -37,7 +41,7 @@ class AnonymizationConfig:
     parameters: dict[str, float]
     suppression: int | None = 50
     anonymized_data: str | None = None
-    backend: str | None = "anjana"
+    backend: str | None = "arx"
 
 
 class AnonymizationManager:
@@ -55,10 +59,18 @@ class AnonymizationManager:
                 identifiers, hierarchies, parameters, suppression, output path,
                 and backend.
         """
-        ...
+        self.config: AnonymizationConfig = config
+        if self.config.backend == "arx":
+            ...
+            self.adapter = arx
+            ...
+        else:
+            ...
+            self.adapter = anjana
+            ...
 
     @classmethod
-    def from_json(cls, json: str):
+    def from_json(cls, json_path: str):
         """
         Create an AnonymizationManager instance from a JSON configuration file/
         workflow template.
@@ -106,7 +118,31 @@ class AnonymizationManager:
         Returns:
             AnonymizationManager: An AnonymizationManager instance.
         """
-        ...
+        # Template file reading
+        with open(json_path, "r") as file:
+            values = json.load(file)
+
+        # TODO file format checking
+        data = pd.read_csv(values["data"])
+        quasi_ident = values["quasi_ident"]
+        ident = values["ident"]
+        k = values["k"]
+        l = values.get("l")
+        t = values.get("t")
+        supp_level = values["supp_level"]
+        sens_att = values.get("sens_att")
+
+        hierarchies = {
+            key: dict(pd.read_csv(value, header=None))
+            for key, value in values["hierarchies"].items()
+        }
+
+        # Strip whitespace from column names
+        data.columns = data.columns.str.strip()
+
+        # Strip whitespace from all string (object) columns
+        str_cols = data.select_dtypes(include=["object", "string"]).columns
+        data[str_cols] = data[str_cols].apply(lambda col: col.str.strip())
 
     def update_config(self, new_config: AnonymizationConfig):
         """
@@ -128,7 +164,8 @@ class AnonymizationManager:
             int: Return code. 0 means anonymization workflow finished correctly.
                 -1 Means an error occurred.
         """
-        ...
+        code = self.adapter.anonymize(self.config)
+        return code
 
     def get_anonymized_data(self) -> pd.DataFrame:
         """
