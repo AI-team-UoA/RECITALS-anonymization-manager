@@ -1,3 +1,4 @@
-from .core import AnonymizationConfig, AnonymizationManager
+from .core import AnonymizationManager
+from .config import AnonymizationConfig
 
 __all__ = ["AnonymizationManager", "AnonymizationConfig"]

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.ARXAnonymizer;
@@ -44,6 +45,7 @@ public class JavaArxAdapter {
             this.data.getDefinition().setAttributeType(identifier, AttributeType.IDENTIFYING_ATTRIBUTE);
         }
         System.out.println("Identifiers defined successfully...");
+        System.out.println("Identifiers: "+String.join(", ", identifiers));
     }
 
     /* It defines the quasi-identifier types. */
@@ -52,6 +54,7 @@ public class JavaArxAdapter {
             this.data.getDefinition().setAttributeType(quasi_identifier, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
         }
         System.out.println("Quasi-Identifiers defined successfully...");
+        System.out.println("Quasi-Identifiers: "+String.join(", ", quasi_identifiers));
     }
 
     /* It defines the insensitive attributes. */
@@ -60,6 +63,7 @@ public class JavaArxAdapter {
             this.data.getDefinition().setAttributeType(insensitive_attribute, AttributeType.INSENSITIVE_ATTRIBUTE);
         }
         System.out.println("Insensitive attributes defined successfully...");
+        System.out.println("Insensitive attributes: "+String.join(", ", insensitive_attributes));
     }
 
     /* It defines the sensitive attributes. */
@@ -68,6 +72,7 @@ public class JavaArxAdapter {
             this.data.getDefinition().setAttributeType(sensitive_attribute, AttributeType.SENSITIVE_ATTRIBUTE);
         }
         System.out.println("Sensitive attributes defined successfully...");
+        System.out.println("Sensitive attributes: "+String.join(", ", sensitive_attributes));
     }
 
     /* Makes the dataset k-anonymous */
@@ -79,8 +84,7 @@ public class JavaArxAdapter {
             if (parameters.containsKey("k")) {
                 int k = (int)Math.floor(parameters.get("k"));
                 config.addPrivacyModel(new KAnonymity(k));
-                System.out.println("K-Anonymity will be applied with k="+k);
-                System.out.println("K-Anonymity was applied successfully...");
+                System.out.println("l-Anonymity will be applied with k="+k);
             } 
             
             /* Checks if l-diversity should be applied. */
@@ -92,8 +96,19 @@ public class JavaArxAdapter {
                 for (String sensitive_attribute : sensitive_attributes) {
                     config.addPrivacyModel(new DistinctLDiversity(sensitive_attribute, l));
                 }
-                System.out.println("L-Diversity will be applied with l="+l);
-                System.out.println("L-Diversity was applied successfully...");
+                System.out.println("l-Diversity will be applied with l="+l+" to the sensitive attributes: "+String.join(", ", sensitive_attributes));
+            } 
+
+            /* Checks if t-closeness should be applied. */
+            if (parameters.containsKey("t")) {
+                double t = parameters.get("t");
+                DataDefinition def = this.data.getDefinition();
+                Set<String> sensitive_attributes = def.getSensitiveAttributes();
+
+                for (String sensitive_attribute : sensitive_attributes) {
+                    config.addPrivacyModel(new EqualDistanceTCloseness(sensitive_attribute, t));
+                }
+                System.out.println("t-Closeness will be applied with t="+t+" to the sensitive attributes: "+String.join(", ", sensitive_attributes));
             } 
 
             /* Anonymizes and stores the dataset. */
@@ -126,12 +141,7 @@ public class JavaArxAdapter {
             e.printStackTrace();
         } 
     }
-    /* Starts the ARX adapter server. */
-    public static void main(String[] args) {
-        System.out.println("gh Hello World");
-    }
-
-    /* Grabs the quasi-identifiers */
+    
     /* Pings the server. */
     public void ping() {
         System.out.println("Ping received");

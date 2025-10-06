@@ -17,14 +17,14 @@
        "parameters" : {
            "k": 10,
            "l": 2,
-           "t": 0.5,
+           "t": 0.5
        },
 
        "suppresion" : {
-           "level" : 50,
+           "level" : 50
        },
 
        "anonymized_data" : "path/to/anonymized_data",
 
-       "backend": "arx | anjana",
+       "backend": "arx | anjana"
    }

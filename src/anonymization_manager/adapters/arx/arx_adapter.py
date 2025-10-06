@@ -4,6 +4,7 @@ Dependencies.
 import os
 import jpype
 from jpype import JClass
+from anonymization_manager.config import AnonymizationConfig
 
 class ArxAdapterException(Exception):
     """
@@ -22,7 +23,7 @@ class ArxAdapter:
     """
     java_adapter = None
 
-    def __init__(self):
+    def __init__(self, config: AnonymizationConfig) -> None:
         """
         It initializes the ARX adapter.
         """
@@ -34,6 +35,9 @@ class ArxAdapter:
         if not os.path.exists(arx_path):
             raise ArxAdapterException(f"ARX jar file not found at {arx_path}")
         
+        # Stores the config.
+        self.config = config
+
         # Starts the JVM with the jar file.
         jpype.startJVM(classpath=[arx_path])
         JavaAdapter = JClass("JavaArxAdapter")
@@ -46,13 +50,16 @@ class ArxAdapter:
         self.java_adapter.loadData(data_path)
     
     def anonymize(self):
-        self.load_data("/home/jimmys/RECITALS/RECITALS-anonymization-manager/examples/chatgpt_sample.csv")
-        self.define_identifiers(["Name"])
-        self.define_quasi_identifiers(["Age"])
-        self.define_insensitive_attributes(["Gender"])
-        self.define_sensitive_attributes(["Disease"])
-        self.define_hierarchies({"Age":"/home/jimmys/RECITALS/RECITALS-anonymization-manager/examples/age.csv"})
-        self.make_anonymous({"k":3.1, "l":2.0}, "anonymized_output.csv")
+        '''
+        Anonymizes the data using the configuration file.
+        '''''
+        self.load_data(self.config.data)
+        self.define_identifiers(self.config.identifiers.get("ids", []))
+        self.define_quasi_identifiers(self.config.identifiers.get("qids", []))
+        self.define_sensitive_attributes(self.config.identifiers.get("satts", []))
+        self.define_insensitive_attributes(self.config.identifiers.get("iatts", []))
+        self.define_hierarchies(self.config.hierarchies)
+        self.make_anonymous(self.config.parameters, self.config.anonymized_data)
 
     def make_anonymous(self, parameters:dict[str, float], output_path:str) -> None:
         '''
@@ -73,6 +80,7 @@ class ArxAdapter:
         """
         ArrayList = JClass("java.util.ArrayList")
         array_list = ArrayList()
+        
         for identifier in identifiers:
             array_list.add(identifier)
         self.java_adapter.defineIdentifiers(array_list)
@@ -101,6 +109,12 @@ class ArxAdapter:
             array_list.add(sensitive_attribute)
         self.java_adapter.defineSensitiveAttributes(array_list)
 
+    def update_config(self, new_config: AnonymizationConfig) -> None:
+        """
+        Updates the configuration of the adapter.
+        """
+        self.config = new_config
+        
     def define_hierarchies(
             self, hierarchies: dict[str, str]
     ) -> None:
@@ -143,8 +157,3 @@ class ArxAdapter:
         if jpype.isJVMStarted():
             jpype.shutdownJVM()
 
-if __name__ == "__main__":
-    adapter = ArxAdapter()
-    adapter.ping()
-    adapter.anonymize()
-    pass

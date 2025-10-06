@@ -2,48 +2,12 @@
 The public-facing API of the Anonymization Manager component, part of the open
 source RECITALS platform.
 """
-
 import json
-from dataclasses import dataclass
-
 import pandas as pd
 
 from anonymization_manager.adapters import anjana
 from anonymization_manager.adapters.arx import arx_adapter
-
-
-@dataclass
-class AnonymizationConfig:
-    """
-    Configuration for an anonymization workflow.
-
-    Args:
-        data (str): The path to the initial dataset. CSV, Excel, JSON and
-            SQLite3 formats are supported.
-        identifiers (dict[list[str]]): A dictionary containing lists with
-            the IDs (ids), the quasi-IDs (qids), the sensitive attributes
-            (satts) and insensitive attributes (iatts).
-        hierarchies (dict[str]): A dictionary with the attributes as keys
-            and the path to the CSV hierarchies as data.
-        Parameters (dict[float]): A dictionary with all necessary parameters
-            for the desired anonymity models (k for k-anonymity, l for
-            l-diversity, t for t-closeness).
-        suppression (int, optional): The percentage of suppression to be
-            applied. Defaults to TBD.
-        anonymized_data (str, optional): The path for the resulting dataset.
-            Defaults to `./results/<dataset>_k-<k>_l-<l>_t-<t>.<extension>`.
-        backend (str, optional): The backend library to be used, between
-            ARX and ANJANA. Defaults to TBD.
-    """
-
-    data: str
-    identifiers: dict[str, list[str]]
-    hierarchies: dict[str, str]
-    parameters: dict[str, float]
-    suppression: int | None = 50
-    anonymized_data: str | None = None
-    backend: str | None = "arx"
-
+from anonymization_manager.config import AnonymizationConfig
 
 class AnonymizationManager:
     """
@@ -63,7 +27,7 @@ class AnonymizationManager:
         self.config: AnonymizationConfig = config
         if self.config.backend == "arx":
             ...
-            self.adapter = arx_adapter
+            self.adapter = arx_adapter.ArxAdapter(config)
             ...
         else:
             ...
@@ -121,29 +85,21 @@ class AnonymizationManager:
         """
         # Template file reading
         with open(json_path, "r") as file:
-            values = json.load(file)
+            config_json = json.load(file)
 
-        # TODO file format checking
-        data = pd.read_csv(values["data"])
-        quasi_ident = values["quasi_ident"]
-        ident = values["ident"]
-        k = values["k"]
-        l = values.get("l")
-        t = values.get("t")
-        supp_level = values["supp_level"]
-        sens_att = values.get("sens_att")
+        config = AnonymizationConfig(
+            data=config_json.get("data"),
+            identifiers=config_json.get("identifiers"),
+            hierarchies=config_json.get("hierarchies"),
+            parameters=config_json.get("parameters"),
+            suppression=config_json.get("suppression"),
+            anonymized_data=config_json.get("anonymized_data"),
+            backend=config_json.get("backend", "arx"),
+        )
 
-        hierarchies = {
-            key: dict(pd.read_csv(value, header=None))
-            for key, value in values["hierarchies"].items()
-        }
+        return cls(config)
 
-        # Strip whitespace from column names
-        data.columns = data.columns.str.strip()
 
-        # Strip whitespace from all string (object) columns
-        str_cols = data.select_dtypes(include=["object", "string"]).columns
-        data[str_cols] = data[str_cols].apply(lambda col: col.str.strip())
 
     def update_config(self, new_config: AnonymizationConfig):
         """
@@ -154,7 +110,8 @@ class AnonymizationManager:
                 identifiers, hierarchies, parameters, suppression, output path,
                 and backend.
         """
-        ...
+        self.config = new_config
+        self.adapter = self.adapter.update_config(new_config)
 
     def anonymize(self) -> int:
         """
@@ -165,7 +122,7 @@ class AnonymizationManager:
             int: Return code. 0 means anonymization workflow finished correctly.
                 -1 Means an error occurred.
         """
-        code = self.adapter.anonymize(self.config)
+        code = self.adapter.anonymize()
         return code
 
     def get_anonymized_data(self) -> pd.DataFrame:
