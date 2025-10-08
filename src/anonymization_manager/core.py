@@ -92,7 +92,7 @@ class AnonymizationManager:
             identifiers=config_json.get("identifiers"),
             hierarchies=config_json.get("hierarchies"),
             parameters=config_json.get("parameters"),
-            suppression=config_json.get("suppression"),
+            suppression=config_json.get("suppression_limit"),
             anonymized_data=config_json.get("anonymized_data"),
             backend=config_json.get("backend", "arx"),
         )

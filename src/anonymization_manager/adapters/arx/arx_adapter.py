@@ -43,7 +43,7 @@ class ArxAdapter:
         JavaAdapter = JClass("JavaArxAdapter")
         self.java_adapter = JavaAdapter()
 
-    def load_data(self, data_path: str):
+    def _load_data(self, data_path: str):
         '''
         Loads the data from the given path to ARX.
         '''
@@ -53,26 +53,28 @@ class ArxAdapter:
         '''
         Anonymizes the data using the configuration file.
         '''''
-        self.load_data(self.config.data)
-        self.define_identifiers(self.config.identifiers.get("ids", []))
-        self.define_quasi_identifiers(self.config.identifiers.get("qids", []))
-        self.define_sensitive_attributes(self.config.identifiers.get("satts", []))
-        self.define_insensitive_attributes(self.config.identifiers.get("iatts", []))
-        self.define_hierarchies(self.config.hierarchies)
-        self.make_anonymous(self.config.parameters, self.config.anonymized_data)
+        self._load_data(self.config.data)
+        self._define_identifiers(self.config.identifiers.get("ids", []))
+        self._define_quasi_identifiers(self.config.identifiers.get("qids", []))
+        self._define_sensitive_attributes(self.config.identifiers.get("satts", []))
+        self._define_insensitive_attributes(self.config.identifiers.get("iatts", []))
+        self._define_hierarchies(self.config.hierarchies)
+        self._make_anonymous(self.config.parameters, self.config.suppression, self.config.anonymized_data)
 
-    def make_anonymous(self, parameters:dict[str, float], output_path:str) -> None:
+    def _make_anonymous(self, parameters, suppression_limit:float , output_path:str) -> None:
         '''
         Makes the data k-anonymous using ARX.
         '''
-        HashMap = JClass("java.util.HashMap")
-        java_map = HashMap()
+        Int = JClass("java.lang.Integer")
+        Double = JClass("java.lang.Double")
 
-        for parameter, value in parameters.items():
-            java_map.put(parameter, value)
-        self.java_adapter.makeAnonymous(java_map, output_path)
+        k = Int(parameters.get("k")) if "k" in parameters else None
+        l = Int(parameters.get("l")) if "l" in parameters else None
+        t = Double(parameters.get("t")) if "t" in parameters else None
+        s = Double(suppression_limit) if suppression_limit is not None else None
+        self.java_adapter.makeAnonymous(k, l , t, s, output_path)
 
-    def define_identifiers(
+    def _define_identifiers(
         self, identifiers: list[str]
     ) -> None:
         """
@@ -85,7 +87,7 @@ class ArxAdapter:
             array_list.add(identifier)
         self.java_adapter.defineIdentifiers(array_list)
 
-    def define_quasi_identifiers(self, quasi_identifiers: list[str]) -> None:
+    def _define_quasi_identifiers(self, quasi_identifiers: list[str]) -> None:
         """
         Defines the quasi-identifiers for the ARX library.
         """
@@ -96,7 +98,7 @@ class ArxAdapter:
             array_list.add(quasi_identifier)
         self.java_adapter.defineQuasiIdentifiers(array_list)
 
-    def define_sensitive_attributes(
+    def _define_sensitive_attributes(
         self, sensitive_attributes: list[str]
     ) -> None:
         """
@@ -115,7 +117,7 @@ class ArxAdapter:
         """
         self.config = new_config
         
-    def define_hierarchies(
+    def _define_hierarchies(
             self, hierarchies: dict[str, str]
     ) -> None:
         """
@@ -128,7 +130,7 @@ class ArxAdapter:
             java_map.put(attribute, hierarchy_path)
         self.java_adapter.defineHierarchies(java_map)
 
-    def define_insensitive_attributes(
+    def _define_insensitive_attributes(
         self, insensitive_attributes: list[str]
     ) -> None:
         """
@@ -140,15 +142,6 @@ class ArxAdapter:
         for insensitive_attribute in insensitive_attributes:
             array_list.add(insensitive_attribute)
         self.java_adapter.defineInsensitiveAttributes(array_list)
-    
-    def ping(self) -> None:
-        """
-        Pings the ARX adapter to check if it is alive.
-        """
-        adapter = jpype.JClass("JavaArxAdapter")
-        adapter_instance = adapter()
-        adapter_instance.ping()
-
         
     def __del__(self):
         """

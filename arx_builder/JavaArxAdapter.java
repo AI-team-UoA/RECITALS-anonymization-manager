@@ -44,7 +44,6 @@ public class JavaArxAdapter {
         for (String identifier : identifiers) {
             this.data.getDefinition().setAttributeType(identifier, AttributeType.IDENTIFYING_ATTRIBUTE);
         }
-        System.out.println("Identifiers defined successfully...");
         System.out.println("Identifiers: "+String.join(", ", identifiers));
     }
 
@@ -53,7 +52,6 @@ public class JavaArxAdapter {
         for (String quasi_identifier : quasi_identifiers) {
             this.data.getDefinition().setAttributeType(quasi_identifier, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
         }
-        System.out.println("Quasi-Identifiers defined successfully...");
         System.out.println("Quasi-Identifiers: "+String.join(", ", quasi_identifiers));
     }
 
@@ -62,7 +60,6 @@ public class JavaArxAdapter {
         for (String insensitive_attribute : insensitive_attributes) {
             this.data.getDefinition().setAttributeType(insensitive_attribute, AttributeType.INSENSITIVE_ATTRIBUTE);
         }
-        System.out.println("Insensitive attributes defined successfully...");
         System.out.println("Insensitive attributes: "+String.join(", ", insensitive_attributes));
     }
 
@@ -71,42 +68,44 @@ public class JavaArxAdapter {
         for (String sensitive_attribute : sensitive_attributes) {
             this.data.getDefinition().setAttributeType(sensitive_attribute, AttributeType.SENSITIVE_ATTRIBUTE);
         }
-        System.out.println("Sensitive attributes defined successfully...");
         System.out.println("Sensitive attributes: "+String.join(", ", sensitive_attributes));
     }
 
     /* Makes the dataset k-anonymous */
-    public void makeAnonymous(HashMap<String, Double> parameters, String output_path) {
+    public void makeAnonymous(Integer k, Integer l, Double t, Double suppression_limit, String output_path) {
         try {
             ARXConfiguration config = ARXConfiguration.create();
-
+            
+            /* Checks if a suppression limit has been defined. */
+            if (suppression_limit != null) {
+                config.setSuppressionLimit(suppression_limit.doubleValue());
+                System.out.println("The suppression limit has been set to: "+suppression_limit);
+            }
+            
             /* Checks if k-anonymity should be applied. */
-            if (parameters.containsKey("k")) {
-                int k = (int)Math.floor(parameters.get("k"));
-                config.addPrivacyModel(new KAnonymity(k));
-                System.out.println("l-Anonymity will be applied with k="+k);
+            if (k != null) {
+                config.addPrivacyModel(new KAnonymity(k.intValue()));
+                System.out.println("k-Anonymity will be applied with k="+k);
             } 
             
             /* Checks if l-diversity should be applied. */
-            if (parameters.containsKey("l")) {
-                int l = (int)Math.floor(parameters.get("l"));
+            if (l != null) {
                 DataDefinition def = this.data.getDefinition();
                 Set<String> sensitive_attributes = def.getSensitiveAttributes();
 
                 for (String sensitive_attribute : sensitive_attributes) {
-                    config.addPrivacyModel(new DistinctLDiversity(sensitive_attribute, l));
+                    config.addPrivacyModel(new DistinctLDiversity(sensitive_attribute, l.intValue()));
                 }
                 System.out.println("l-Diversity will be applied with l="+l+" to the sensitive attributes: "+String.join(", ", sensitive_attributes));
             } 
 
             /* Checks if t-closeness should be applied. */
-            if (parameters.containsKey("t")) {
-                double t = parameters.get("t");
+            if (t != null) {
                 DataDefinition def = this.data.getDefinition();
                 Set<String> sensitive_attributes = def.getSensitiveAttributes();
 
                 for (String sensitive_attribute : sensitive_attributes) {
-                    config.addPrivacyModel(new EqualDistanceTCloseness(sensitive_attribute, t));
+                    config.addPrivacyModel(new EqualDistanceTCloseness(sensitive_attribute, t.doubleValue()));
                 }
                 System.out.println("t-Closeness will be applied with t="+t+" to the sensitive attributes: "+String.join(", ", sensitive_attributes));
             } 
@@ -140,10 +139,5 @@ public class JavaArxAdapter {
         } catch (IOException e) {
             e.printStackTrace();
         } 
-    }
-    
-    /* Pings the server. */
-    public void ping() {
-        System.out.println("Ping received");
     }
 }
