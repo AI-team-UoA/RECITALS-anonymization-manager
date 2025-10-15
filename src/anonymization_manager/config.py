@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class AnonymizationConfig:
     """
@@ -25,9 +26,14 @@ class AnonymizationConfig:
     """
 
     data: str
-    identifiers: dict[str, list[str]]
+    identifiers: list[str]
+    quasi_identifiers: list[str]
+    sensitive_attributes: list[str]
+    insensitive_attributes: list[str]
     hierarchies: dict[str, str]
-    parameters: dict[str, float]
-    suppression: int | None = 50
+    k: int | None
+    l: int | None
+    t: float | None
+    suppression_limit: float | None = 50
     anonymized_data: str | None = None
     backend: str | None = "arx"

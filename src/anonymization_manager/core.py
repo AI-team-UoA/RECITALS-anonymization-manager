@@ -2,12 +2,15 @@
 The public-facing API of the Anonymization Manager component, part of the open
 source RECITALS platform.
 """
+
 import json
+
 import pandas as pd
 
-from anonymization_manager.adapters import anjana
-from anonymization_manager.adapters.arx import arx_adapter
+#from anonymization_manager.adapters.anjana import AnjanaAdapter
+from anonymization_manager.adapters.arx.arx_adapter import ArxAdapter
 from anonymization_manager.config import AnonymizationConfig
+
 
 class AnonymizationManager:
     """
@@ -24,14 +27,9 @@ class AnonymizationManager:
                 identifiers, hierarchies, parameters, suppression, output path,
                 and backend.
         """
-        self.config: AnonymizationConfig = config
-        if self.config.backend == "arx":
-            ...
-            self.adapter = arx_adapter.ArxAdapter(config)
-            ...
+        if config.backend == "arx":
+            self.adapter = ArxAdapter(config)
         else:
-            ...
-            self.adapter = anjana
             ...
 
     @classmethod
@@ -61,11 +59,9 @@ class AnonymizationManager:
                         "h3":"path/to/h3"
                     },
 
-                    "parameters" : {
-                        "k": 10,
-                        "l": 2,
-                        "t": 0.5,
-                    },
+                    "k": 10,
+                    "l": 2,
+                    "t": 0.5,
 
                     "suppresion" : {
                         "level" : 50,
@@ -90,16 +86,19 @@ class AnonymizationManager:
         config = AnonymizationConfig(
             data=config_json.get("data"),
             identifiers=config_json.get("identifiers"),
+            quasi_identifiers=config_json.get("quasi_identifiers"),
+            sensitive_attributes=config_json.get("sensitive_attributes"),
+            insensitive_attributes=config_json.get("insensitive_attributes"),
             hierarchies=config_json.get("hierarchies"),
-            parameters=config_json.get("parameters"),
-            suppression=config_json.get("suppression_limit"),
+            k=config_json.get("k"),
+            l=config_json.get("l"),
+            t=config_json.get("t"),
+            suppression_limit=config_json.get("suppression_limit"),
             anonymized_data=config_json.get("anonymized_data"),
             backend=config_json.get("backend", "arx"),
         )
 
         return cls(config)
-
-
 
     def update_config(self, new_config: AnonymizationConfig):
         """
@@ -110,27 +109,28 @@ class AnonymizationManager:
                 identifiers, hierarchies, parameters, suppression, output path,
                 and backend.
         """
-        self.config = new_config
-        self.adapter = self.adapter.update_config(new_config)
+        self.adapter.update_config(new_config)
 
-    def anonymize(self) -> int:
+    def anonymize(self) -> tuple[int, dict[str, int]]:
         """
         Executes the anonymization pipeline based on the class instance's
         specified parameters.
 
+        Saves the results to `./results/<dataset>_k-<k>_l-<l>_t-<t>.csv`.
+
         Returns:
-            int: Return code. 0 means anonymization workflow finished correctly.
-                -1 Means an error occurred.
+            int: Return code, transformations. 0 means anonymization workflow
+                finished correctly. -1 Means an error occurred.
         """
-        code = self.adapter.anonymize()
-        return code
+        code, results = self.adapter.anonymize()
+        return code, results
 
     def get_anonymized_data(self) -> pd.DataFrame:
         """
-        Get the anonymized dataset in memory.
+        Loads the anonymized dataset in memory.
 
         Returns:
-            Any: The anonymized dataset as a pandas DataFrame.
+            pd.DataFrame: The resulting anonymized dataset.
         """
         ...
 
