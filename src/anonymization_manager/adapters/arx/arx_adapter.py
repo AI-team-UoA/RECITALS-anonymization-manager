@@ -40,28 +40,55 @@ class ArxAdapter:
         self.config = config
 
         # Starts the JVM with the jar file.
-        jpype.startJVM(classpath=[arx_path])
+        jpype.startJVM(classpath=[arx_path, "/home/jimmys/RECITALS/RECITALS-anonymization-manager/arx/ArxAdapter/lib/libarx-3.9.2.jar"])
         JavaAdapter = JClass("JavaArxAdapter")
         self.java_adapter = JavaAdapter()
 
-    def _load_data(self, data_path: str):
+    def _load_data(self):
         '''
         Loads the data from the given path to ARX.
         '''
-        self.java_adapter.loadData(data_path)
+        self.java_adapter.loadData(self.config.data)
     
     def anonymize(self) -> tuple[int, dict[str, int]]:
         '''
         Anonymizes the data using the configuration file.
         '''''
-        self._load_data(self.config.data)
+        self._load_data()
         self._define_identifiers()
         self._define_quasi_identifiers()
         self._define_sensitive_attributes()
         self._define_insensitive_attributes()
-        self._define_hierarchies(self.config.hierarchies)
-        return 1, self._make_anonymous()
+        self._define_hierarchies()
+        res = self._make_anonymous()
+        print(self._arx_result_to_dataframe(res), self._arx_result_get_transformations(res))
+        return self._arx_result_to_dataframe(res), self._arx_result_get_transformations(res)
 
+    def _arx_result_get_transformations(self, arx_result) -> dict[str, int]:
+        """
+        Gets the transformations applied to each attribute using the ARXResult object.
+        """
+        String = JClass("java.lang.String")
+        transformations = {attr: int(arx_result.getOutput().getGeneralization(String(attr))) for attr in self.config.quasi_identifiers}
+        return transformations
+    
+
+    def _arx_result_to_dataframe(self, arx_result) -> pd.DataFrame:
+        """
+        Converts the anonymized data from ARX to a pandas DataFrame.
+        """
+        data_handle = arx_result.getOutput()
+        
+        column_names = [data_handle.getAttributeName(i) for i in range(data_handle.getNumColumns())]
+        
+        data = []
+        for i in range(data_handle.getNumRows()):
+            row = [data_handle.getValue(i, j) for j in range(data_handle.getNumColumns())]
+            data.append(row)
+        
+        df = pd.DataFrame(data, columns=column_names)
+        return df
+    
     def _make_anonymous(self) -> dict[str, int]:
         '''
         Makes the data k-anonymous using ARX.
@@ -79,8 +106,7 @@ class ArxAdapter:
 
         # Makes the data anonymous and returns the transformations.
         result = self.java_adapter.makeAnonymous(k, l , t, s, self.config.anonymized_data)
-        transformations = {str(entry.getKey()): int(entry.getValue()) for entry in result.entrySet()}
-        return transformations
+        return result
 
     def _define_identifiers(
         self
@@ -123,14 +149,14 @@ class ArxAdapter:
         """
         self.config = new_config
         
-    def _define_hierarchies(self, hierarchies: dict[str, str]) -> None:
+    def _define_hierarchies(self) -> None:
         """
         Defines the hierarchies for the ARX library.
         """
         HashMap = JClass("java.util.HashMap")
         java_map = HashMap()
 
-        for attribute, hierarchy_path in hierarchies.items():
+        for attribute, hierarchy_path in self.config.hierarchies.items():
             java_map.put(attribute, hierarchy_path)
         self.java_adapter.defineHierarchies(java_map)
 

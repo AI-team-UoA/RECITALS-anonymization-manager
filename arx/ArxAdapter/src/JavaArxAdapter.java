@@ -72,7 +72,7 @@ public class JavaArxAdapter {
     }
 
     /* Makes the dataset k-anonymous */
-    public HashMap<String, Integer> makeAnonymous(Integer k, Integer l, Double t, Double suppression_limit, String output_path) {
+    public ARXResult makeAnonymous(Integer k, Integer l, Double t, Double suppression_limit, String output_path) {
         try {
             ARXConfiguration config = ARXConfiguration.create();
             
@@ -111,11 +111,12 @@ public class JavaArxAdapter {
             } 
 
             /* Anonymizes and stores the dataset. */
+
             ARXAnonymizer anonymizer = new ARXAnonymizer();
             ARXResult res = anonymizer.anonymize(this.data, config);
             DataHandle out = res.getOutput();
             out.save(output_path, ',');
-
+            /*
             DataDefinition def = this.data.getDefinition();
             Set<String> quasi_identifiers = def.getQuasiIdentifyingAttributes();
 
@@ -126,6 +127,8 @@ public class JavaArxAdapter {
             }
 
             return gen_levels;
+            */
+            return res;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
