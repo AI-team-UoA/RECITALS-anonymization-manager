@@ -13,7 +13,6 @@ class ArxAdapterException(Exception):
     """
     pass
 
-
 class ArxAdapter:
     """
     This class serves as an adapter for the ARX library, it is responsible for the integration and interaction with the ARX Java library.
