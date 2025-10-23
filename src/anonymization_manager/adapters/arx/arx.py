@@ -87,6 +87,24 @@ class ARXResult:
         """
         return self.arx_result.getOutput().getStatistics().getQualityStatistics().getDiscernibility().getValue()
     
+    def get_average_class_size_metric(self) -> float:
+        """
+        Returns the average class metric, not to be confused with the other similarly named method.
+        """
+        return self.arx_result.getOutput().getStatistics().getQualityStatistics().getAverageClassSize().getValue()
+    
+    def get_granularity_metric(self, attribute:str) -> float:
+        """
+        Returns the granularity metric for the specific attribute.
+        """
+        return self.arx_result.getOutput().getStatistics().getQualityStatistics().getGranularity().getValue(attribute)
+    
+    def get_ssesst_metric(self) -> float:
+        """
+        Returns the ssesst metric for the anonymized dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getQualityStatistics().getSSESST().getValue()
+    
 class ARXAnonymizer:
     """
     This class is responsible for anonymizing datasets using the ARX library.
@@ -232,3 +250,6 @@ if __name__ == "__main__":
     print(res.get_min_equivalence_class_size())
     print(res.get_number_of_equivalence_classes())
     print(res.get_discernibility_metric())
+    print(res.get_average_class_size_metric())
+    print(res.get_granularity_metric("Age"))
+    print(res.get_ssesst_metric())
