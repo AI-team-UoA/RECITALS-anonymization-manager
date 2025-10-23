@@ -49,7 +49,7 @@ class ARXResult:
         Stores the anonymized dataset as .csv file.
         """
         pass
-    
+
 class ARXAnonymizer:
     """
     This class is responsible for anonymizing datasets using the ARX library.
@@ -130,7 +130,7 @@ class ARXAnonymizer:
         # Adds t-closeness.
         if config.t is not None:
             for sensitive_attribute in config.sensitive_attributes:
-                configuration.addPrivacyModel(TCloseness(sensitive_attribute, config.l))
+                configuration.addPrivacyModel(TCloseness(sensitive_attribute, config.t))
         
         return configuration
     
