@@ -44,12 +44,49 @@ class ARXResult:
         transformations = {quasi_identifier: self.arx_result.getOutput().getGeneralization(quasi_identifier) for quasi_identifier in quasi_identifiers}
         return transformations
     
-    def store_as_csv(self) -> None:
+    def store_as_csv(self, output_path:str) -> None:
         """
         Stores the anonymized dataset as .csv file.
         """
-        pass
+        output = self.arx_result.getOutput()
+        output.save(output_path, ',')
 
+    def get_average_equivalence_class_size(self) -> float:
+        """
+        Returns the average equivalence class size.
+        """
+        return self.arx_result.getOutput().getStatistics().getEquivalenceClassStatistics().getAverageEquivalenceClassSize()
+    
+    def get_number_of_suppressed_records(self) -> int:
+        """
+        Returns the number of suppressed records, i.e. removed from the dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getEquivalenceClassStatistics().getNumberOfSuppressedRecords()
+
+    def get_max_equivalence_class_size(self) -> int:
+        """
+        Returns the maximum size of an equivalence class present in the anonymized dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getEquivalenceClassStatistics().getMaximalEquivalenceClassSize()
+
+    def get_min_equivalence_class_size(self) -> int:
+        """
+        Returns the minimum size of an equivalence class present in the anonymized dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getEquivalenceClassStatistics().getMinimalEquivalenceClassSize()
+    
+    def get_number_of_equivalence_classes(self) -> int:
+        """
+        Returns the number of equivalence classes present in the anonymized dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getEquivalenceClassStatistics().getNumberOfEquivalenceClasses()
+    
+    def get_discernibility_metric(self) -> float:
+        """
+        Returns the discernibility metric for the anonymized dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getQualityStatistics().getDiscernibility().getValue()
+    
 class ARXAnonymizer:
     """
     This class is responsible for anonymizing datasets using the ARX library.
@@ -188,3 +225,10 @@ if __name__ == "__main__":
     res = ARXAnonymizer.anonymize(config)
     print(res.get_as_dataframe())
     print("next", res.get_transformations())
+    res.store_as_csv("test.csv")
+    print(res.get_average_equivalence_class_size())
+    print(res.get_number_of_suppressed_records())
+    print(res.get_max_equivalence_class_size())
+    print(res.get_min_equivalence_class_size())
+    print(res.get_number_of_equivalence_classes())
+    print(res.get_discernibility_metric())
