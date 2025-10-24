@@ -241,7 +241,7 @@ if __name__ == "__main__":
                                  ) 
     
     res = ARXAnonymizer.anonymize(config)
-    print(res.get_as_dataframe())
+    print(res.arx_result)
     print("next", res.get_transformations())
     res.store_as_csv("test.csv")
     print(res.get_average_equivalence_class_size())
