@@ -18,12 +18,10 @@ class ARXResult:
     def __init__(self, java_arx_result) -> None:
         self.arx_result = java_arx_result
 
-    def get_as_dataframe(self) -> pd.DataFrame:
+    def _data_handle_to_dataframe(data_handle:JClass) -> pd.DataFrame:
         """
-        Returns the anonymized data from ARX as a pandas dataframe.
+        Converts a datahandle to a dataframe.
         """
-        data_handle = self.arx_result.getOutput()
-
         column_names = [data_handle.getAttributeName(i) for i in range(data_handle.getNumColumns())]
 
         data = []
@@ -35,6 +33,20 @@ class ARXResult:
         df = pd.DataFrame(data, columns=column_names)
         return df
     
+    def get_anonymized_data_as_dataframe(self) -> pd.DataFrame:
+        """
+        Returns the anonymized data from ARX as a pandas dataframe.
+        """
+        data_handle = self.arx_result.getOutput()
+        return ARXResult._data_handle_to_dataframe(data_handle)
+    
+    def get_raw_data_as_dataframe(self) -> pd.DataFrame:
+        """
+        Returns the original dataset as a dataframe.
+        """
+        data_handle = self.arx_result.getInput()
+        return ARXResult._data_handle_to_dataframe(data_handle)
+    
     def get_transformations(self) -> dict[str, int]:
         """
         Returns the transformations applied to each quasi-identifier.
@@ -43,6 +55,12 @@ class ARXResult:
         quasi_identifiers = output_data.getDefinition().getQuasiIdentifyingAttributes().toArray()
         transformations = {quasi_identifier: self.arx_result.getOutput().getGeneralization(quasi_identifier) for quasi_identifier in quasi_identifiers}
         return transformations
+    
+    def get_anonymization_time(self) -> int:
+        """
+        Returns the time it took to anonymize the dataset (Wall Clock).
+        """
+        return self.arx_result.getTime()
     
     def store_as_csv(self, output_path:str) -> None:
         """
@@ -104,6 +122,36 @@ class ARXResult:
         Returns the ssesst metric for the anonymized dataset.
         """
         return self.arx_result.getOutput().getStatistics().getQualityStatistics().getSSESST().getValue()
+    
+    def get_record_level_squared_error_metric(self) -> float:
+        """
+        Returns the record level squared metric for the anonymized dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getQualityStatistics().getRecordLevelSquaredError().getValue()
+
+    def get_attribute_level_squared_error_metric(self, attribute:str) -> float:
+        """
+        Returns the attribute level squared metric for the anonymized dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getQualityStatistics().getAttributeLevelSquaredError().getValue(attribute)
+    
+    def get_non_uniform_entropy_metric(self, attribute:str) -> float:
+        """
+        Returns the non uniform entropy metric for the specific attribute in the anonymized dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getQualityStatistics().getNonUniformEntropy().getValue(attribute)
+
+    def get_generalization_intensity_metric(self, attribute:str) -> float:
+        """
+        Returns the generalization intensity metric for the specific attribute in the anonymized dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getQualityStatistics().getGeneralizationIntensity().getValue(attribute)
+    
+    def get_ambiguity_metric(self) -> float:
+        """
+        Returns the ambiguity metric for the anonymized dataset.
+        """
+        return self.arx_result.getOutput().getStatistics().getQualityStatistics().getAmbiguity().getValue()
     
 class ARXAnonymizer:
     """
@@ -224,32 +272,3 @@ class ARXAnonymizer:
 
         # It returns the ARXResult.
         return ARXResult(result)
-    
-if __name__ == "__main__":
-    config = AnonymizationConfig("/home/jimmys/RECITALS/RECITALS-anonymization-manager/examples/chatgpt_sample.csv"
-                                , ["Name", "LastName"]
-                                , ["Age"]
-                                , ["Disease"]
-                                , ["Gender"]
-                                , {"Age" : "/home/jimmys/RECITALS/RECITALS-anonymization-manager/examples/age.csv"}
-                                , 2
-                                , 2
-                                , 0.5
-                                , 0.55,
-                                "None",
-                                "Arx"
-                                 ) 
-    
-    res = ARXAnonymizer.anonymize(config)
-    print(res.arx_result)
-    print("next", res.get_transformations())
-    res.store_as_csv("test.csv")
-    print(res.get_average_equivalence_class_size())
-    print(res.get_number_of_suppressed_records())
-    print(res.get_max_equivalence_class_size())
-    print(res.get_min_equivalence_class_size())
-    print(res.get_number_of_equivalence_classes())
-    print(res.get_discernibility_metric())
-    print(res.get_average_class_size_metric())
-    print(res.get_granularity_metric("Age"))
-    print(res.get_ssesst_metric())
