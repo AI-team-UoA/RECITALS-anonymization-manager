@@ -26,6 +26,7 @@ class AnjanaResult:
         self.raw = raw
         self.config = config
         self.time = time
+        self.quasi_identifiers = config.quasi_identifiers
 
     def get_anonymized_data_as_dataframe(self) -> pd.DataFrame:
         """
@@ -43,7 +44,7 @@ class AnjanaResult:
         """
         Returns the transformations applied to each quasi-identifier.
         """
-        qi: list[str] = self.config.quasi_identifiers
+        qi: list[str] = self.quasi_identifiers
         transformations: list[int] = utils.get_transformation(
             self.result, qi, self.config.hierarchies
         )
@@ -63,77 +64,108 @@ class AnjanaResult:
         """
         return self.time
 
+    # HACK?
     def get_average_equivalence_class_size(self) -> float:
         """
         Returns the average equivalence class size.
         """
+        eq_classes = self.result.groupby(list(self.quasi_identifiers)).size()
+        return float(eq_classes.mean())
 
     def get_number_of_suppressed_records(self) -> int:
         """
         Returns the number of suppressed records, i.e. removed from the dataset.
         """
+        # Suppressed = original rows not in anonymized (by index)
+        return len(self.raw) - len(self.result)
 
+    # TODO
     def get_max_equivalence_class_size(self) -> int:
         """
         Returns the maximum size of an equivalence class present in the anonymized dataset.
         """
+        ...
 
+    # TODO
     def get_min_equivalence_class_size(self) -> int:
         """
         Returns the minimum size of an equivalence class present in the anonymized dataset.
         """
+        ...
 
+    # TODO
     def get_number_of_equivalence_classes(self) -> int:
         """
         Returns the number of equivalence classes present in the anonymized dataset.
         """
+        ...
 
+    # TODO
     def get_discernibility_metric(self) -> float:
         """
         Returns the discernibility metric for the anonymized dataset.
         """
+        ...
+        eq_classes = self.result.groupby(list(self.quasi_identifiers)).size()
+        return np.sum(eq_classes**2)
 
+    # TODO
     def get_average_class_size_metric(self) -> float:
         """
         Returns the average class metric, not to be confused with the other similarly named method.
         """
+        ...
 
+    # TODO
     def get_granularity_metric(self, attribute: str) -> float:
         """
         Returns the granularity metric for the specific attribute.
         """
+        ...
 
+    # TODO
     def get_ssesst_metric(self) -> float:
         """
         Returns the ssesst metric for the anonymized dataset.
         """
+        ...
 
+    # TODO
     def get_record_level_squared_error_metric(self) -> float:
         """
         Returns the record level squared metric for the anonymized dataset.
         """
+        ...
 
+    # TODO
     def get_attribute_level_squared_error_metric(
         self, attribute: str
     ) -> float:
         """
         Returns the attribute level squared metric for the anonymized dataset.
         """
+        ...
 
+    # TODO
     def get_non_uniform_entropy_metric(self, attribute: str) -> float:
         """
         Returns the non uniform entropy metric for the specific attribute in the anonymized dataset.
         """
+        ...
 
+    # TODO
     def get_generalization_intensity_metric(self, attribute: str) -> float:
         """
         Returns the generalization intensity metric for the specific attribute in the anonymized dataset.
         """
+        ...
 
+    # TODO
     def get_ambiguity_metric(self) -> float:
         """
         Returns the ambiguity metric for the anonymized dataset.
         """
+        ...
 
 
 class AnjanaAnonymizer:
