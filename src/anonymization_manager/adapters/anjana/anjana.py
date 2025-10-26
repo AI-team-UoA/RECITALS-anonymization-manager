@@ -2,8 +2,10 @@
 The Anonymization Manager's adapter for the ANJANA library backend.
 """
 
+import time
+
 import pandas as pd
-from anjana.anonymity import k_anonymity, l_diversity, t_closeness
+from anjana.anonymity import k_anonymity, l_diversity, t_closeness, utils
 
 from anonymization_manager.config import AnonymizationConfig
 
@@ -13,39 +15,53 @@ class AnjanaResult:
     Wrapper class for Anjana's anonymized results.
     """
 
-    def __init__(self, result: pd.DataFrame, raw: pd.DataFrame):
+    def __init__(
+        self,
+        result: pd.DataFrame,
+        raw: pd.DataFrame,
+        config: AnonymizationConfig,
+        time: int,
+    ):
         self.result = result
         self.raw = raw
+        self.config = config
+        self.time = time
 
     def get_anonymized_data_as_dataframe(self) -> pd.DataFrame:
         """
         Returns the anonymized data from ARX as a pandas dataframe.
         """
-        ...
+        return self.result
 
-    # HACK?
     def get_raw_data_as_dataframe(self) -> pd.DataFrame:
         """
         Returns the original dataset as a dataframe.
         """
+        return self.raw
 
     def get_transformations(self) -> dict[str, int]:
         """
         Returns the transformations applied to each quasi-identifier.
         """
+        qi: list[str] = self.config.quasi_identifiers
+        transformations: list[int] = utils.get_transformation(
+            self.result, qi, self.config.hierarchies
+        )
 
-    def get_anonymization_time(self) -> int:
-        """
-        Returns the time it took to anonymize the dataset (Wall Clock).
-        """
-        return self.arx_result.getTime()
+        result = {qi[trans]: trans for trans in transformations}
+        return result
 
     def store_as_csv(self, output_path: str) -> None:
         """
         Stores the anonymized dataset as .csv file.
         """
-        output = self.arx_result.getOutput()
-        output.save(output_path, ",")
+        self.result.save(output_path, ",")
+
+    def get_anonymization_time(self) -> int:
+        """
+        Returns the time it took to anonymize the dataset (Wall Clock).
+        """
+        return self.time
 
     def get_average_equivalence_class_size(self) -> float:
         """
@@ -157,6 +173,7 @@ class AnjanaAnonymizer:
         hierarchies = config.hierarchies
 
         ##### Start of anonymization pipeline #####
+        start = time.perf_counter()
 
         # k-anonymity
         if k is None:
@@ -193,4 +210,9 @@ class AnjanaAnonymizer:
                 hierarchies,
             )
 
-        return AnjanaResult(data, raw_data)
+        end = time.perf_counter()
+        elapsed_ms = int(
+            (end - start) * 1000  # Convert seconds -> milliseconds
+        )
+
+        return AnjanaResult(data, raw_data, config, elapsed_ms)
