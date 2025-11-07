@@ -37,7 +37,7 @@ build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 79
-select = [
+lint.select = [
     "I",  # isort formatting.
 ]
 [tool.ruff.lint.pydocstyle]
