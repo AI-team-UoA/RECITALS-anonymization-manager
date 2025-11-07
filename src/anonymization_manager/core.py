@@ -6,6 +6,7 @@ source RECITALS platform.
 import json
 
 import pandas as pd
+from loguru import logger
 
 from anonymization_manager.adapters.anjana.anjana import (
     AnjanaAnonymizer,
@@ -32,8 +33,11 @@ class AnonymizationManager:
     This is the class representing the anonymization manager.
     """
 
-    def anonymize(config: AnonymizationConfig) -> AnonymizedData:
+    def anonymize(self, config: AnonymizationConfig) -> AnonymizedData:
         if config.backend == None or config.backend == "arx":
             return AnonymizedData(ARXAnonymizer.anonymize(config))
-        else:
+        elif config.backend == "anjana":
             return AnonymizedData(AnjanaAnonymizer.anonymize(config))
+        else:
+            logger.warning(f"Unsupported backend: {config.backend}, using ARX")
+            return AnonymizedData(ARXAnonymizer.anonymize(config))
