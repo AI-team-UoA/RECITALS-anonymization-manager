@@ -49,14 +49,14 @@ class AnjanaResult:
             self.result, qi, self.config.hierarchies
         )
 
-        result = {qi[trans]: trans for trans in transformations}
+        result = {qi[trans]: trans + 1 for trans in transformations}
         return result
 
     def store_as_csv(self, output_path: str) -> None:
         """
         Stores the anonymized dataset as .csv file.
         """
-        self.result.save(output_path, ",")
+        self.result.to_csv(output_path)
 
     def get_anonymization_time(self) -> int:
         """
@@ -188,6 +188,10 @@ class AnjanaAnonymizer:
         # TODO add function that handles multiple file-types (common among adapters)
         ## TODO add filetype check (do not assume csv)
         data = pd.read_csv(config.data)
+        data.columns = data.columns.str.strip()
+        # # FIXME
+        # for col in cols:
+        #     data[col] = data[col].str.strip()
         raw_data = data.copy()
         ident = config.identifiers
         quasi_ident = config.quasi_identifiers
@@ -201,6 +205,8 @@ class AnjanaAnonymizer:
         supp_level = config.suppression_limit
         if supp_level is None:
             supp_level = 50
+        else:
+            supp_level = int(supp_level * 100)
 
         hierarchies = config.hierarchies
 
@@ -243,8 +249,6 @@ class AnjanaAnonymizer:
             )
 
         end = time.perf_counter()
-        elapsed_ms = int(
-            (end - start) * 1000  # Convert seconds -> milliseconds
-        )
+        elapsed_ms = int((end - start) * 1000)
 
         return AnjanaResult(data, raw_data, config, elapsed_ms)
