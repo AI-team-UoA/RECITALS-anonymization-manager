@@ -13,6 +13,7 @@ dependencies = [
     "anjana>=1.1.0",
     "jpype1>=1.6.0",
     "py4j==0.10.9.9",
+    "pytest>=9.0.0",
 ]
 
 [project.scripts]

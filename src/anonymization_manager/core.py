@@ -31,7 +31,6 @@ class AnonymizationManager:
     """
     This is the class representing the anonymization manager.
     """
-
     def anonymize(config: AnonymizationConfig) -> AnonymizedData:
         if config.backend == None or config.backend == "arx":
             return AnonymizedData(ARXAnonymizer.anonymize(config))

@@ -272,7 +272,8 @@ class ARXAnonymizer:
                 f"Could not locate libarx at {libarx}"
             )
 
-        jpype.startJVM(classpath=[libarx])
+        if not jpype.isJVMStarted():
+            jpype.startJVM(classpath=[libarx])
 
     @classmethod
     def _define_attribute_types(
