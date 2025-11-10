@@ -98,9 +98,8 @@ def _generate_path(config) -> str:
 
 def main():
     args, config = _parse_arguments()
-    am = AnonymizationManager()
 
-    data = am.anonymize(config)
+    data = AnonymizationManager.anonymize(config)
 
     time = data.get_anonymization_time()
     logger.success(
