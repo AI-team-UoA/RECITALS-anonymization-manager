@@ -1,0 +1,21 @@
+   {
+       "data" : "/home/jimmys/RECITALS/RECITALS-anonymization-manager/examples/chatgpt_sample.csv",
+
+        "identifiers" : ["Name", "LastName"],
+        "quasi_identifiers" : ["Age"],
+        "sensitive_attributes" : ["Disease"],
+        "insensitive_attributes" : [],
+
+       "hierarchies" : {
+           "Age":"/home/jimmys/RECITALS/RECITALS-anonymization-manager/examples/age.csv" 
+       },
+
+       "k":2,
+       "l":3,
+
+       "suppression_limit" : 55,
+
+       "anonymized_data" : "anonymized_data.csv",
+
+       "backend": "arx"
+   }
