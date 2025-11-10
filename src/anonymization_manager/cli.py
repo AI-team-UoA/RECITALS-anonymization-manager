@@ -1,5 +1,8 @@
 """
 Command-line interface for Anonymization Manager.
+
+Showcases main AnonymizationManager, AnonymizationConfig functionalities and
+extra AnonymizedData statistics.
 """
 
 import argparse
@@ -21,7 +24,7 @@ class Arguments:
     output_path: str
 
 
-def parse_arguments() -> tuple[Arguments, AnonymizationConfig]:
+def _parse_arguments() -> tuple[Arguments, AnonymizationConfig]:
     """
     Parses the command-line arguments.
 
@@ -94,7 +97,7 @@ def _generate_path(config) -> str:
 
 
 def main():
-    args, config = parse_arguments()
+    args, config = _parse_arguments()
     am = AnonymizationManager()
 
     data = am.anonymize(config)

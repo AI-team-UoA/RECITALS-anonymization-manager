@@ -45,6 +45,31 @@ class AnonymizationConfig:
         """
         Default initializer.
         """
+        # --- Checks if k is correct ---
+        if k is not None:
+            if not isinstance(k, int) or  k <= 0:
+                raise ValueError(f"The parameter for k-anonymity must be a positive integer, but got {k} instead!")
+        
+        # --- Checks if l is correct ---
+        if l is not None:
+            if not isinstance(l, int) or  l <= 0:
+                raise ValueError(f"The parameter for l-diversity must be a positive integer, but got {l} instead!")
+        
+        # --- Checks if t is correct ---
+        if t is not None:
+            if not isinstance(t, float) or not (0 <= t <= 1):
+                raise ValueError(f"The parameter for t-closeness must be a float in range [0,1], but got {t} instead!")
+        
+        # --- Checks if the suppresion limit is correct ---
+        if suppression_limit is not None:
+            if not isinstance(suppression_limit, int) or not (0 <= suppression_limit <= 100):
+                raise ValueError(f"The parameter for suppresion limit must be an integer in range [0,100], but got {suppression_limit} instead!")
+
+        # --- Checks if the backend is correct ---    
+        if backend is not None:
+            if backend != "arx" and backend != "anjana":
+                raise ValueError(f"The parameter for the backend must be either the string arx or anjana, but got {backend} instead!")
+            
         self.data = data
         self.identifiers = identifiers
         self.quasi_identifiers = quasi_identifiers

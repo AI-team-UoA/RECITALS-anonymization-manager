@@ -203,8 +203,6 @@ class AnjanaAnonymizer:
         supp_level = config.suppression_limit
         if supp_level is None:
             supp_level = 50
-        else:
-            supp_level = int(supp_level * 100)
 
         hierarchies = config.hierarchies
 
