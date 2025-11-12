@@ -1,5 +1,8 @@
-from dataclasses import dataclass
 import json
+from dataclasses import dataclass
+
+import pandas as pd
+
 
 @dataclass
 class AnonymizationConfig:
@@ -24,18 +27,21 @@ class AnonymizationConfig:
         backend (str, optional): The backend library to be used, between
             ARX and ANJANA. Defaults to TBD.
     """
-    def __init__(self, data:str, 
-                identifiers: list[str], 
-                quasi_identifiers: list[str], 
-                sensitive_attributes: list[str], 
-                insensitive_attributes: list[str],
-                hierarchies: dict[str, str], 
-                k:int | None = None, 
-                l:int | None = None,
-                t:float | None = None,
-                suppression_limit: float | None = None, 
-                backend: str | None = "arx"):
-        
+
+    def __init__(
+        self,
+        data: str,
+        identifiers: list[str],
+        quasi_identifiers: list[str],
+        sensitive_attributes: list[str],
+        insensitive_attributes: list[str],
+        hierarchies: dict[str, str],
+        k: int | None = None,
+        l: int | None = None,
+        t: float | None = None,
+        suppression_limit: float | None = None,
+        backend: str | None = "arx",
+    ):
         """
         Default initializer.
         """
@@ -69,15 +75,19 @@ class AnonymizationConfig:
         self.quasi_identifiers = quasi_identifiers
         self.sensitive_attributes = sensitive_attributes
         self.insensitive_attributes = insensitive_attributes
-        self.hierarchies = hierarchies
+        hierarchies = hierarchies
+        self.hierarchies = {
+            key: dict(pd.read_csv(path, header=None))
+            for key, path in hierarchies.items()
+        }
         self.k = k
         self.l = l
         self.t = t
         self.suppression_limit = suppression_limit
         self.backend = backend
-        
+
     @classmethod
-    def from_json(cls, json_path:str):
+    def from_json(cls, json_path: str):
         # Template file reading
         with open(json_path, "r") as file:
             config_json = json.load(file)

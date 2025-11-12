@@ -12,12 +12,13 @@ requires-python = ">=3.10,<3.13"
 dependencies = [
     "anjana>=1.1.0",
     "jpype1>=1.6.0",
+    "loguru>=0.7.3",
     "py4j==0.10.9.9",
     "pytest>=9.0.0",
 ]
 
 [project.scripts]
-anonymization-manager = "anonymization_manager:main"
+anonymization-manager = "anonymization_manager.cli:main"
 
 [dependency-groups]
 dev = [
@@ -37,6 +38,9 @@ build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 79
+lint.select = [
+    "I",  # isort formatting.
+]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
