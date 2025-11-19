@@ -83,14 +83,36 @@ class AnonymizationConfig:
         return config
 
     def _validate(self) -> None:
-        """A helper method used for validating the configuration."""
+        """
+        Runs all validation checks on the configuration.
+
+        Validates:
+            - Parameters (k, l, t, suppression_limit, backend)
+            - Attribute lists
+            - Dataset path
+            - Hierarchies
+            - Privacy Models
+        """
         self._validate_parameters()
         self._validate_attributes()
         self._validate_dataset()
         self._validate_hierarchies()
-        
+        self._validate_privacy_models()
+
     def _validate_parameters(self) -> None:
-        """Validates k, l, t, suppression and backend parameters."""
+        """
+        Validates the anonymization parameters.
+        
+        Checks:
+            - k is a positive integer if provided
+            - l is a positive integer if provided
+            - t is a float in [0,1] if provided
+            - suppression_limit is an integer in [0,100] if provided
+            - backend is either "arx" or "anjana" if provided
+
+        Raises:
+            ValueError: If any parameter is invalid.
+        """
 
         # --- Checks if k is correct ---
         if self.k is not None:
@@ -127,7 +149,18 @@ class AnonymizationConfig:
             )
     
     def _validate_attributes(self) -> None:
-        """Validates the identifiers, quasi-identifiers, sensitive attributes and insensitive attributes."""
+        """
+        Validates all the attribute lists.
+
+        Checks:
+            - Each attribute list is a Python list
+            - All attributes are strings
+            - Attribute names are unique across identifiers, quasi-identifiers,
+            sensitive attributes, and insensitive attributes
+
+        Raises:
+            ValueError: If any attribute check fails.
+        """
 
         # Checks that the attributes are provided using lists.
         for attr_list in [self.identifiers, self.quasi_identifiers, self.sensitive_attributes, self.insensitive_attributes]:
@@ -158,7 +191,16 @@ class AnonymizationConfig:
             )
 
     def _validate_dataset(self) -> None:
-        """Validates the dataset."""
+        """
+        Validates the dataset path.
+
+        Checks:
+            - Dataset path is a string
+            - Dataset file exists at the given path
+
+        Raises:
+            ValueError: If the dataset path is invalid or the file does not exists.
+        """
 
         # --- Checks that the dataset path is a string ---
         if not isinstance(self.data, str):
@@ -173,7 +215,19 @@ class AnonymizationConfig:
             )
     
     def _validate_hierarchies(self) -> None:
-        """Validates the hierarchies."""
+        """
+        Validates the hierarchies provided for the quasi-identifiers.
+
+        Checks:
+            - Hierarchies is a dictionary mapping quasi-identifiers to CSV paths
+            - Each quasi-identifier key is a string
+            - Each quasi-identifier exists in 'quasi_identifiers'
+            - Each hierarchy path is a string
+            - Each hierarchy file exists at the specified path
+
+        Raises:
+            ValueError: If any hierarchy is invalid or missing.
+        """
 
         # --- Checks that the hierarchy format is valid ---
         if not isinstance(self.hierarchies, dict):
@@ -207,3 +261,18 @@ class AnonymizationConfig:
                 raise ValueError(
                     f"Cannot create hierarchy for {qid!r}, the path {hierarchy_path!r} could not be located!"
                 )
+
+    def _validate_privacy_models(self) -> None:
+        """Validates the privacy models.
+
+        If sensitive attributes are present, requires that either:
+            - l-diversity ('l') is specified, or
+            - t-closeness ('t') is specified
+        
+        Raises:
+            ValueError: If sensitive attributes exist but neither 'l' nor 't' is provided.
+        """
+        if self.sensitive_attributes and self.t is None and self.l is None:
+            raise ValueError(
+                f"sensitive-attributes={self.sensitive_attributes}, l-Diversity or t-Closeness must be used when anonymizing with sensitive attributes!"
+            )
