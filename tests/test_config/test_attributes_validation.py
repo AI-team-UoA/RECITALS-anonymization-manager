@@ -1,7 +1,12 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from common import *
 
 class TestAttributes:
-    @pytest.mark.parametrize("identifiers,should_raise", [
+    @pytest.mark.parametrize("identifiers,error", [
         ([], False),         # Default
         (["Name"], False),   # One Identifier
         (
@@ -13,15 +18,15 @@ class TestAttributes:
             ], 
             False
         ),
-        ([1], True),         # Integer Identifier
+        ([1], TypeError),    # Integer Identifier
     ])
-    def test_identifier_values(self, identifiers, should_raise) -> None:
-        with pytest.raises(ValueError) if should_raise else contextlib.nullcontext():
+    def test_identifier_values(self, identifiers, error) -> None:
+        with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
                 PATH, identifiers, [], [], [], {}
             )
 
-    @pytest.mark.parametrize("qidentifiers,should_raise", [
+    @pytest.mark.parametrize("qidentifiers,error", [
         ([], False),        # Default
         (["Age"], False),   # One Quasi-Identifier
         (
@@ -33,15 +38,15 @@ class TestAttributes:
             ],
             False
         ),
-        ([1], True),        # Integer
+        ([1], TypeError),   # Integer
     ])
-    def test_quasi_identifier_values(self, qidentifiers, should_raise) -> None:
-        with pytest.raises(ValueError) if should_raise else contextlib.nullcontext():
+    def test_quasi_identifier_values(self, qidentifiers, error) -> None:
+        with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
                 PATH, [], qidentifiers, [], [], {}
             )
 
-    @pytest.mark.parametrize("sensitives,should_raise", [
+    @pytest.mark.parametrize("sensitives,error", [
         ([], False),           # Default
         (["Disease"], False),  # One Sensitive
         (
@@ -52,29 +57,29 @@ class TestAttributes:
             ], 
             False
         ),
-        ([1], True),         # Integer Sensitive
+        ([1], TypeError),      # Integer Sensitive
     ])
-    def test_sensitive_values(self, sensitives, should_raise) -> None:
-        with pytest.raises(ValueError) if should_raise else contextlib.nullcontext():
+    def test_sensitive_values(self, sensitives, error) -> None:
+        with pytest.raises(TypeError) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
-                PATH, [], [], sensitives, [], {}
+                PATH, [], [], sensitives, [], {}, l=2
             )
 
-    @pytest.mark.parametrize("insensitives,should_raise", [
+    @pytest.mark.parametrize("insensitives,error", [
         ([], False),         # Default
         (["Color"], False),  # One Insensitive
         (
             [
-                "Color",      # Many Insensitives
+                "Color",     # Many Insensitives
                 "Food",
                 "Account Type",
             ], 
             False
         ),
-        ([1], True),         # Integer Insensitive
+        ([1], TypeError),    # Integer Insensitive
     ])
-    def test_insensitive_values(self, insensitives, should_raise) -> None:
-        with pytest.raises(ValueError) if should_raise else contextlib.nullcontext():
+    def test_insensitive_values(self, insensitives, error) -> None:
+        with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
                 PATH, [], [], [], insensitives, {}
             )

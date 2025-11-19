@@ -1,13 +1,18 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from common import *
 
 class TestDataset:
-    @pytest.mark.parametrize("dataset,should_raise", [
-        (PATH, False),      # Exists.
-        ("dummy", True),    # Does Not Exists.
-        (123, True)         # Integer
+    @pytest.mark.parametrize("dataset,error", [
+        (PATH, None),                  # Exists.
+        ("dummy", FileNotFoundError),  # Does Not Exists.
+        (123, TypeError)               # Integer
     ])
-    def test_dataset(self, dataset, should_raise) -> None:
-        with pytest.raises(ValueError) if should_raise else contextlib.nullcontext():
+    def test_dataset(self, dataset, error) -> None:
+        with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
                 dataset, [], [], [], [], {}
             )

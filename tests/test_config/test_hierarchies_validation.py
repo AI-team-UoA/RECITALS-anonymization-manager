@@ -1,7 +1,12 @@
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from common import *
 
 class TestHierarchies:
-    @pytest.mark.parametrize("hierarchies,quasi_identifiers,should_raise", [
+    @pytest.mark.parametrize("hierarchies,quasi_identifiers,error", [
         ({}, [], False),            # Default.
         (
             {
@@ -27,33 +32,33 @@ class TestHierarchies:
             {
                 "age":"age.csv"     # Hierarchy File Does Not Exist
             },
-            [],
-            True
+            ["age"],
+            FileNotFoundError
         ),
         (
             {
                 "age":AGE_PATH     # Hierarchy Quasi Identifier Not Defined
             },
             [],
-            True
+            TypeError
         ),
         (
             {
                 123:AGE_PATH       # Quasi Identifier Not A String
             },
             ["age"],
-            True
+            TypeError
         ),
         (
             {
                 "age":123          # Hierarchy Path Not A String
             },
             ["age"],
-            True
+            TypeError
         ),
     ])
-    def test_hierarchies(self, hierarchies, quasi_identifiers, should_raise) -> None:
-        with pytest.raises(ValueError) if should_raise else contextlib.nullcontext():
+    def test_hierarchies(self, hierarchies, quasi_identifiers, error) -> None:
+        with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
                 PATH, [], quasi_identifiers, [], [], hierarchies
             )
