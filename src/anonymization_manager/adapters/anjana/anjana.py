@@ -44,9 +44,14 @@ class AnjanaResult:
         """
         Returns the transformations applied to each quasi-identifier.
         """
+        hierarchies = {
+            key: dict(pd.read_csv(path, header=None))
+            for key, path in self.config.hierarchies.items()
+        }
+
         qi: list[str] = self.quasi_identifiers
         transformations: list[int] = utils.get_transformation(
-            self.result, qi, self.config.hierarchies
+            self.result, qi, hierarchies
         )
 
         return dict(zip(qi, transformations))
@@ -194,7 +199,10 @@ class AnjanaAnonymizer:
         ident = config.identifiers
         quasi_ident = config.quasi_identifiers
         # TODO Only 1 sensitive attribute supported right now
-        sens_att = config.sensitive_attributes[0]
+        if len(config.sensitive_attributes) > 0:
+            sens_att = config.sensitive_attributes[0]
+        else:
+            sens_att = ""
 
         k = config.k
         l = config.l
@@ -205,6 +213,10 @@ class AnjanaAnonymizer:
             supp_level = 50
 
         hierarchies = config.hierarchies
+        hierarchies = {
+            key: dict(pd.read_csv(path, header=None))
+            for key, path in hierarchies.items()
+        }
 
         ##### Start of anonymization pipeline #####
         start = time.perf_counter()
