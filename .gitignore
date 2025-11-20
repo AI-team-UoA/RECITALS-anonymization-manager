@@ -4,3 +4,4 @@
 arx_builder/build
 bin
 .vscode
+*.org
