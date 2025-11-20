@@ -9,3 +9,4 @@ bin
 *.org
 test-results.xml
 coverage.xml
+.coverage
