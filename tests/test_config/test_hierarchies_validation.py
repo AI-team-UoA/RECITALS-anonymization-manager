@@ -1,9 +1,4 @@
-import sys
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from common import *
+from tests.common import *
 
 class TestHierarchies:
     @pytest.mark.parametrize("hierarchies,quasi_identifiers,error", [
