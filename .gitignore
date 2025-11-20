@@ -1,7 +1,11 @@
 **/.venv/**/**
 .ruff_cache/**
 **/__pycache__/**
+.mypy_cache/**
+.pytest_cache/**
 arx_builder/build
 bin
 .vscode
 *.org
+test-results.xml
+coverage.xml

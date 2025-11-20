@@ -25,6 +25,7 @@ dev = [
     "basedpyright>=1.31.4",
     "mypy>=1.18.2",
     "pre-commit>=4.4.0",
+    "pytest-cov>=7.0.0",
     "ruff>=0.13.1",
 ]
 docs = [
