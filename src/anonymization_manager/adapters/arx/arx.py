@@ -41,7 +41,7 @@ class ARXResult:
         Args:
             data_handle (jpype._jclass.org.deidentifier.arx.DataHandle):
                 The ARX DataHandle Object.
-        
+
         Returns:
             pd.DataFrame: The dataset as a pandas DataFrame.
         """
@@ -314,7 +314,7 @@ class ARXResult:
     def get_generalization_intensity_metric(self, attribute: str) -> float:
         """
         Returns the generalization intensity metric for a specific attribute.
-        
+
         Args:
             attribute (str): The attribute name.
 
@@ -361,9 +361,7 @@ class ARXAnonymizer:
         libarx = os.path.join(os.path.dirname(__file__), "libarx-3.9.2.jar")
 
         if not os.path.exists(libarx):
-            raise FileNotFoundError(
-                f"Could not locate libarx at {libarx}"
-            )
+            raise FileNotFoundError(f"Could not locate libarx at {libarx}")
 
         if not jpype.isJVMStarted():
             jpype.startJVM(classpath=[libarx])
@@ -374,7 +372,7 @@ class ARXAnonymizer:
     ) -> None:
         """
         Sets the attribute types for identifiers, quasi-identifiers, and sensitive/insensitive attributes.
-        
+
         Args:
             data (JClass): The ARX Data object.
             config (AnonymizationConfig): The anonymization configuration.
@@ -433,7 +431,7 @@ class ARXAnonymizer:
 
         Args:
             config (AnonymizationConfig): The anonymization configuration.
-        
+
         Returns:
             JClass: The ARXConfiguration object ready for the anonymization.
         """

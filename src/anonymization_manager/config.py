@@ -1,7 +1,9 @@
 import json
-from dataclasses import dataclass
-import pandas as pd
 import os
+from dataclasses import dataclass
+
+import pandas as pd
+
 
 @dataclass
 class AnonymizationConfig:
@@ -9,17 +11,17 @@ class AnonymizationConfig:
     Configuration object for the anonymization workflow.
 
     Attributes:
-        data (str): 
+        data (str):
             Path to the input dataset. Supported formats include CSV, Excel,
             JSON, and SQLite (.db) files.
 
-        identifiers (list[str]): 
+        identifiers (list[str]):
             List of direct identifiers (e.g., name, SSN, phone number).
-        
+
         quasi_identifiers (list[str]):
             List of quasi-identifying attributes requiring generalization
             (e.g., age, zipcode, occupation)
-        
+
         sensitive_attributes (list[str]):
             Attributes considered sensitive (e.g., disease, salary)
             If not empty, either l-diversity or t-closeness must be specified.
@@ -27,8 +29,8 @@ class AnonymizationConfig:
         insensitive_attributes (list[str]):
             Attributes that are neither identifiers nor sensitive and are carried through unchanged.
 
-        
-        hierarchies (dict[str, str]): 
+
+        hierarchies (dict[str, str]):
             Mapping from quasi-identifiers to CSV hierarchy files.
 
         k (int, optional):
@@ -50,6 +52,7 @@ class AnonymizationConfig:
             Anonymization backend to use, either 'arx' or 'anjana'.
             Defaults to 'arx'
     """
+
     data: str
     identifiers: list[str]
     quasi_identifiers: list[str]
@@ -70,7 +73,11 @@ class AnonymizationConfig:
         with open(json_path, "r") as file:
             config_json = json.load(file)
 
-        attributes = {key: config_json[key] for key in cls.__annotations__ if key in config_json}
+        attributes = {
+            key: config_json[key]
+            for key in cls.__annotations__
+            if key in config_json
+        }
         return cls(**attributes)
 
     def _validate(self) -> None:
@@ -93,7 +100,7 @@ class AnonymizationConfig:
     def _validate_parameters(self) -> None:
         """
         Validates the anonymization parameters.
-        
+
         Checks:
             - k is a positive integer if provided
             - l is a positive integer if provided
@@ -109,38 +116,46 @@ class AnonymizationConfig:
         # --- Checks if k is correct ---
         if self.k is not None:
             if not isinstance(self.k, int):
-                raise TypeError(f"k must be an integer, but got {self.k!r} instead")
-            
+                raise TypeError(
+                    f"k must be an integer, but got {self.k!r} instead"
+                )
+
             if self.k <= 0:
                 raise ValueError(
                     f"k must be positive, but got {self.k!r} instead"
                 )
-        
+
         # --- Checks if l is correct ---
         if self.l is not None:
             if not isinstance(self.l, int):
-                raise TypeError(f"l must be an integer, but got {self.l!r} instead")
-            
+                raise TypeError(
+                    f"l must be an integer, but got {self.l!r} instead"
+                )
+
             if self.l <= 0:
                 raise ValueError(
                     f"l must be positive, but got {self.l!r} instead"
                 )
-        
+
         # --- Checks if t is correct ---
         if self.t is not None:
             if not isinstance(self.t, (float, int)):
-                raise TypeError(f"t must be a float, but got {self.t!r} instead")
-            
+                raise TypeError(
+                    f"t must be a float, but got {self.t!r} instead"
+                )
+
             if not 0.0 <= self.t <= 1.0:
                 raise ValueError(
                     f"t must be in [0,1], but got {self.t!r} instead"
                 )
-        
+
         # --- Checks if the suppression limit is correct ---
         if self.suppression_limit is not None:
             if not isinstance(self.suppression_limit, int):
-                raise TypeError(f"suppression_limit must be an integer, but got {self.suppression_limit!r} instead")
-            
+                raise TypeError(
+                    f"suppression_limit must be an integer, but got {self.suppression_limit!r} instead"
+                )
+
             if not 0 <= self.suppression_limit <= 100:
                 raise ValueError(
                     f"t must be in [0,100], but got {self.suppression_limit!r} instead"
@@ -150,13 +165,13 @@ class AnonymizationConfig:
         if not isinstance(self.backend, str):
             raise TypeError(
                 f"backed must be a string, but got {self.backend!r} instead!"
-            )  
-          
+            )
+
         if self.backend not in ["arx", "anjana"]:
             raise ValueError(
                 f"The backend must be either 'arx' or 'anjana', but got {self.backend!r} instead!"
             )
-    
+
     def _validate_attributes(self) -> None:
         """
         Validates all the attribute lists.
@@ -175,7 +190,7 @@ class AnonymizationConfig:
             "identifiers": self.identifiers,
             "quasi_identifiers": self.quasi_identifiers,
             "sensitive_attributes": self.sensitive_attributes,
-            "insensitive_attributes": self.insensitive_attributes
+            "insensitive_attributes": self.insensitive_attributes,
         }
 
         # Checks that the attributes are provided using lists.
@@ -185,10 +200,8 @@ class AnonymizationConfig:
                     f"{name} must be a list, but got {attrs!r} instead!"
                 )
             if not all(isinstance(x, str) for x in attrs):
-                raise TypeError(
-                    f"All entries in {name} must be strings!"
-                )
-        
+                raise TypeError(f"All entries in {name} must be strings!")
+
         # --- Checks that the attribute names do not overlap.
         all_attrs = sum(attr_list.values(), [])
         if len(all_attrs) != len(set(all_attrs)):
@@ -208,19 +221,19 @@ class AnonymizationConfig:
             TypeError: If the dataset path is not a string.
             FileNotFoundError: If the file does not exist at the given path.
         """
-        
+
         # --- Checks that the dataset path is a string ---
         if not isinstance(self.data, str):
             raise TypeError(
                 f"The dataset path must be provided as a string, but got {self.data!r} instead!"
             )
-        
+
         # --- Checks that the dataset file exists.
         if not os.path.exists(self.data):
             raise FileNotFoundError(
                 f"The dataset could not be located at {self.data!r}!"
             )
-    
+
     def _validate_hierarchies(self) -> None:
         """
         Validates the hierarchies provided for the quasi-identifiers.
@@ -251,19 +264,19 @@ class AnonymizationConfig:
                 raise TypeError(
                     f"Hierarchy quasi-identifier keys must be strings, but got {qid!r} instead!"
                 )
-            
+
             # --- Checks that the quasi-identifier exists ---
             if qid not in self.quasi_identifiers:
                 raise TypeError(
                     f"Cannot create hierarchy for {qid!r}, since it is not a quasi-identifier!"
                 )
-            
+
             # --- Checks that the hierarchy path is a string ---
             if not isinstance(hierarchy_path, str):
                 raise TypeError(
                     f"The hierarchy path for {qid!r} must be a string, but got {hierarchy_path!r} instead!"
                 )
-            
+
             # --- Checks that the hierarchy path exists.
             if not os.path.exists(hierarchy_path):
                 raise FileNotFoundError(
@@ -276,7 +289,7 @@ class AnonymizationConfig:
         If sensitive attributes are present, requires that either:
             - l-diversity ('l') is specified, or
             - t-closeness ('t') is specified
-        
+
         Raises:
             ValueError: If sensitive attributes exist but neither 'l' nor 't' is provided.
         """
