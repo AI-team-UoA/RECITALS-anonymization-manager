@@ -65,6 +65,7 @@ class AnonymizationConfig:
     quality_metric: str | None = None
     suppression_limit: int | None = None
     backend: str = "arx"
+    attribute_weights: dict[str, float] | None = None
 
     def __post_init__(self):
         self._validate()
@@ -196,6 +197,28 @@ class AnonymizationConfig:
                 raise ValueError(
                     f"Unsupported quality metric: {self.quality_metric!r}!"
                 )
+        
+        if self.attribute_weights is not None:
+            if not isinstance(self.attribute_weights, dict):
+                raise TypeError(
+                    f"Attribute weights must be a dictionary mapping attribute names to weights!"
+                )
+
+            for attr, weight in self.attribute_weights.items():
+                if not isinstance(attr, str):
+                    raise TypeError(
+                        f"Attribute names in attribute_weights must be strings!"
+                    )
+                
+                if not isinstance(weight, (int, float)):
+                    raise TypeError(
+                        f"Attribute weights must be numeric values!"
+                    )
+
+                if weight < 0:
+                    raise ValueError(
+                        f"Attribute weights must be non-negative!"
+                    )
             
     def _validate_attributes(self) -> None:
         """

@@ -92,3 +92,19 @@ class TestParameters:
             config = AnonymizationConfig(
                 PATH, [], [], [], [], {}, backend=backend
             )
+
+    @pytest.mark.parametrize(
+        "attribute_weights,error",
+        [
+            (1, TypeError),             # Int is not valid
+            ({1,1}, TypeError),         # Attribute name not a string
+            ({"foo":"bar"}, TypeError), # Weight not a number
+            ({"foo":-0.5}, ValueError), # Negative weight not allowed
+            ({"foo":2, "bar":0.2}, None), # Valid weights
+        ],
+    )
+    def test_attribute_weights(self, attribute_weights, error):
+        with pytest.raises(error) if error else contextlib.nullcontext():
+            config = AnonymizationConfig(
+                PATH, [], [], [], [], {}, attribute_weights=attribute_weights, backend="arx"
+            )

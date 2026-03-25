@@ -490,7 +490,10 @@ class ARXAnonymizer:
                         Metric.createNormalizedEntropyMetric()
                     )
 
-
+        # Adds attribute weights.
+        if config.attribute_weights is not None:
+            for attribute, weight in config.attribute_weights.items():
+                configuration.setAttributeWeight(attribute, weight)
 
         # Adds k-anonymity.
         if config.k is not None:

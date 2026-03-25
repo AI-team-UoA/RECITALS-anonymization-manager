@@ -454,7 +454,55 @@ print(f"Transformations: {result.get_transformations()}")
 
 > [!caution]
 >**Note**: Quality metrics are only supported by the ARX backend. Using Anjana will result in undefined behaviour.
-### Example 4: Using JSON Configuration
+
+### Example 4: Using Attribute Weights
+```python3
+    config = AnonymizationConfig(
+        data="data/adult.csv",
+        identifiers=["education-num"],
+        quasi_identifiers=[
+            "age",
+            "native-country",
+            "race",
+            "sex",
+            "marital-status",
+            "occupation",
+            "workclass",
+            "education",
+        ],
+        attribute_weights = {
+            "age": 0.1,
+            "race":2
+        },
+        sensitive_attributes=["salary-class", "capital-gain", "capital-loss"],
+        insensitive_attributes=["hours-per-week"],
+        hierarchies={
+            "age": "hierarchies/age.csv",
+            "native-country": "hierarchies/country.csv",
+            "race": "hierarchies/race.csv",
+            "sex": "hierarchies/sex.csv",
+            "marital-status": "hierarchies/marital.csv",
+            "occupation": "hierarchies/occupation.csv",
+            "workclass": "hierarchies/workclass.csv",
+            "education": "hierarchies/education.csv",
+        },
+        k=4,
+        l=2,
+        backend="arx",
+    )
+
+    result = AnonymizationManager.anonymize(config)
+    result.store_as_csv("results/anonymized.csv")
+```
+
+**Using Attribute Weights**: Attribute weights allow you to control the generalization behavior for specific quasi-identifiers. Lower weights (e.g., 0.1) prioritize preserving the original values with minimal generalization, while higher weights (e.g., 2) accept more generalization. The optimization algorithm uses these weights to balance privacy and data utility.
+
+To use attribute weights, pass a dictionary mapping attribute names to numeric values (int or float). All weights must be non-negative.
+
+> [!caution]
+>**Note**: Attribute weights are only supported by the ARX backend. Using Anjana will result in undefined behaviour.
+
+### Example 5: Using JSON Configuration
 
 ```python
 config = AnonymizationConfig.from_json("templates/sample.json")
