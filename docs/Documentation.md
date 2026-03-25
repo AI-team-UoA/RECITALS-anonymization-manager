@@ -401,8 +401,60 @@ result = AnonymizationManager.anonymize(config)
 print(f"Average equivalence class size: {result.get_average_equivalence_class_size()}")
 print(f"Transformations: {result.get_transformations()}")
 ```
+### Example 3: Using Quality Metrics
+```python
+    config = AnonymizationConfig(
+        data="data/adult.csv",
+        identifiers=["education-num"],
+        quasi_identifiers=[
+            "age",
+            "native-country",
+            "race",
+            "sex",
+            "marital-status",
+            "occupation",
+            "workclass",
+            "education",
+        ],
+        sensitive_attributes=["salary-class", "capital-gain", "capital-loss"],
+        insensitive_attributes=["hours-per-week"],
+        hierarchies={
+            "age": "hierarchies/age.csv",
+            "native-country": "hierarchies/country.csv",
+            "race": "hierarchies/race.csv",
+            "sex": "hierarchies/sex.csv",
+            "marital-status": "hierarchies/marital.csv",
+            "occupation": "hierarchies/occupation.csv",
+            "workclass": "hierarchies/workclass.csv",
+            "education": "hierarchies/education.csv",
+        },
+        k=4,
+        l=2,
+        quality_metric="discernability",
+        backend="arx",
+    )
 
-### Example 3: Using JSON Configuration
+    result = AnonymizationManager.anonymize(config)
+    result.store_as_csv("results/anonymized.csv")
+    print("-----------------------> [Metrics] <-----------------------")
+    print("Discernability : ", result.get_discernability_metric())
+    print("-----------------------> [Metrics] <-----------------------")
+```
+**Using Quality Metrics**: Using a quality metric for the anonymization process is straightforward. The user simply has to pass the `quality_metric` parameter with the desired metric name. 
+
+**Supported quality metrics:**
+1. `discernability` - Measures distinguishability of records
+2. `aecs` - Average Equivalence Class Size metric
+3. `precision` - Precision metric
+4. `height` - Height metric
+5. `loss` - Information loss metric
+6. `ambiguity` - Ambiguity metric
+7. `entropy` - Entropy-based metric
+8. `normalized-entropy` - Normalized entropy metric
+
+> [!caution]
+>**Note**: Quality metrics are only supported by the ARX backend. Using Anjana will result in undefined behaviour.
+### Example 4: Using JSON Configuration
 
 ```python
 config = AnonymizationConfig.from_json("templates/sample.json")

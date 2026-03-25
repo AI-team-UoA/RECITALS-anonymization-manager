@@ -192,12 +192,12 @@ class ARXResult:
             .getNumberOfEquivalenceClasses()
         )
 
-    def get_discernibility_metric(self) -> float:
+    def get_discernability_metric(self) -> float:
         """
-        Returns the discernibility metric, a measure of information loss.
+        Returns the discernability metric, a measure of information loss.
 
         Returns:
-            float: Discernibility metric value.
+            float: discernability metric value.
         """
         return (
             self.arx_result.getOutput()
