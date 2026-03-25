@@ -62,6 +62,7 @@ class AnonymizationConfig:
     k: int | None = None
     l: int | None = None
     t: float | None = None
+    quality_metric: str | None = None
     suppression_limit: int | None = None
     backend: str = "arx"
 
@@ -172,6 +173,30 @@ class AnonymizationConfig:
                 f"The backend must be either 'arx' or 'anjana', but got {self.backend!r} instead!"
             )
 
+        # --- Checks if the quality metric is correct ---
+        if self.quality_metric is not None:
+            if not isinstance(self.quality_metric, str):
+                raise TypeError(
+                    f"Quality metric must be a string, but got {self.quality_metric!r} instead!"
+                )
+            
+            quality_metrics = [
+                "discernability", 
+                "aecs", 
+                "precision", 
+                "height", 
+                "loss", 
+                "ambiguity",
+                "entropy",
+                "classification",
+                "normalized-entropy"
+            ]
+
+            if self.quality_metric not in quality_metrics:
+                raise ValueError(
+                    f"Unsupported quality metric: {self.quality_metric!r}!"
+                )
+            
     def _validate_attributes(self) -> None:
         """
         Validates all the attribute lists.

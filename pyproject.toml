@@ -15,6 +15,7 @@ dependencies = [
     "loguru>=0.7.3",
     "py4j==0.10.9.9",
     "pytest>=9.0.0",
+    "pytest-xdist>=3.8.0",
 ]
 
 [project.scripts]
