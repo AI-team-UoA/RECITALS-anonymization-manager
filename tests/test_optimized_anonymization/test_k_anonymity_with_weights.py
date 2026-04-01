@@ -1,7 +1,7 @@
 from tests.common import *
 
 
-class TestKAnonymity:
+class TestWeights:
     @pytest.mark.parametrize("k,attribute_weights", [
         (5, {"age":0.1}),
         (5, {"age": 2, "race":0.2}),
