@@ -59,12 +59,13 @@ class TestParameters:
         "suppression_limit,error",
         [
             (None, None),  # Default
-            (10, None),  # Small Valid
-            (55, None),  # Typical Valid
-            (88, None),  # Large Valid
+            (10, ValueError),  # Small Valid
+            (55, ValueError),  # Typical Valid
+            (88, ValueError),  # Large Valid
             (0, None),  # Smallest Valid
-            (100, None),  # Largest Valid
-            (0.68, TypeError),  # Float
+            (1, None),  # Largest Valid
+            (100, ValueError),  # Largest Valid
+            (0.68, None),  # Float
             (111, ValueError),  # Too Large
             (-5, ValueError),  # Negative
             ("67", TypeError),  # String
@@ -91,4 +92,20 @@ class TestParameters:
         with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
                 PATH, [], [], [], [], {}, backend=backend
+            )
+
+    @pytest.mark.parametrize(
+        "attribute_weights,error",
+        [
+            (1, TypeError),             # Int is not valid
+            ({1,1}, TypeError),         # Attribute name not a string
+            ({"foo":"bar"}, TypeError), # Weight not a number
+            ({"foo":-0.5}, ValueError), # Negative weight not allowed
+            ({"foo":2, "bar":0.2}, None), # Valid weights
+        ],
+    )
+    def test_attribute_weights(self, attribute_weights, error):
+        with pytest.raises(error) if error else contextlib.nullcontext():
+            config = AnonymizationConfig(
+                PATH, [], [], [], [], {}, attribute_weights=attribute_weights, backend="arx"
             )

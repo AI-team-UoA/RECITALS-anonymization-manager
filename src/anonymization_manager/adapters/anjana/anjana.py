@@ -208,9 +208,9 @@ class AnjanaAnonymizer:
         l = config.l
         t = config.t
 
-        supp_level = config.suppression_limit
-        if supp_level is None:
-            supp_level = 50
+        # Anjana supports integer limits in [1-100]
+        supp_level = config.suppression_limit or 0.0
+        supp_level = int(round(supp_level*100))
 
         hierarchies = config.hierarchies
         hierarchies = {

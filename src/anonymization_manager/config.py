@@ -45,7 +45,7 @@ class AnonymizationConfig:
             t value for t-closeness.
             Must be a float in [0,1].
 
-        suppression_limit (int, optional):
+        suppression_limit (float, optional):
             Maximum percentage of suppressed rows allowed (0-100%).
 
         backend (str, optional):
@@ -62,8 +62,10 @@ class AnonymizationConfig:
     k: int | None = None
     l: int | None = None
     t: float | None = None
-    suppression_limit: int | None = None
+    quality_metric: str | None = None
+    suppression_limit: float | None = None
     backend: str = "arx"
+    attribute_weights: dict[str, float] | None = None
 
     def __post_init__(self):
         self._validate()
@@ -105,7 +107,7 @@ class AnonymizationConfig:
             - k is a positive integer if provided
             - l is a positive integer if provided
             - t is a float in [0,1] if provided
-            - suppression_limit is an integer in [0,100] if provided
+            - suppression_limit is a float in [0,1] if provided
             - backend is either "arx" or "anjana" if provided
 
         Raises:
@@ -151,14 +153,14 @@ class AnonymizationConfig:
 
         # --- Checks if the suppression limit is correct ---
         if self.suppression_limit is not None:
-            if not isinstance(self.suppression_limit, int):
+            if not isinstance(self.suppression_limit, (int, float)):
                 raise TypeError(
-                    f"suppression_limit must be an integer, but got {self.suppression_limit!r} instead"
+                    f"suppression_limit must be a number, but got {self.suppression_limit!r} instead"
                 )
 
-            if not 0 <= self.suppression_limit <= 100:
+            if not 0 <= self.suppression_limit <= 1:
                 raise ValueError(
-                    f"t must be in [0,100], but got {self.suppression_limit!r} instead"
+                    f"t must be in [0,1], but got {self.suppression_limit!r} instead"
                 )
 
         # --- Checks if the backend is correct ---
@@ -172,6 +174,52 @@ class AnonymizationConfig:
                 f"The backend must be either 'arx' or 'anjana', but got {self.backend!r} instead!"
             )
 
+        # --- Checks if the quality metric is correct ---
+        if self.quality_metric is not None:
+            if not isinstance(self.quality_metric, str):
+                raise TypeError(
+                    f"Quality metric must be a string, but got {self.quality_metric!r} instead!"
+                )
+            
+            quality_metrics = [
+                "discernability", 
+                "aecs", 
+                "precision", 
+                "height", 
+                "loss", 
+                "ambiguity",
+                "entropy",
+                "classification",
+                "normalized-entropy"
+            ]
+
+            if self.quality_metric not in quality_metrics:
+                raise ValueError(
+                    f"Unsupported quality metric: {self.quality_metric!r}!"
+                )
+        
+        if self.attribute_weights is not None:
+            if not isinstance(self.attribute_weights, dict):
+                raise TypeError(
+                    f"Attribute weights must be a dictionary mapping attribute names to weights!"
+                )
+
+            for attr, weight in self.attribute_weights.items():
+                if not isinstance(attr, str):
+                    raise TypeError(
+                        f"Attribute names in attribute_weights must be strings!"
+                    )
+                
+                if not isinstance(weight, (int, float)):
+                    raise TypeError(
+                        f"Attribute weights must be numeric values!"
+                    )
+
+                if weight < 0:
+                    raise ValueError(
+                        f"Attribute weights must be non-negative!"
+                    )
+            
     def _validate_attributes(self) -> None:
         """
         Validates all the attribute lists.

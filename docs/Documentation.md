@@ -92,7 +92,7 @@ The `AnonymizationConfig` class accepts the following parameters:
 - **k** (int | None): K-anonymity parameter (default: None, meaning no k-anonymity)
 - **l** (int | None): L-diversity parameter (default: None)
 - **t** (float | None): T-closeness parameter (default: None)
-- **suppression_limit** (float | None): Maximum percentage of records that can be suppressed (default: None for ARX, 50% for ANJANA)
+- **suppression_limit** (float | None): Maximum percentage of records that can be suppressed (default: 0% for both ARX and ANJANA)
 - **backend** (str | None): Backend library to use ("arx" or "anjana", default: "arx")
 
 ### Configuration from JSON
@@ -118,7 +118,7 @@ Example JSON configuration:
     "k": 2,
     "l": 2,
     "t": 0.5,
-    "suppression_limit": 50,
+    "suppression_limit": 0.5,
     "backend": "arx"
 }
 ```
@@ -159,7 +159,7 @@ config = AnonymizationConfig(
     k=2,
     l=2,
     t=0.5,
-    suppression_limit=50,
+    suppression_limit=0.5,
     backend="arx"
 )
 
@@ -393,7 +393,7 @@ config = AnonymizationConfig(
     k=2,
     l=2,
     t=0.5,
-    suppression_limit=50,
+    suppression_limit=0.5,
     backend="anjana"
 )
 
@@ -401,8 +401,108 @@ result = AnonymizationManager.anonymize(config)
 print(f"Average equivalence class size: {result.get_average_equivalence_class_size()}")
 print(f"Transformations: {result.get_transformations()}")
 ```
+### Example 3: Using Quality Metrics
+```python
+    config = AnonymizationConfig(
+        data="data/adult.csv",
+        identifiers=["education-num"],
+        quasi_identifiers=[
+            "age",
+            "native-country",
+            "race",
+            "sex",
+            "marital-status",
+            "occupation",
+            "workclass",
+            "education",
+        ],
+        sensitive_attributes=["salary-class", "capital-gain", "capital-loss"],
+        insensitive_attributes=["hours-per-week"],
+        hierarchies={
+            "age": "hierarchies/age.csv",
+            "native-country": "hierarchies/country.csv",
+            "race": "hierarchies/race.csv",
+            "sex": "hierarchies/sex.csv",
+            "marital-status": "hierarchies/marital.csv",
+            "occupation": "hierarchies/occupation.csv",
+            "workclass": "hierarchies/workclass.csv",
+            "education": "hierarchies/education.csv",
+        },
+        k=4,
+        l=2,
+        quality_metric="discernability",
+        backend="arx",
+    )
 
-### Example 3: Using JSON Configuration
+    result = AnonymizationManager.anonymize(config)
+    result.store_as_csv("results/anonymized.csv")
+    print("-----------------------> [Metrics] <-----------------------")
+    print("Discernability : ", result.get_discernability_metric())
+    print("-----------------------> [Metrics] <-----------------------")
+```
+**Using Quality Metrics**: Using a quality metric for the anonymization process is straightforward. The user simply has to pass the `quality_metric` parameter with the desired metric name. 
+
+**Supported quality metrics:**
+1. `discernability` - Measures distinguishability of records
+2. `aecs` - Average Equivalence Class Size metric
+3. `precision` - Precision metric
+4. `height` - Height metric
+5. `loss` - Information loss metric
+6. `ambiguity` - Ambiguity metric
+7. `entropy` - Entropy-based metric
+8. `normalized-entropy` - Normalized entropy metric
+
+> [!caution]
+>**Note**: Quality metrics are only supported by the ARX backend. Using Anjana will result in undefined behaviour.
+
+### Example 4: Using Attribute Weights
+```python3
+    config = AnonymizationConfig(
+        data="data/adult.csv",
+        identifiers=["education-num"],
+        quasi_identifiers=[
+            "age",
+            "native-country",
+            "race",
+            "sex",
+            "marital-status",
+            "occupation",
+            "workclass",
+            "education",
+        ],
+        attribute_weights = {
+            "age": 0.1,
+            "race":2
+        },
+        sensitive_attributes=["salary-class", "capital-gain", "capital-loss"],
+        insensitive_attributes=["hours-per-week"],
+        hierarchies={
+            "age": "hierarchies/age.csv",
+            "native-country": "hierarchies/country.csv",
+            "race": "hierarchies/race.csv",
+            "sex": "hierarchies/sex.csv",
+            "marital-status": "hierarchies/marital.csv",
+            "occupation": "hierarchies/occupation.csv",
+            "workclass": "hierarchies/workclass.csv",
+            "education": "hierarchies/education.csv",
+        },
+        k=4,
+        l=2,
+        backend="arx",
+    )
+
+    result = AnonymizationManager.anonymize(config)
+    result.store_as_csv("results/anonymized.csv")
+```
+
+**Using Attribute Weights**: Attribute weights allow you to control the generalization behavior for specific quasi-identifiers. Lower weights (e.g., 0.1) prioritize preserving the original values with minimal generalization, while higher weights (e.g., 2) accept more generalization. The optimization algorithm uses these weights to balance privacy and data utility.
+
+To use attribute weights, pass a dictionary mapping attribute names to numeric values (int or float). All weights must be non-negative.
+
+> [!caution]
+>**Note**: Attribute weights are only supported by the ARX backend. Using Anjana will result in undefined behaviour.
+
+### Example 5: Using JSON Configuration
 
 ```python
 config = AnonymizationConfig.from_json("templates/sample.json")

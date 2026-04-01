@@ -46,7 +46,7 @@ class ARXResult:
             pd.DataFrame: The dataset as a pandas DataFrame.
         """
         column_names = [
-            data_handle.getAttributeName(i)
+            str(data_handle.getAttributeName(i))
             for i in range(data_handle.getNumColumns())
         ]
 
@@ -54,7 +54,7 @@ class ARXResult:
 
         for i in range(data_handle.getNumRows()):
             row = [
-                data_handle.getValue(i, j)
+                str(data_handle.getValue(i, j))
                 for j in range(data_handle.getNumColumns())
             ]
             data.append(row)
@@ -192,12 +192,12 @@ class ARXResult:
             .getNumberOfEquivalenceClasses()
         )
 
-    def get_discernibility_metric(self) -> float:
+    def get_discernability_metric(self) -> float:
         """
-        Returns the discernibility metric, a measure of information loss.
+        Returns the discernability metric, a measure of information loss.
 
         Returns:
-            float: Discernibility metric value.
+            float: discernability metric value.
         """
         return (
             self.arx_result.getOutput()
@@ -343,6 +343,8 @@ class ARXResult:
             .getAmbiguity()
             .getValue()
         )
+    
+
 
 
 class ARXAnonymizer:
@@ -440,12 +442,58 @@ class ARXAnonymizer:
         TCloseness = JClass(
             "org.deidentifier.arx.criteria.EqualDistanceTCloseness"
         )
+        Metric = JClass("org.deidentifier.arx.metric.Metric")
         ARXConfiguration = JClass("org.deidentifier.arx.ARXConfiguration")
         configuration = ARXConfiguration.create()
 
         # Adds a supression limit.
         if config.suppression_limit is not None:
             configuration.setSuppressionLimit(config.suppression_limit)
+
+        # Adds a quality metric.
+        if config.quality_metric is not None:
+            match config.quality_metric:
+                case "discernability":
+                    configuration.setQualityModel(
+                        Metric.createDiscernabilityMetric()
+                    )
+                case "aecs":
+                    configuration.setQualityModel(
+                        Metric.createAECSMetric()
+                    )
+                case "precision":
+                    configuration.setQualityModel(
+                        Metric.createPrecisionMetric()
+                    )
+                case "height":
+                    configuration.setQualityModel(
+                        Metric.createHeightMetric()
+                    )
+                case "loss":
+                    configuration.setQualityModel(
+                        Metric.createLossMetric()
+                    )
+                case "ambiguity":
+                    configuration.setQualityModel(
+                        Metric.createAmbiguityMetric()
+                    )
+                case "entropy":
+                    configuration.setQualityModel(
+                        Metric.createEntropyMetric()
+                    )
+                case "classification":
+                    configuration.setQualityModel(
+                        Metric.createClassificationMetric()
+                    )
+                case "normalized-entropy":
+                    configuration.setQualityModel(
+                        Metric.createNormalizedEntropyMetric()
+                    )
+
+        # Adds attribute weights.
+        if config.attribute_weights is not None:
+            for attribute, weight in config.attribute_weights.items():
+                configuration.setAttributeWeight(attribute, weight)
 
         # Adds k-anonymity.
         if config.k is not None:
