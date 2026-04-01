@@ -59,12 +59,13 @@ class TestParameters:
         "suppression_limit,error",
         [
             (None, None),  # Default
-            (10, None),  # Small Valid
-            (55, None),  # Typical Valid
-            (88, None),  # Large Valid
+            (10, ValueError),  # Small Valid
+            (55, ValueError),  # Typical Valid
+            (88, ValueError),  # Large Valid
             (0, None),  # Smallest Valid
-            (100, None),  # Largest Valid
-            (0.68, TypeError),  # Float
+            (1, None),  # Largest Valid
+            (100, ValueError),  # Largest Valid
+            (0.68, None),  # Float
             (111, ValueError),  # Too Large
             (-5, ValueError),  # Negative
             ("67", TypeError),  # String

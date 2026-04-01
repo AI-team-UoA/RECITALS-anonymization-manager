@@ -92,7 +92,7 @@ The `AnonymizationConfig` class accepts the following parameters:
 - **k** (int | None): K-anonymity parameter (default: None, meaning no k-anonymity)
 - **l** (int | None): L-diversity parameter (default: None)
 - **t** (float | None): T-closeness parameter (default: None)
-- **suppression_limit** (float | None): Maximum percentage of records that can be suppressed (default: None for ARX, 50% for ANJANA)
+- **suppression_limit** (float | None): Maximum percentage of records that can be suppressed (default: 0% for both ARX and ANJANA)
 - **backend** (str | None): Backend library to use ("arx" or "anjana", default: "arx")
 
 ### Configuration from JSON
@@ -118,7 +118,7 @@ Example JSON configuration:
     "k": 2,
     "l": 2,
     "t": 0.5,
-    "suppression_limit": 50,
+    "suppression_limit": 0.5,
     "backend": "arx"
 }
 ```
@@ -159,7 +159,7 @@ config = AnonymizationConfig(
     k=2,
     l=2,
     t=0.5,
-    suppression_limit=50,
+    suppression_limit=0.5,
     backend="arx"
 )
 
@@ -393,7 +393,7 @@ config = AnonymizationConfig(
     k=2,
     l=2,
     t=0.5,
-    suppression_limit=50,
+    suppression_limit=0.5,
     backend="anjana"
 )
 

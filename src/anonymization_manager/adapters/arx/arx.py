@@ -46,7 +46,7 @@ class ARXResult:
             pd.DataFrame: The dataset as a pandas DataFrame.
         """
         column_names = [
-            data_handle.getAttributeName(i)
+            str(data_handle.getAttributeName(i))
             for i in range(data_handle.getNumColumns())
         ]
 
@@ -54,7 +54,7 @@ class ARXResult:
 
         for i in range(data_handle.getNumRows()):
             row = [
-                data_handle.getValue(i, j)
+                str(data_handle.getValue(i, j))
                 for j in range(data_handle.getNumColumns())
             ]
             data.append(row)
