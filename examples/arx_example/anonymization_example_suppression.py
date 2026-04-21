@@ -28,7 +28,7 @@ if __name__ == "__main__":
         },
         k=4,
         l=2,
-        quality_metric="discernability",
+        quality_metric={"name":"discernability", "params":{}},
         suppression_limit=0.05,
         backend="arx",
     )

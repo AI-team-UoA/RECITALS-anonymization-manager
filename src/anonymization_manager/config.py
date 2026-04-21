@@ -1,12 +1,48 @@
 import json
 import os
 from dataclasses import dataclass
+from typing import Annotated, Any, Dict, List, Literal, Optional
 
 import pandas as pd
+from pydantic import (
+    BaseModel,
+    Field,
+    field_validator,
+    model_validator,
+)
 
+MetricType = Literal["loss", 
+                     "aecs", 
+                     "precision",
+                     "discernability", 
+                     "height", 
+                     "entropy", 
+                     "ambiguity", 
+                     "normalized-entropy", 
+                     "precomputed-entropy"
+                     "publisher-payout"
+                     "static",
+                     "precomputed-loss",
+                     "kldivergence"
+]
 
-@dataclass
-class AnonymizationConfig:
+BackendType = Literal["arx", "anjana"]
+
+class MetricConfig(BaseModel):
+    """
+        Configuration object for the quality metric.
+
+        Attributes:
+            name (str): 
+                The name of the quality metric.
+            
+            params (dict[str, any]):
+                A dictionary mapping the parameters to values.
+    """
+    name: MetricType
+    params: Dict[str, Any] = Field(default_factory=dict)
+
+class AnonymizationConfig(BaseModel):
     """
     Configuration object for the anonymization workflow.
 
@@ -15,20 +51,19 @@ class AnonymizationConfig:
             Path to the input dataset. Supported formats include CSV, Excel,
             JSON, and SQLite (.db) files.
 
-        identifiers (list[str]):
+        identifiers (list[str], optional):
             List of direct identifiers (e.g., name, SSN, phone number).
 
-        quasi_identifiers (list[str]):
+        quasi_identifiers (list[str], optional):
             List of quasi-identifying attributes requiring generalization
             (e.g., age, zipcode, occupation)
 
-        sensitive_attributes (list[str]):
+        sensitive_attributes (list[str], optional):
             Attributes considered sensitive (e.g., disease, salary)
             If not empty, either l-diversity or t-closeness must be specified.
 
-        insensitive_attributes (list[str]):
+        insensitive_attributes (list[str], optional):
             Attributes that are neither identifiers nor sensitive and are carried through unchanged.
-
 
         hierarchies (dict[str, str]):
             Mapping from quasi-identifiers to CSV hierarchy files.
@@ -51,24 +86,26 @@ class AnonymizationConfig:
         backend (str, optional):
             Anonymization backend to use, either 'arx' or 'anjana'.
             Defaults to 'arx'
+
+        quality_metric (dict[Any], optional):
+            A dictionary holding the information related to the quality metric. For
+            more information, check the documentation.
+        attribute_weights (dict[str, float], optional):
+            A set assigning weight "importance" to each attribute.
     """
-
     data: str
-    identifiers: list[str]
-    quasi_identifiers: list[str]
-    sensitive_attributes: list[str]
-    insensitive_attributes: list[str]
-    hierarchies: dict[str, str]
-    k: int | None = None
-    l: int | None = None
-    t: float | None = None
-    quality_metric: str | None = None
-    suppression_limit: float | None = None
-    backend: str = "arx"
-    attribute_weights: dict[str, float] | None = None
-
-    def __post_init__(self):
-        self._validate()
+    identifiers: Optional[List[str]] = Field(default_factory=list)
+    quasi_identifiers: Optional[List[str]] = Field(default_factory=list)
+    sensitive_attributes: Optional[List[str]] = Field(default_factory=list)
+    insensitive_attributes: Optional[List[str]] = Field(default_factory=list)
+    hierarchies: Optional[Dict[str, str]] = Field(default_factory=dict)
+    k: Optional[int] = Field(None, gt=0, description="k must be an integer > 0!")
+    l: Optional[int] = Field(None, gt=0, description="l must be an integer > 0!")
+    t: Optional[float] = Field(None, ge=0.0, le=1.0, description="t must be a float in [0,1]!")
+    quality_metric: Optional[MetricConfig] = Field(None)
+    suppression_limit: Optional[float] = Field(None, ge=0.0, le=1.0)
+    backend: Optional[BackendType] = "arx"
+    attribute_weights: Optional[Dict[str, Annotated[float, Field(ge=0)]]] = None
 
     @classmethod
     def from_json(cls, json_path: str):
@@ -81,157 +118,17 @@ class AnonymizationConfig:
             if key in config_json
         }
         return cls(**attributes)
-
-    def _validate(self) -> None:
-        """
-        Runs all validation checks on the configuration.
-
-        Validates:
-            - Parameters (k, l, t, suppression_limit, backend)
-            - Attribute lists
-            - Dataset path
-            - Hierarchies
-            - Privacy Models
-        """
-        self._validate_parameters()
-        self._validate_attributes()
-        self._validate_dataset()
-        self._validate_hierarchies()
-        self._validate_privacy_models()
-
-    def _validate_parameters(self) -> None:
-        """
-        Validates the anonymization parameters.
-
-        Checks:
-            - k is a positive integer if provided
-            - l is a positive integer if provided
-            - t is a float in [0,1] if provided
-            - suppression_limit is a float in [0,1] if provided
-            - backend is either "arx" or "anjana" if provided
-
-        Raises:
-            TypeError: If a parameter is of the wrong type.
-            ValueError: If a parameter violates the allowed ranges.
-        """
-
-        # --- Checks if k is correct ---
-        if self.k is not None:
-            if not isinstance(self.k, int):
-                raise TypeError(
-                    f"k must be an integer, but got {self.k!r} instead"
-                )
-
-            if self.k <= 0:
-                raise ValueError(
-                    f"k must be positive, but got {self.k!r} instead"
-                )
-
-        # --- Checks if l is correct ---
-        if self.l is not None:
-            if not isinstance(self.l, int):
-                raise TypeError(
-                    f"l must be an integer, but got {self.l!r} instead"
-                )
-
-            if self.l <= 0:
-                raise ValueError(
-                    f"l must be positive, but got {self.l!r} instead"
-                )
-
-        # --- Checks if t is correct ---
-        if self.t is not None:
-            if not isinstance(self.t, (float, int)):
-                raise TypeError(
-                    f"t must be a float, but got {self.t!r} instead"
-                )
-
-            if not 0.0 <= self.t <= 1.0:
-                raise ValueError(
-                    f"t must be in [0,1], but got {self.t!r} instead"
-                )
-
-        # --- Checks if the suppression limit is correct ---
-        if self.suppression_limit is not None:
-            if not isinstance(self.suppression_limit, (int, float)):
-                raise TypeError(
-                    f"suppression_limit must be a number, but got {self.suppression_limit!r} instead"
-                )
-
-            if not 0 <= self.suppression_limit <= 1:
-                raise ValueError(
-                    f"t must be in [0,1], but got {self.suppression_limit!r} instead"
-                )
-
-        # --- Checks if the backend is correct ---
-        if not isinstance(self.backend, str):
-            raise TypeError(
-                f"backed must be a string, but got {self.backend!r} instead!"
-            )
-
-        if self.backend not in ["arx", "anjana"]:
-            raise ValueError(
-                f"The backend must be either 'arx' or 'anjana', but got {self.backend!r} instead!"
-            )
-
-        # --- Checks if the quality metric is correct ---
-        if self.quality_metric is not None:
-            if not isinstance(self.quality_metric, str):
-                raise TypeError(
-                    f"Quality metric must be a string, but got {self.quality_metric!r} instead!"
-                )
-            
-            quality_metrics = [
-                "discernability", 
-                "aecs", 
-                "precision", 
-                "height", 
-                "loss", 
-                "ambiguity",
-                "entropy",
-                "classification",
-                "normalized-entropy"
-            ]
-
-            if self.quality_metric not in quality_metrics:
-                raise ValueError(
-                    f"Unsupported quality metric: {self.quality_metric!r}!"
-                )
-        
-        if self.attribute_weights is not None:
-            if not isinstance(self.attribute_weights, dict):
-                raise TypeError(
-                    f"Attribute weights must be a dictionary mapping attribute names to weights!"
-                )
-
-            for attr, weight in self.attribute_weights.items():
-                if not isinstance(attr, str):
-                    raise TypeError(
-                        f"Attribute names in attribute_weights must be strings!"
-                    )
-                
-                if not isinstance(weight, (int, float)):
-                    raise TypeError(
-                        f"Attribute weights must be numeric values!"
-                    )
-
-                if weight < 0:
-                    raise ValueError(
-                        f"Attribute weights must be non-negative!"
-                    )
-            
-    def _validate_attributes(self) -> None:
+    
+    @model_validator(mode="after")
+    def validate_attributes(self) -> "AnonymizationConfig":
         """
         Validates all the attribute lists.
 
         Checks:
-            - Each attribute list is a Python list
-            - All attributes are strings
             - Attribute names are unique across identifiers, quasi-identifiers,
             sensitive attributes, and insensitive attributes
 
         Raises:
-            TypeError: If an attribute list is not a list, or contains non-string elements.
             ValueError: If attribute names overlap across categories.
         """
         attr_list = {
@@ -240,24 +137,18 @@ class AnonymizationConfig:
             "sensitive_attributes": self.sensitive_attributes,
             "insensitive_attributes": self.insensitive_attributes,
         }
-
-        # Checks that the attributes are provided using lists.
-        for name, attrs in attr_list.items():
-            if not isinstance(attrs, list):
-                raise TypeError(
-                    f"{name} must be a list, but got {attrs!r} instead!"
-                )
-            if not all(isinstance(x, str) for x in attrs):
-                raise TypeError(f"All entries in {name} must be strings!")
-
         # --- Checks that the attribute names do not overlap.
         all_attrs = sum(attr_list.values(), [])
         if len(all_attrs) != len(set(all_attrs)):
             raise ValueError(
                 f"Attribute names must be unique across all types!"
             )
+        
+        return self
 
-    def _validate_dataset(self) -> None:
+    @field_validator("data")
+    @classmethod
+    def validate_dataset(cls, path: str) -> str:
         """
         Validates the dataset path.
 
@@ -269,60 +160,32 @@ class AnonymizationConfig:
             TypeError: If the dataset path is not a string.
             FileNotFoundError: If the file does not exist at the given path.
         """
-
-        # --- Checks that the dataset path is a string ---
-        if not isinstance(self.data, str):
-            raise TypeError(
-                f"The dataset path must be provided as a string, but got {self.data!r} instead!"
-            )
-
         # --- Checks that the dataset file exists.
-        if not os.path.exists(self.data):
+        if not os.path.exists(path):
             raise FileNotFoundError(
-                f"The dataset could not be located at {self.data!r}!"
+                f"The dataset could not be located at {path!r}!"
             )
-
-    def _validate_hierarchies(self) -> None:
+        return path
+    
+    @model_validator(mode="after")
+    def validate_hierarchies(self) -> "AnonymizationConfig":
         """
         Validates the hierarchies provided for the quasi-identifiers.
 
         Checks:
-            - Hierarchies is a dictionary mapping quasi-identifiers to CSV paths
-            - Each quasi-identifier key is a string
             - Each quasi-identifier exists in 'quasi_identifiers'
-            - Each hierarchy path is a string
             - Each hierarchy file exists at the specified path
 
         Raises:
-            TypeError: If hierarchies is not a dictionary, or any key/path is not a string.
             ValueError: If a key is not a quasi-identifier.
             FileNotFoundError: If any hierarchy file cannot be located at the given path.
         """
-
-        # --- Checks that the hierarchy format is valid ---
-        if not isinstance(self.hierarchies, dict):
-            raise TypeError(
-                f"The hierarchies must be provided in a dictionary format mapping quasi-identifiers to hierarchy file paths!"
-            )
-
         # --- Checks if the hierarchies are valid ---
         for qid, hierarchy_path in self.hierarchies.items():
-            # --- Checks that the quasi-identifier is a string ---
-            if not isinstance(qid, str):
-                raise TypeError(
-                    f"Hierarchy quasi-identifier keys must be strings, but got {qid!r} instead!"
-                )
-
             # --- Checks that the quasi-identifier exists ---
             if qid not in self.quasi_identifiers:
-                raise TypeError(
+                raise ValueError(
                     f"Cannot create hierarchy for {qid!r}, since it is not a quasi-identifier!"
-                )
-
-            # --- Checks that the hierarchy path is a string ---
-            if not isinstance(hierarchy_path, str):
-                raise TypeError(
-                    f"The hierarchy path for {qid!r} must be a string, but got {hierarchy_path!r} instead!"
                 )
 
             # --- Checks that the hierarchy path exists.
@@ -330,8 +193,11 @@ class AnonymizationConfig:
                 raise FileNotFoundError(
                     f"Cannot create hierarchy for {qid!r}, the path {hierarchy_path!r} could not be located!"
                 )
+            
+        return self
 
-    def _validate_privacy_models(self) -> None:
+    @model_validator(mode="after")
+    def validate_privacy_models(self) -> "AnonymizationConfig":
         """Validates the privacy models.
 
         If sensitive attributes are present, requires that either:
@@ -345,3 +211,22 @@ class AnonymizationConfig:
             raise ValueError(
                 f"sensitive-attributes={self.sensitive_attributes}, l-Diversity or t-Closeness must be used when anonymizing with sensitive attributes!"
             )
+        
+        return self
+    
+    @model_validator(mode="after")
+    def validate_quality_metric(self) -> "AnonymizationConfig":
+        """
+            Validates the quality metric.
+
+            Checks that arx is used with the quality metric parameter
+
+            Raises:
+                ValueError: If anjana is used with the quality metric parameter.
+        """
+        if self.backend == "anjana" and self.quality_metric is not None:
+            raise ValueError(
+                "Anjana does not support quality metric as a parameter!"
+            )
+        
+        return self

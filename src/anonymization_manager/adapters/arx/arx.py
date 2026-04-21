@@ -2,6 +2,7 @@ import os
 
 import jpype
 import pandas as pd
+from typing import Any
 from jpype import JClass
 
 from anonymization_manager.config import AnonymizationConfig
@@ -437,6 +438,7 @@ class ARXAnonymizer:
         Returns:
             JClass: The ARXConfiguration object ready for the anonymization.
         """
+        # Important types.
         KAnonymity = JClass("org.deidentifier.arx.criteria.KAnonymity")
         LDiversity = JClass("org.deidentifier.arx.criteria.DistinctLDiversity")
         TCloseness = JClass(
@@ -445,51 +447,106 @@ class ARXAnonymizer:
         Metric = JClass("org.deidentifier.arx.metric.Metric")
         ARXConfiguration = JClass("org.deidentifier.arx.ARXConfiguration")
         configuration = ARXConfiguration.create()
+        agg_func = Metric.AggregateFunction
 
         # Adds a supression limit.
         if config.suppression_limit is not None:
             configuration.setSuppressionLimit(config.suppression_limit)
-
+        
         # Adds a quality metric.
         if config.quality_metric is not None:
-            match config.quality_metric:
-                case "discernability":
-                    configuration.setQualityModel(
-                        Metric.createDiscernabilityMetric()
-                    )
-                case "aecs":
-                    configuration.setQualityModel(
-                        Metric.createAECSMetric()
-                    )
-                case "precision":
-                    configuration.setQualityModel(
-                        Metric.createPrecisionMetric()
-                    )
-                case "height":
-                    configuration.setQualityModel(
-                        Metric.createHeightMetric()
-                    )
-                case "loss":
-                    configuration.setQualityModel(
-                        Metric.createLossMetric()
-                    )
-                case "ambiguity":
-                    configuration.setQualityModel(
-                        Metric.createAmbiguityMetric()
-                    )
-                case "entropy":
-                    configuration.setQualityModel(
-                        Metric.createEntropyMetric()
-                    )
-                case "classification":
-                    configuration.setQualityModel(
-                        Metric.createClassificationMetric()
-                    )
-                case "normalized-entropy":
-                    configuration.setQualityModel(
-                        Metric.createNormalizedEntropyMetric()
-                    )
+            # Maps the quality metrics to the appropriate constructor.
+            quality_metric_map = {
+                "discernability": Metric.createDiscernabilityMetric,
+                "aecs": Metric.createAECSMetric,
+                "precision": Metric.createPrecisionMetric,
+                "height": Metric.createHeightMetric,
+                "loss": Metric.createLossMetric,
+                "ambiguity": Metric.createAmbiguityMetric,
+                "entropy": Metric.createEntropyMetric,
+                "normalized-entropy": Metric.createNormalizedEntropyMetric,
+                "precomputed-entropy": Metric.createPrecomputedEntropyMetric,
+                "publisher-payout": Metric.createPublisherPayoutMetric,
+                "static": Metric.createStaticMetric,
+                "precomputed-loss": Metric.createPrecomputedLossMetric,
+                "kldivergence": Metric.createKLDivergenceMetric
+            }
 
+            # Maps the aggregate functions to the java appropriate classes.
+            agg_func_map = {
+                "SUM": agg_func.SUM,
+                "ARITHMETIC_MEAN": agg_func.ARITHMETIC_MEAN,
+                "GEOMETRIC_MEAN": agg_func.GEOMETRIC_MEAN,
+                "RANK": agg_func.RANK,
+                "MAXIMUM": agg_func.MAXIMUM
+
+            }
+
+            # Maps Java types to JPype types.
+            java_to_jpype_map = {
+                "double": jpype.JDouble,
+                "float": jpype.JFloat,
+                "int": jpype.JInt,
+                "long": jpype.JLong,
+                "boolean": jpype.JBoolean,
+                "AggregateFunction": JClass("org.deidentifier.arx.metric.Metric$AggregateFunction")
+            }
+
+            # Gets the name and parameters.
+            name = config.quality_metric.name
+            params = config.quality_metric.params
+
+            # Resolves the metric constructor.
+            create_metric = quality_metric_map.get(name)
+            if create_metric is None:
+                raise ValueError(
+                    f"Unsupported quality metric '{name}'!, "
+                    f"Valid options are {list(quality_metric_map)}"
+                )
+            
+            # Resolves the aggregate function if present.
+            if "function" in params:
+                func_name = params["function"]
+                if func_name not in agg_func_map:
+                    raise ValueError(
+                        f"Unsupported aggregate function '{func_name}'!, "
+                        f"Valid options are {list(agg_func_map)}"
+                    )
+                params["function"] = agg_func_map[func_name]
+
+            # Collects the signatures.
+            signatures = ARXAnonymizer._get_metric_signatures(create_metric.__doc__)
+
+            possible_signs = [sign for sign in signatures if len(sign) == len(params)]
+
+            # Narrows does by matching signatures.
+            match = next(
+                (sign for sign in possible_signs if ARXAnonymizer._validate_signature(params, sign)),
+                None
+            )
+            
+            # Checks if a match was found.
+            if match is None:
+                raise ValueError(
+                    f"No overload of '{name}' matches the provided parameter types!, "
+                    f"Check the arx documentation. Available overloads are {create_metric.__doc__}."
+                )
+            
+            # Casts the values to JPype to get exact matching. 
+            # It then tries to call the appropriate constructor.
+            try:
+                casted_params = [
+                    java_to_jpype_map[t](v) if t != "AggregateFunction" else v
+                    for t,v in zip(match, params.values())
+                ]
+                configuration.setQualityModel(create_metric(*casted_params))
+            except Exception as e:
+                raise ValueError(
+                    f"Invalid quality metric configuration for '{name}'!, "
+                    f"Parameters {params} are not valid!, "
+                    f"Reason is {type(e).__name__}: {e}"
+                )
+            
         # Adds attribute weights.
         if config.attribute_weights is not None:
             for attribute, weight in config.attribute_weights.items():
@@ -532,6 +589,88 @@ class ARXAnonymizer:
         anonymizer = ARXAnonymizer()
         return anonymizer.anonymize(data, configuration)
 
+    @staticmethod
+    def _get_metric_signatures(doc: str) -> list[list[str]]:
+        """Parses JPype docstring to extract parameter lists per overload.
+            e.g. from org.deidentifier.arx.metric.Metric createLossMetric(boolean)
+            Args:
+                doc (str): The description of the method.
+            Returns:
+                list[list[str]]:
+                    The types of the parameters. 
+        """
+        signatures = []
+
+        # Goes over all the lines.
+        for line in doc.splitlines():
+            line = line.strip()
+
+            # We expect signatures to start with *.
+            if not line.startswith("*"):
+                continue
+            
+            # Deriving only the parameter types.
+            types_start = line.index("(")+1
+            types_end = line.index(")")
+            types = line[types_start:types_end].strip()
+
+            # Gets the types
+            if not types:
+                signatures.append([])
+                continue
+            else:
+                types = [
+                    t.strip().split(".")[-1]
+                    for t in types.split(",")
+                ]
+
+            # Collect the types.
+            signatures.append(types)
+
+        return signatures
+    
+    @staticmethod
+    def _validate_signature(params:dict[str,Any], types: list[Any]) -> bool:
+        """
+            Validates that the provided parameters match the given types.
+            Args:
+                params (dict[str, Any]): The parameters.
+                types (list[Any]): The expected java types from the signature.
+
+            Returns:
+                bool: True if the params match the types of the signature.
+        """
+        java_to_python_map = {
+            "double": (float, int),
+            "float": (float, int),
+            "int": int,
+            "long": int,
+            "boolean": bool,
+            "AggregateFunction": JClass(
+                "org.deidentifier.arx.metric.Metric$AggregateFunction"
+            )
+        }
+
+        # Checks the parameter count.
+        if len(params) != len(types):
+            return False
+        
+        # Checks the types.
+        for val, java_type in zip(params.values(), types):
+            if java_type not in java_to_python_map:
+                return False
+            
+            if isinstance(val, bool) and java_type != "boolean":
+                return False
+            
+            if not isinstance(val, java_to_python_map[java_type]):
+                return False
+            
+        return True
+            
+            
+            
+    
     @classmethod
     def anonymize(cls, config: AnonymizationConfig) -> ARXResult:
         """
