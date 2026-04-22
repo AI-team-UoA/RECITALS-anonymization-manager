@@ -1,3 +1,0 @@
-"""
-ANJANA adapter.
-"""

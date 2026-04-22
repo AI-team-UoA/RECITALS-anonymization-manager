@@ -12,16 +12,20 @@ requires-python = ">=3.10,<3.13"
 dependencies = [
     "anjana>=1.1.0",
     "jpype1>=1.6.0",
+    "loguru>=0.7.3",
     "py4j==0.10.9.9",
     "pydantic>=2.11.10",
 ]
 
 [project.scripts]
-anonymization-manager = "anonymization_manager:main"
+anonymization-manager = "anonymization_manager.cli:main"
 
 [dependency-groups]
 dev = [
     "basedpyright>=1.31.4",
+    "mypy>=1.18.2",
+    "pre-commit>=4.4.0",
+    "pytest-cov>=7.0.0",
     "ruff>=0.13.1",
 ]
 docs = [
@@ -35,8 +39,34 @@ packages = ["src/anonymization_manager"]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
+
+[[tool.mypy.overrides]]
+module = ["pandas.*", "jpype.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "anonymization-manager.*"
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+no_implicit_reexport = true
+strict_equality = true
+strict_optional = true
+warn_return_any = true
+warn_unused_ignores = true
+
 [tool.ruff]
 line-length = 79
+lint.select = [
+    "I",  # isort formatting.
+]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
