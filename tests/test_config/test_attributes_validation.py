@@ -16,12 +16,14 @@ class TestAttributes:
                 ],
                 False,
             ),
-            ([1], TypeError),  # Integer Identifier
+            ([1], ValidationError),  # Integer Identifier
         ],
     )
     def test_identifier_values(self, identifiers, error) -> None:
         with pytest.raises(error) if error else contextlib.nullcontext():
-            config = AnonymizationConfig(PATH, identifiers, [], [], [], {})
+            config = AnonymizationConfig(data=PATH, 
+                                         identifiers=identifiers
+                                         )
 
     @pytest.mark.parametrize(
         "qidentifiers,error",
@@ -37,12 +39,14 @@ class TestAttributes:
                 ],
                 False,
             ),
-            ([1], TypeError),  # Integer
+            ([1], ValidationError),  # Integer
         ],
     )
     def test_quasi_identifier_values(self, qidentifiers, error) -> None:
         with pytest.raises(error) if error else contextlib.nullcontext():
-            config = AnonymizationConfig(PATH, [], qidentifiers, [], [], {})
+            config = AnonymizationConfig(data=PATH, 
+                                         quasi_identifiers=qidentifiers
+                                         )
 
     @pytest.mark.parametrize(
         "sensitives,error",
@@ -57,12 +61,14 @@ class TestAttributes:
                 ],
                 False,
             ),
-            ([1], TypeError),  # Integer Sensitive
+            ([1], ValidationError),  # Integer Sensitive
         ],
     )
     def test_sensitive_values(self, sensitives, error) -> None:
-        with pytest.raises(TypeError) if error else contextlib.nullcontext():
-            config = AnonymizationConfig(PATH, [], [], sensitives, [], {}, l=2)
+        with pytest.raises(error) if error else contextlib.nullcontext():
+            config = AnonymizationConfig(data=PATH, 
+                                         sensitive_attributes=sensitives,
+                                         l=2)
 
     @pytest.mark.parametrize(
         "insensitives,error",
@@ -77,9 +83,11 @@ class TestAttributes:
                 ],
                 False,
             ),
-            ([1], TypeError),  # Integer Insensitive
+            ([1], ValidationError),  # Integer Insensitive
         ],
     )
     def test_insensitive_values(self, insensitives, error) -> None:
         with pytest.raises(error) if error else contextlib.nullcontext():
-            config = AnonymizationConfig(PATH, [], [], [], insensitives, {})
+            config = AnonymizationConfig(data=PATH, 
+                                         insensitive_attributes=insensitives, 
+                                         )

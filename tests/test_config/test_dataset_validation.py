@@ -7,9 +7,9 @@ class TestDataset:
         [
             (PATH, None),  # Exists.
             ("dummy", FileNotFoundError),  # Does Not Exists.
-            (123, TypeError),  # Integer
+            (123, ValidationError),  # Integer
         ],
     )
     def test_dataset(self, dataset, error) -> None:
         with pytest.raises(error) if error else contextlib.nullcontext():
-            config = AnonymizationConfig(dataset, [], [], [], [], {})
+            config = AnonymizationConfig(data=dataset)

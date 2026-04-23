@@ -28,12 +28,11 @@ if __name__ == "__main__":
         },
         k=4,
         l=2,
-        quality_metric={"name":"discernability"},
+        quality_metric={"name":"loss", "params":{"function":"MAXIMUM"}},
         backend="arx",
     )
 
     result = AnonymizationManager.anonymize(config)
     result.store_as_csv("results/anonymized.csv")
-    print("-----------------------> [Metrics] <-----------------------")
-    print("Discernability : ", result.get_discernability_metric())
-    print("-----------------------> [Metrics] <-----------------------")
+    print(result.get_anonymized_data_as_dataframe())
+

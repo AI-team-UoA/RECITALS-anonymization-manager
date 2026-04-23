@@ -403,6 +403,9 @@ print(f"Transformations: {result.get_transformations()}")
 ```
 ### Example 3: Using Quality Metrics
 ```python
+from anonymization_manager import *
+
+if __name__ == "__main__":
     config = AnonymizationConfig(
         data="data/adult.csv",
         identifiers=["education-num"],
@@ -430,18 +433,62 @@ print(f"Transformations: {result.get_transformations()}")
         },
         k=4,
         l=2,
-        quality_metric="discernability",
+        quality_metric={"name":"loss", "params":{"function":"MAXIMUM"}},
         backend="arx",
     )
 
     result = AnonymizationManager.anonymize(config)
     result.store_as_csv("results/anonymized.csv")
-    print("-----------------------> [Metrics] <-----------------------")
-    print("Discernability : ", result.get_discernability_metric())
-    print("-----------------------> [Metrics] <-----------------------")
+    print(result.get_anonymized_data_as_dataframe())
 ```
-**Using Quality Metrics**: Using a quality metric for the anonymization process is straightforward. The user simply has to pass the `quality_metric` parameter with the desired metric name. 
+#### Using Quality Metrics: 
+Using a quality metric for the anonymization process is straightforward. The user simply has to pass the `quality_metric` parameter which is of the form:
+```json
+    ...
+    quality_metric = {
+        name:"metric-name",
+        params = {
+            "param1":"value1",
+            "param2":"value2",
+            ...
+            "paramn":"valuen"
+        }
+    }
+```
+> **Note**: This feature is intended for advanced users. 
+> Most of the quality metrics avaliable through ARX can be accessed.
+> See the ARX documentation: 
+> https://arx.deidentifier.org/wp-content/uploads/javadoc/current/api/index.html
 
+#### Parameter Ordering
+Parameters **must be passed in the same order** as they appear in ARX's method signature. Otherwise, behaviour will be undefined.
+
+Example ARX method:
+```java
+createEntropyMetric(boolean monotonic, double gsFactor)
+```
+Usage:
+```json
+    quality_metric = {
+        name:"entropy",
+        params = {
+            "monotonic":true,
+            "gs_factor":0.5,
+        }
+    }
+```
+#### Using aggregate functions:
+If the metric supports aggregate functions, pass the function name as a **capitalized string**:
+```json
+    quality_metric = {
+        name:"entropy",
+        params = {
+            "monotonic":true,
+            "gs_factor":0.5,
+            "function":"MAXIMUM"
+        }
+    }
+```
 **Supported quality metrics:**
 1. `discernability` - Measures distinguishability of records
 2. `aecs` - Average Equivalence Class Size metric
@@ -451,9 +498,13 @@ print(f"Transformations: {result.get_transformations()}")
 6. `ambiguity` - Ambiguity metric
 7. `entropy` - Entropy-based metric
 8. `normalized-entropy` - Normalized entropy metric
-
-> [!caution]
->**Note**: Quality metrics are only supported by the ARX backend. Using Anjana will result in undefined behaviour.
+9. `publisher-payout` - Publisher payout metric
+10. `precomputed-loss` - Precomputed loss metric
+11. `kldivergence` - Kl divergence metric
+12. `precomputed-entropy` - Precomputed entropy metric
+13. `static` - Static metric
+> **Caution**
+>Quality metrics are only supported by the **ARX backend**. Using Anjana will result in undefined behaviour.
 
 ### Example 4: Using Attribute Weights
 ```python3

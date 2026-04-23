@@ -37,3 +37,4 @@ if __name__ == "__main__":
 
     result = AnonymizationManager.anonymize(config)
     result.store_as_csv("results/anonymized.csv")
+    print(result.get_anonymized_data_as_dataframe())

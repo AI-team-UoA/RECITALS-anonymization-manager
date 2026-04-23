@@ -13,7 +13,6 @@ class TestKAnonymity:
         (5, "normalized-entropy"),
     ])
     def test_k_anonymity(self, k, quality_metric) -> None:
-        for backend in ["arx", "anjana"]:
             config = AnonymizationConfig(
                 data=PATH,
                 identifiers=["education-num"],
@@ -40,8 +39,8 @@ class TestKAnonymity:
                     "education": EDUCATION_PATH,
                 },
                 k=k,
-                quality_metric=quality_metric,
-                backend=backend,
+                quality_metric={"name":quality_metric},
+                backend="arx",
             )
 
             data = AnonymizationManager.anonymize(config)

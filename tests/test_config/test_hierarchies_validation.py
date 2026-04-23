@@ -30,26 +30,28 @@ class TestHierarchies:
                     "age": AGE_PATH  # Hierarchy Quasi Identifier Not Defined
                 },
                 [],
-                TypeError,
+                ValueError,
             ),
             (
                 {
                     123: AGE_PATH  # Quasi Identifier Not A String
                 },
                 ["age"],
-                TypeError,
+                ValidationError,
             ),
             (
                 {
                     "age": 123  # Hierarchy Path Not A String
                 },
                 ["age"],
-                TypeError,
+                ValidationError,
             ),
         ],
     )
     def test_hierarchies(self, hierarchies, quasi_identifiers, error) -> None:
         with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
-                PATH, [], quasi_identifiers, [], [], hierarchies
+                data=PATH, 
+                quasi_identifiers=quasi_identifiers,
+                hierarchies=hierarchies
             )

@@ -8,7 +8,6 @@ class TestKLModels:
         (5, 2, {"age": 2, "race":0.2, "education":3}, "entropy"),
     ])
     def test_k_anonymity(self, k, l, attribute_weights, metric) -> None:
-        for backend in ["arx", "anjana"]:
             config = AnonymizationConfig(
                 data=PATH,
                 identifiers=["education-num"],
@@ -36,8 +35,8 @@ class TestKLModels:
                 k=k,
                 l=l,
                 attribute_weights=attribute_weights,
-                quality_metric=metric,
-                backend=backend,
+                quality_metric={"name":metric},
+                backend="arx",
             )
 
             data = AnonymizationManager.anonymize(config)

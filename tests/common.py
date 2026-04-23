@@ -2,6 +2,7 @@ import contextlib
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from anonymization_manager import *
 
