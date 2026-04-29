@@ -2,7 +2,7 @@ from anonymization_manager import *
 
 if __name__ == "__main__":
     config = AnonymizationConfig(
-        data="data/adult.csv",
+        data="examples/arx_example/data/adult.csv",
         identifiers=["education-num"],
         quasi_identifiers=[
             "age",
@@ -21,14 +21,14 @@ if __name__ == "__main__":
         sensitive_attributes=["salary-class", "capital-gain", "capital-loss"],
         insensitive_attributes=["hours-per-week"],
         hierarchies={
-            "age": "hierarchies/age.csv",
-            "native-country": "hierarchies/country.csv",
-            "race": "hierarchies/race.csv",
-            "sex": "hierarchies/sex.csv",
-            "marital-status": "hierarchies/marital.csv",
-            "occupation": "hierarchies/occupation.csv",
-            "workclass": "hierarchies/workclass.csv",
-            "education": "hierarchies/education.csv",
+            "age": "examples/arx_example/hierarchies/age.csv",
+            "native-country": "examples/arx_example/hierarchies/country.csv",
+            "race": "examples/arx_example/hierarchies/race.csv",
+            "sex": "examples/arx_example/hierarchies/sex.csv",
+            "marital-status": "examples/arx_example/hierarchies/marital.csv",
+            "occupation": "examples/arx_example/hierarchies/occupation.csv",
+            "workclass": "examples/arx_example/hierarchies/workclass.csv",
+            "education": "examples/arx_example/hierarchies/education.csv",
         },
         k=4,
         l=2,
@@ -36,5 +36,5 @@ if __name__ == "__main__":
     )
 
     result = AnonymizationManager.anonymize(config)
-    result.store_as_csv("results/anonymized.csv")
+    result.store_as_csv("examples/arx_example/results/anonymized.csv")
     print(result.get_anonymized_data_as_dataframe())
