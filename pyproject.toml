@@ -25,6 +25,8 @@ anonymization-manager = "anonymization_manager.cli:main"
 [dependency-groups]
 dev = [
     "basedpyright>=1.31.4",
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.7.6",
     "mypy>=1.18.2",
     "pre-commit>=4.4.0",
     "pytest-cov>=7.0.0",

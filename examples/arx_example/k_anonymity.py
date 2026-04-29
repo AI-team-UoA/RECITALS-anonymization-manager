@@ -14,7 +14,6 @@ if __name__ == "__main__":
             "workclass",
             "education",
         ],
-        sensitive_attributes=["salary-class", "capital-gain", "capital-loss"],
         insensitive_attributes=["hours-per-week"],
         hierarchies={
             "age": "examples/arx_example/hierarchies/age.csv",
@@ -26,14 +25,8 @@ if __name__ == "__main__":
             "workclass": "examples/arx_example/hierarchies/workclass.csv",
             "education": "examples/arx_example/hierarchies/education.csv",
         },
-        k=4,
-        l=2,
-        quality_metric={"name":"discernability"},
-        backend="arx",
+        k=3,
     )
 
     result = AnonymizationManager.anonymize(config)
-    result.store_as_csv("examples/arx_example/results/anonymized.csv")
-    print("-----------------------> [Metrics] <-----------------------")
-    print("Discernability : ", result.get_discernability_metric())
-    print("-----------------------> [Metrics] <-----------------------")
+    print(result.get_anonymized_data_as_dataframe())

@@ -1,0 +1,29 @@
+site_name: RECITALS Anonymization Manager
+
+theme:
+  name: material
+  logo: assets/logo_transparent.png
+  favicon: assets/logo_transparent.png
+  palette:
+    primary: indigo
+    accent: indigo
+  features:
+    - navigation.tabs
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - API: api.md
+  - Guide: guide.md
+  - Literature: literature.md
+  - Links: links.md
+
+markdown_extensions:
+  - attr_list 
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
