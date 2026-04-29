@@ -11,7 +11,7 @@
 RECITALS Anonymization Manager is a privacy-preserving data anonymization toolkit that supports key techniques such as k-anonymity, l-diversity and t-closeness. It enables users to protect sensitive information in datasets while maintaining data utility.
 
 The toolkit is designed to simplify the anonymization process by providing reusable templates, allowing users to easily apply privacy transformations without manually configuring complex rules. This makes it suitable for researchers and developers who need fast, consistent, and reliable data anonymization workflows.
-## 🧪 Supported Techniques
+## Supported Techniques
 - **k-anonymity**: Ensures that each record is indistinguishable from at least *k-1* other records with repsect to identifying/quasi-identifying attributes, reducing the risk of re-identification.
 - **l-diversity**: Extends k-anonymity by ensuring that sensitive attributes within each group have at least *l* well-represented values.
 - **t-closeness**: Strengthens privacy further by requiring that the distribution of sensitive attributes in each group is within a threshold *t* of the overall dataset distribution.
@@ -19,7 +19,7 @@ The toolkit is designed to simplify the anonymization process by providing reusa
 ## ⚙️ Dependencies
 The **Anonymization Manager** leverages two core libraries to anonymize data by applying privacy preserving techniques.
 
-### ⚙️ Core Libraries
+### Core Libraries
 <table align="center">
 <tr>
     <td align="center" width="50%">
@@ -41,7 +41,7 @@ The **Anonymization Manager** leverages two core libraries to anonymize data by 
 </tr>
 </table>
 
-### 🐍 Python Infrastructure
+### Python Infrastructure
 The manager leverages a modern Python stack for performance and reliability:
 * **Pydantic**: Data validation and settings management.
 * **Pandas**: High-performance data structures and analysis.
@@ -89,7 +89,7 @@ The manager leverages a modern Python stack for performance and reliability:
 </table>
 </div>
 
-## 🇪🇺 Funding
+## Funding
 This project has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement [**No.101168490**](https://cordis.europa.eu/project/id/101168490). The European Commision authority managing RECITALS project is the European Cybersecurity Competence Center. 
 <div align="center">
 <img src="assets/eu_funded_en.png" width="200" alt="European Union Flag">
