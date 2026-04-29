@@ -48,7 +48,7 @@ The manager leverages a modern Python stack for performance and reliability:
 * **JPype**: Integration bridge between Python and the ARX Java backend.
 * **Pytest**: Automated testing and quality assurance.
 
-## 🚀 Installation
+## 📩 Installation
 
 1. Install [uv](https://docs.astral.sh/uv/) package/project manager
 
