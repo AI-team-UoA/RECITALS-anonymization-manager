@@ -89,7 +89,7 @@ The manager leverages a modern Python stack for performance and reliability:
 </table>
 </div>
 
-## Funding
+## 🇪🇺 Funding
 This project has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement [**No.101168490**](https://cordis.europa.eu/project/id/101168490). The European Commision authority managing RECITALS project is the European Cybersecurity Competence Center. 
 <div align="center">
 <img src="assets/eu_funded_en.png" width="200" alt="European Union Flag">
