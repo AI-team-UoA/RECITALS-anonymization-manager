@@ -7,7 +7,7 @@
     Privacy-preserving data anonymization toolkit for research and analysis
 </p>
 
-## 🛡️ Overview
+## Overview
 RECITALS Anonymization Manager is a privacy-preserving data anonymization toolkit that supports key techniques such as k-anonymity, l-diversity and t-closeness. It enables users to protect sensitive information in datasets while maintaining data utility.
 
 The toolkit is designed to simplify the anonymization process by providing reusable templates, allowing users to easily apply privacy transformations without manually configuring complex rules. This makes it suitable for researchers and developers who need fast, consistent, and reliable data anonymization workflows.
@@ -17,7 +17,7 @@ The toolkit is designed to simplify the anonymization process by providing reusa
 - **t-closeness**: Strengthens privacy further by requiring that the distribution of sensitive attributes in each group is within a threshold *t* of the overall dataset distribution.
 ### Functionalities
 
-## ⚙️ Dependencies
+## Dependencies
 The **Anonymization Manager** leverages two core libraries to anonymize data by applying privacy preserving techniques.
 
 ### Core Libraries
@@ -49,7 +49,7 @@ The manager leverages a modern Python stack for performance and reliability:
 * **JPype**: Integration bridge between Python and the ARX Java backend.
 * **Pytest**: Automated testing and quality assurance.
 
-## 📩 Installation
+## Installation
 
 1. Install [uv](https://docs.astral.sh/uv/) package/project manager
 
@@ -58,7 +58,7 @@ The manager leverages a modern Python stack for performance and reliability:
     ```
     uv sync --all-extras --group dev
     ```
-## 📚 Examples & Testing
+## Examples & Testing
 ### Testing
 We use **pytest** to ensure correctness of the **Anonymization Manager**.
 
@@ -75,7 +75,7 @@ To execute an example script, use the following command:
 # Execute the my_script example with uv
 uv run examples/my_script.py
 ```
-## 👥 Contributors
+## Contributors
 <div align=center>
 <table>
     <tr>
@@ -104,7 +104,7 @@ uv run examples/my_script.py
 </table>
 </div>
 
-## 🇪🇺 Funding
+## Funding
 This project has received funding from the European Union’s Horizon Europe research and innovation programme under grant agreement [**No.101168490**](https://cordis.europa.eu/project/id/101168490). The European Commision authority managing RECITALS project is the European Cybersecurity Competence Center. 
 <div align="center">
 <img src="assets/eu_funded_en.png" width="200" alt="European Union Flag">
