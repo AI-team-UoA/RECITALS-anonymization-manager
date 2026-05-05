@@ -5,11 +5,13 @@ theme:
   logo: assets/logo_transparent.png
   favicon: assets/logo_transparent.png
   palette:
-    primary: indigo
-    accent: indigo
+    - scheme: default
+      primary: teal
+      accent: blue
   features:
     - navigation.tabs
     - content.code.copy
+    - navigation.tracking
 
 nav:
   - Home: index.md
@@ -27,3 +29,13 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [.]
+          options:
+            show_root_heading: true
+            show_source: true
+            inherited_members: true

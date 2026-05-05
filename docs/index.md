@@ -1,4 +1,5 @@
 ## Overview
+---
 RECITALS Anonymization Manager is a privacy-preserving data anonymization toolkit that supports key techniques such as k-anonymity, l-diversity and t-closeness. It enables users to protect sensitive information in datasets while maintaining data utility.
 
 The toolkit is designed to simplify the anonymization process by providing reusable templates, allowing users to easily apply privacy transformations without manually configuring complex rules. This makes it suitable for researchers and developers who need fast, consistent, and reliable data anonymization workflows.

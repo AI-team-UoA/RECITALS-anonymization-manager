@@ -1,6 +1,8 @@
 # Literature
+---
 This page provides the foundational research that underpins the privacy models provided by the RECITALS Anonymization Manager.
 ## Publications
+---
 ### k-anonymity
 > **Sweeney, L. (2002)** *k-anonymity: A model for protecting privacy.*
 > [[DOI: 10.1142/S0218488502001648](https://doi.org/10.1142/S0218488502001648)]

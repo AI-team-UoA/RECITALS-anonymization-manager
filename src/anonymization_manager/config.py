@@ -56,7 +56,7 @@ class AnonymizationConfig(BaseModel):
 
         quasi_identifiers (list[str], optional):
             List of quasi-identifying attributes requiring generalization
-            (e.g., age, zipcode, occupation)
+            (e.g., age, zipcode, occupation).
 
         sensitive_attributes (list[str], optional):
             Attributes considered sensitive (e.g., disease, salary)
@@ -81,11 +81,11 @@ class AnonymizationConfig(BaseModel):
             Must be a float in [0,1].
 
         suppression_limit (float, optional):
-            Maximum percentage of suppressed rows allowed (0-100%).
+            Maximum percentage of suppressed rows allowed (0-100%). Must be a float in [0,1].
 
         backend (str, optional):
             Anonymization backend to use, either 'arx' or 'anjana'.
-            Defaults to 'arx'
+            Defaults to 'arx'.
 
         quality_metric (dict[Any], optional):
             A dictionary holding the information related to the quality metric. For
@@ -120,7 +120,7 @@ class AnonymizationConfig(BaseModel):
         return cls(**attributes)
     
     @model_validator(mode="after")
-    def validate_attributes(self) -> "AnonymizationConfig":
+    def _validate_attributes(self) -> "AnonymizationConfig":
         """
         Validates all the attribute lists.
 
@@ -148,7 +148,7 @@ class AnonymizationConfig(BaseModel):
 
     @field_validator("data")
     @classmethod
-    def validate_dataset(cls, path: str) -> str:
+    def _validate_dataset(cls, path: str) -> str:
         """
         Validates the dataset path.
 
@@ -168,7 +168,7 @@ class AnonymizationConfig(BaseModel):
         return path
     
     @model_validator(mode="after")
-    def validate_hierarchies(self) -> "AnonymizationConfig":
+    def _validate_hierarchies(self) -> "AnonymizationConfig":
         """
         Validates the hierarchies provided for the quasi-identifiers.
 
@@ -197,7 +197,7 @@ class AnonymizationConfig(BaseModel):
         return self
 
     @model_validator(mode="after")
-    def validate_privacy_models(self) -> "AnonymizationConfig":
+    def _validate_privacy_models(self) -> "AnonymizationConfig":
         """Validates the privacy models.
 
         If sensitive attributes are present, requires that either:
@@ -215,7 +215,7 @@ class AnonymizationConfig(BaseModel):
         return self
     
     @model_validator(mode="after")
-    def validate_quality_metric(self) -> "AnonymizationConfig":
+    def _validate_quality_metric(self) -> "AnonymizationConfig":
         """
             Validates the quality metric.
 
