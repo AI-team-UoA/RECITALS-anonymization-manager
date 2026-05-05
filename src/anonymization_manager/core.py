@@ -34,6 +34,16 @@ class AnonymizationManager:
     """
 
     def anonymize(config: AnonymizationConfig) -> AnonymizedData:
+        """
+        Anonymizes the dataset using the anonymization config.
+        
+        Args: 
+            config (AnonymizationConfig):
+                The configuration the anonymization manager must respect.
+
+        Raises:
+            None: Will fix it later.  
+        """
         if config.backend == None or config.backend == "arx":
             return AnonymizedData(ARXAnonymizer.anonymize(config))
         elif config.backend == "anjana":

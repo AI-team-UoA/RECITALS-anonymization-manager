@@ -1,5 +1,7 @@
 # Guide
+---
 ## Attribute Classification
+---
 When using the RECITALS Anonymization Manager, you must classify every column in your dataset into one of four categories. This classification dictates how the privacy models *(k,l,t)* treat the data.
 
 ### Attribute Types
@@ -11,7 +13,6 @@ When using the RECITALS Anonymization Manager, you must classify every column in
 | **Insensitive** | General info with no privacy risk  | **Ignored** |
 
 ### Example
-
 This example shows how you can define the attribute types for each column of the dataset.
 ```python
 config = AnonymizationConfig(
@@ -35,6 +36,7 @@ config = AnonymizationConfig(
 ```
 
 ## Hierarchies
+---
 In the RECITALS Anonymization Manager, hierarchies are the most important part of the generalization process. They dictate how to transform specific data into broader categories (e.g. turning "25" into "20-30" or "Greece" into "Europe").
 
 These are provided as `.csv` files where each column represents a level of abstraction.
@@ -79,7 +81,7 @@ To use hierarchies, simply map each column name to the appropriate hierarchy fil
     )
 ```
 ## Privacy Models
-
+---
 ### Using k-anonymity
 To use *k*-anonymity, specify the *k* threshold and provide hierarchies for all quasi-identifiers. This ensures that each record is indistinguishable from at least *k*-1 records.
 
@@ -242,6 +244,7 @@ if __name__ == "__main__":
     print(result.get_anonymized_data_as_dataframe())
 ```
 ## Suppression
+---
 Sometimes, a dataset might contain outliers that make anonymization difficult without aggressively generalizing attributes. 
 By using suppression, you effectively allow the exclusion of a small percentage of records to maintain data usability.
 !!! tip "Suppression Limit"
@@ -282,4 +285,123 @@ if __name__ == "__main__":
 
     result = AnonymizationManager.anonymize(config)
     dataframe = print(result.get_anonymized_data_as_dataframe())
+```
+## ARX vs Anjana
+---
+The RECITALS Anonymization Manager is designed to be backend agnostic, supporting two primary engines **ARX** and **Anjana**. While both serve as the "backbone" for the anonymization process, they offer different advantages depending on your project's needs.
+### Comparison
+| Feature | **ARX** | **Anjana**|
+|:---|:---|:---|
+| **Implementation** | Java | Python |
+| **Best For** | Production & Research | Prototyping & Simple Tasks |
+| **Performance** | High (Super Optimized) | Moderate (Python Native) |
+| **Environment** | Requires JPype | No Other Dependencies |
+
+**Use ARX when:**
+
+* You require access to **advanced functionalities**, e.g. fine-grained quality metrics mentioned later in this guide.
+* You are dealing with large datasets.
+* You need to satisfy complex privacy requirements.
+
+**Use Anjana when:**
+
+* You prefer a **native python** approach.
+* Your task is relatively simple.
+## Advanced Optimization
+---
+### Weighted Attributes
+When using the **ARX** backend, you can influence how the anonymization algorithm chooses which attributes to generalize. By assigning **weights**, you tell the engine which columns are more important to keep in their original form.
+
+**Why use Weights?**
+
+* **Low Weight (e.g. 0.1)** tells the engine it is "cheap" to generalize this attribute. It will be transformed first to satisfy privacy requirements.
+* **High Weight (e.g., 2.0)** tells the engine this attribute is valuable. The algorithm will try harder to keep this data specific and only generalize it as a last resort.
+```python
+from anonymization_manager import *
+
+if __name__ == "__main__":
+    config = AnonymizationConfig(
+        data="examples/arx_example/data/adult.csv",
+        identifiers=["education-num"],
+        quasi_identifiers=[
+            "age",
+            "native-country",
+            "race",
+            "sex",
+            "marital-status",
+            "occupation",
+            "workclass",
+            "education",
+        ],
+        attribute_weights = {
+            "age": 0.1,
+            "race":2
+        },
+        sensitive_attributes=["salary-class", "capital-gain", "capital-loss"],
+        insensitive_attributes=["hours-per-week"],
+        hierarchies={
+            "age": "examples/arx_example/hierarchies/age.csv",
+            "native-country": "examples/arx_example/hierarchies/country.csv",
+            "race": "examples/arx_example/hierarchies/race.csv",
+            "sex": "examples/arx_example/hierarchies/sex.csv",
+            "marital-status": "examples/arx_example/hierarchies/marital.csv",
+            "occupation": "examples/arx_example/hierarchies/occupation.csv",
+            "workclass": "examples/arx_example/hierarchies/workclass.csv",
+            "education": "examples/arx_example/hierarchies/education.csv",
+        },
+        k=4,
+        l=2,
+        backend="arx",
+    )
+
+    result = AnonymizationManager.anonymize(config)
+    print(result.get_anonymized_data_as_dataframe())
+```
+### Quality Metrics
+Anonymization is a trade-off between **privacy** and **utility**. By defining a `quality_metric`, you can guide the **ARX** engine to optimize the output for a specific type of data utility.
+
+When configuring advanced metrics, keep the following rules in mind to ensure compatibility with the underlying **ARX** engine:
+
+* **Parameter Order**: Parameters in your configuration must follow the exact order and structure defined in the official [**ARX** documentation](https://arx.deidentifier.org/wp-content/uploads/javadoc/current/dev/index.html).
+
+* **Aggregate Functions**: Any aggregate functions must be provided as **ALL CAPS** string .e.g. "SUM", "MEAN", "MAX".
+
+In the following example, we use the **Discernability** metric.
+```python
+from anonymization_manager import *
+
+if __name__ == "__main__":
+    config = AnonymizationConfig(
+        data="examples/arx_example/data/adult.csv",
+        identifiers=["education-num"],
+        quasi_identifiers=[
+            "age",
+            "native-country",
+            "race",
+            "sex",
+            "marital-status",
+            "occupation",
+            "workclass",
+            "education",
+        ],
+        sensitive_attributes=["salary-class", "capital-gain", "capital-loss"],
+        insensitive_attributes=["hours-per-week"],
+        hierarchies={
+            "age": "examples/arx_example/hierarchies/age.csv",
+            "native-country": "examples/arx_example/hierarchies/country.csv",
+            "race": "examples/arx_example/hierarchies/race.csv",
+            "sex": "examples/arx_example/hierarchies/sex.csv",
+            "marital-status": "examples/arx_example/hierarchies/marital.csv",
+            "occupation": "examples/arx_example/hierarchies/occupation.csv",
+            "workclass": "examples/arx_example/hierarchies/workclass.csv",
+            "education": "examples/arx_example/hierarchies/education.csv",
+        },
+        k=4,
+        l=2,
+        quality_metric={"name":"discernability"},
+        backend="arx",
+    )
+
+    result = AnonymizationManager.anonymize(config)
+    print("Discernability : ", result.get_discernability_metric())
 ```
