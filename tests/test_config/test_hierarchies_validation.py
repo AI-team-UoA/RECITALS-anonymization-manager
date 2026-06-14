@@ -53,5 +53,6 @@ class TestHierarchies:
             config = AnonymizationConfig(
                 data=PATH, 
                 quasi_identifiers=quasi_identifiers,
-                hierarchies=hierarchies
+                hierarchies=hierarchies,
+                k=2
             )

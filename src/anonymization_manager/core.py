@@ -1,11 +1,3 @@
-"""
-The public-facing API of the Anonymization Manager component, part of the open
-source RECITALS platform.
-"""
-
-import json
-
-import pandas as pd
 from loguru import logger
 
 from anonymization_manager.adapters.anjana.anjana import (
@@ -18,19 +10,41 @@ from anonymization_manager.config import AnonymizationConfig
 
 class AnonymizedData:
     """
-    This is a wrapper class for ARXResult, AnjanaResult.
+    Wrapper around the backend-specific result object.
+
+    Forwards all attribute access to the underlying ARXResult or AnjanaResult
+    instance. This presents a unified interface to the user regardless of which backend produced
+    the result.
     """
 
     def __init__(self, result: ARXResult | AnjanaResult):
+        """
+        Initializes the AnonymizedData wrapper.
+
+        Args:
+            result (ARXResult | AnjanaResult): The backend result object.
+        """
         self._result = result
 
     def __getattr__(self, name):
+        """
+        Forwards attribute access to the wrapped result object.
+
+        Args:
+            name (str): The name of the attribute or method.
+        Returns:
+            Any: The corresponding attribute or method from the underlying
+            object.
+        """
         return getattr(self._result, name)
 
 
 class AnonymizationManager:
     """
-    This is the class representing the anonymization manager.
+    Entry point for the anonymization workflow.
+
+    Directs execution to the appropriate backend adapter, wraps
+    the result, and returns it to the caller.
     """
 
     def anonymize(config: AnonymizationConfig) -> AnonymizedData:
@@ -41,8 +55,11 @@ class AnonymizationManager:
             config (AnonymizationConfig):
                 The configuration the anonymization manager must respect.
 
+        Returns:
+            AnonymizedData: A unified wrapper around the backend-specific result object.
+        
         Raises:
-            None: Will fix it later.  
+            Exception: If the underlying anonymization engine fails.
         """
         if config.backend == None or config.backend == "arx":
             return AnonymizedData(ARXAnonymizer.anonymize(config))

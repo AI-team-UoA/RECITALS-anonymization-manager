@@ -1,9 +1,7 @@
 import json
 import os
-from dataclasses import dataclass
 from typing import Annotated, Any, Dict, List, Literal, Optional
 
-import pandas as pd
 from pydantic import (
     BaseModel,
     Field,
@@ -19,8 +17,8 @@ MetricType = Literal["loss",
                      "entropy", 
                      "ambiguity", 
                      "normalized-entropy", 
-                     "precomputed-entropy"
-                     "publisher-payout"
+                     "precomputed-entropy",
+                     "publisher-payout",
                      "static",
                      "precomputed-loss",
                      "kldivergence"
@@ -109,6 +107,15 @@ class AnonymizationConfig(BaseModel):
 
     @classmethod
     def from_json(cls, json_path: str):
+        """
+        Constructs an AnonymizationConfig from a JSON file.
+
+        Args:
+            json_path (str): Path to the JSON configuration file.
+
+        Returns:
+            AnonymizationConfig: The constructed and validated configuration object.
+        """
         with open(json_path, "r") as file:
             config_json = json.load(file)
 
@@ -153,11 +160,9 @@ class AnonymizationConfig(BaseModel):
         Validates the dataset path.
 
         Checks:
-            - Dataset path is a string
             - Dataset file exists at the given path
 
         Raises:
-            TypeError: If the dataset path is not a string.
             FileNotFoundError: If the file does not exist at the given path.
         """
         # --- Checks that the dataset file exists.
@@ -173,7 +178,7 @@ class AnonymizationConfig(BaseModel):
         Validates the hierarchies provided for the quasi-identifiers.
 
         Checks:
-            - Each quasi-identifier exists in 'quasi_identifiers'
+            - Each quasi-identifier exists in `quasi_identifiers`
             - Each hierarchy file exists at the specified path
 
         Raises:
@@ -197,36 +202,70 @@ class AnonymizationConfig(BaseModel):
         return self
 
     @model_validator(mode="after")
-    def _validate_privacy_models(self) -> "AnonymizationConfig":
-        """Validates the privacy models.
+    def _validate_sensitive_attributes_and_l_t(self) -> "AnonymizationConfig":
+        """
+        Validates the relationship between sensitive attribute and l-diversity/t-closeness.
 
-        If sensitive attributes are present, requires that either:
-            - l-diversity ('l') is specified, or
-            - t-closeness ('t') is specified
+        Checks:
+            - If `sensitive_attributes` is non-empty, `l` or `t` must be specified.
+            - If `l` or `t` is specified, `sensitive_attributes` must not be empty.
 
         Raises:
-            ValueError: If sensitive attributes exist but neither 'l' nor 't' is provided.
+            ValueError: If sensitive attributes exist without `l` or `t`, or if
+            `l`/`t` is specified without sensitive attributes.
         """
-        if self.sensitive_attributes and self.t is None and self.l is None:
+        has_sensitive = bool(self.sensitive_attributes)
+        has_l_t = self.l is not None or self.t is not None
+
+        if has_sensitive and not has_l_t:
             raise ValueError(
-                f"sensitive-attributes={self.sensitive_attributes}, l-Diversity or t-Closeness must be used when anonymizing with sensitive attributes!"
+                "`l` or `t` must be specified when anonymizing with sensitive attributes!"
+            )
+        
+        if not has_sensitive and has_l_t:
+            raise ValueError(
+                "If `l` or `t` is specified, `sensitive_attributes` must not be empty!"
             )
         
         return self
     
     @model_validator(mode="after")
-    def _validate_quality_metric(self) -> "AnonymizationConfig":
+    def _validate_privacy_model_presence(self) -> "AnonymizationConfig":
         """
-            Validates the quality metric.
+        Validates that at least one privacy model is specified.
 
-            Checks that arx is used with the quality metric parameter
+        Checks:
+            - At least one of `k`, `l`, or `t` is provided.
+
+        Raises:
+            ValueError: If `k`, `l`, and `t` are all set to None.
+        """
+        if self.k is None and self.l is None and self.t is None:
+            raise ValueError(
+                "At least one of `k`, `l` or `t` must be specified!"
+            )
+        
+        return self
+    
+    @model_validator(mode="after")
+    def _validate_backend_compatibility(self) -> "AnonymizationConfig":
+        """
+            Validates that ARX-only parameters are not used with the Anjana backend.
+
+            Checks that `quality_metric` and `attribute_weights` are only used when
+            the ARX backend is selected.
 
             Raises:
-                ValueError: If anjana is used with the quality metric parameter.
+                ValueError: If anjana is used with the `quality_metric` or `attribute_weights`.
         """
-        if self.backend == "anjana" and self.quality_metric is not None:
-            raise ValueError(
-                "Anjana does not support quality metric as a parameter!"
-            )
+        if self.backend == "anjana":
+            if self.quality_metric is not None:
+                raise ValueError(
+                    "Anjana does not support `quality_metric` as a parameter!"
+                )
+            if self.attribute_weights is not None:
+                raise ValueError(
+                    "Anjana does not support `attribute_weights` as a parameter!"
+                )
         
         return self

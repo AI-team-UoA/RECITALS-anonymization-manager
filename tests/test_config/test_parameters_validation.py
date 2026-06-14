@@ -5,7 +5,6 @@ class TestParameters:
     @pytest.mark.parametrize(
         "k,error",
         [
-            (None, None),  # Default
             (1, None),  # Smallest Valid
             (10, None),  # Typical Valid
             (50, None),  # Larger Valid
@@ -23,7 +22,6 @@ class TestParameters:
     @pytest.mark.parametrize(
         "l,error",
         [
-            (None, None),  # Default
             (1, None),  # Smallest Valid
             (10, None),  # Typical Valid
             (50, None),  # Larger Valid
@@ -36,12 +34,13 @@ class TestParameters:
     )
     def test_l_values(self, l, error):
         with pytest.raises(error) if error else contextlib.nullcontext():
-            config = AnonymizationConfig(data=PATH, l=l)
+            config = AnonymizationConfig(data=PATH, 
+                                         sensitive_attributes=["foo"],
+                                         l=l)
 
     @pytest.mark.parametrize(
         "t,error",
         [
-            (None, None),  # Default
             (0.0, None),  # Smallest Valid
             (1.0, None),  # Largest Valid
             (0.55, None),  # Typical Valid
@@ -53,7 +52,9 @@ class TestParameters:
     )
     def test_t_values(self, t, error):
         with pytest.raises(error) if error else contextlib.nullcontext():
-            config = AnonymizationConfig(data=PATH, t=t)
+            config = AnonymizationConfig(data=PATH, 
+                                         sensitive_attributes=["foo"],
+                                         t=t)
 
     @pytest.mark.parametrize(
         "suppression_limit,error",
@@ -75,7 +76,8 @@ class TestParameters:
     def test_suppression_values(self, suppression_limit, error):
         with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
-                data=PATH, suppression_limit=suppression_limit
+                data=PATH, suppression_limit=suppression_limit,
+                k=2
             )
 
     @pytest.mark.parametrize(
@@ -91,7 +93,9 @@ class TestParameters:
     def test_backend_values(self, backend, error):
         with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
-                data=PATH, backend=backend
+                data=PATH, 
+                backend=backend,
+                k=2
             )
 
     @pytest.mark.parametrize(
@@ -108,6 +112,7 @@ class TestParameters:
         with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
                 data=PATH, 
+                k=2,
                 attribute_weights=attribute_weights, 
                 backend="arx"
             )
@@ -131,6 +136,7 @@ class TestParameters:
         with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
                 data=PATH, 
+                k=2,
                 quality_metric={"name":metric},
                 backend="arx"
             )
@@ -149,6 +155,7 @@ class TestParameters:
         with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(
                 data=PATH, 
+                k=2,
                 quality_metric={"name":metric, "params":{"gs_factor":gs_factor}},
                 backend="arx"
             )
