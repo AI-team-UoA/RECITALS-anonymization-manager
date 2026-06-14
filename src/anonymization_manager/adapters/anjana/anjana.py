@@ -105,7 +105,7 @@ class AnjanaResult:
         ...
 
     # TODO
-    def get_discernibility_metric(self) -> float:
+    def get_discernability_metric(self) -> float:
         """
         Returns the discernibility metric for the anonymized dataset.
         """

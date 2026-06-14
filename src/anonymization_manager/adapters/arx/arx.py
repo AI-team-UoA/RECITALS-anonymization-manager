@@ -97,9 +97,9 @@ class ARXResult:
             .toArray()
         )
         transformations = {
-            quasi_identifier: self.arx_result.getOutput().getGeneralization(
+            str(quasi_identifier): int(self.arx_result.getOutput().getGeneralization(
                 quasi_identifier
-            )
+            ))
             for quasi_identifier in quasi_identifiers
         }
         return transformations
@@ -111,7 +111,7 @@ class ARXResult:
         Returns:
             int: Time in milliseconds.
         """
-        return self.arx_result.getTime()
+        return int(self.arx_result.getTime())
 
     def store_as_csv(self, output_path: str) -> None:
         """
@@ -130,7 +130,7 @@ class ARXResult:
         Returns:
             float: Average equivalence class size.
         """
-        return (
+        return float(
             self.arx_result.getOutput()
             .getStatistics()
             .getEquivalenceClassStatistics()
@@ -144,7 +144,7 @@ class ARXResult:
         Returns:
             int: Number of suppressed records.
         """
-        return (
+        return int(
             self.arx_result.getOutput()
             .getStatistics()
             .getEquivalenceClassStatistics()
@@ -158,7 +158,7 @@ class ARXResult:
         Returns:
             int: Maximum equivalence class size.
         """
-        return (
+        return int(
             self.arx_result.getOutput()
             .getStatistics()
             .getEquivalenceClassStatistics()
@@ -172,7 +172,7 @@ class ARXResult:
         Returns:
             int: Minimum equivalence class size.
         """
-        return (
+        return int(
             self.arx_result.getOutput()
             .getStatistics()
             .getEquivalenceClassStatistics()
@@ -186,7 +186,7 @@ class ARXResult:
         Returns:
             int: Number of equivalence classes.
         """
-        return (
+        return int(
             self.arx_result.getOutput()
             .getStatistics()
             .getEquivalenceClassStatistics()
@@ -200,7 +200,7 @@ class ARXResult:
         Returns:
             float: discernability metric value.
         """
-        return (
+        return float(
             self.arx_result.getOutput()
             .getStatistics()
             .getQualityStatistics()
@@ -218,7 +218,7 @@ class ARXResult:
         Returns:
             float: Average class size metric value.
         """
-        return (
+        return float(
             self.arx_result.getOutput()
             .getStatistics()
             .getQualityStatistics()
@@ -236,7 +236,7 @@ class ARXResult:
         Returns:
             float: Granularity metric value.
         """
-        return (
+        return float(
             self.arx_result.getOutput()
             .getStatistics()
             .getQualityStatistics()
@@ -251,7 +251,7 @@ class ARXResult:
         Returns:
             float: SSESST metric value.
         """
-        return (
+        return float(
             self.arx_result.getOutput()
             .getStatistics()
             .getQualityStatistics()
@@ -266,7 +266,7 @@ class ARXResult:
         Returns:
             float: Record-level squared error value.
         """
-        return (
+        return float(
             self.arx_result.getOutput()
             .getStatistics()
             .getQualityStatistics()
@@ -286,7 +286,7 @@ class ARXResult:
         Returns:
             float: Attribute-level squared error value.
         """
-        return (
+        return float(
             self.arx_result.getOutput()
             .getStatistics()
             .getQualityStatistics()
@@ -304,7 +304,7 @@ class ARXResult:
         Returns:
             float: Non-uniform entropy value.
         """
-        return (
+        return float(
             self.arx_result.getOutput()
             .getStatistics()
             .getQualityStatistics()
@@ -322,7 +322,7 @@ class ARXResult:
         Returns:
             float: Generalization intensity value.
         """
-        return (
+        return float(
             self.arx_result.getOutput()
             .getStatistics()
             .getQualityStatistics()
@@ -337,7 +337,7 @@ class ARXResult:
         Returns:
             float: Ambiguity metric value.
         """
-        return (
+        return float(
             self.arx_result.getOutput()
             .getStatistics()
             .getQualityStatistics()

@@ -12,4 +12,6 @@ class TestDataset:
     )
     def test_dataset(self, dataset, error) -> None:
         with pytest.raises(error) if error else contextlib.nullcontext():
-            config = AnonymizationConfig(data=dataset)
+            config = AnonymizationConfig(data=dataset,
+                                         k=2
+                                         )

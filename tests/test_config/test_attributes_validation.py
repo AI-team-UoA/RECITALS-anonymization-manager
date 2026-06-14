@@ -22,7 +22,8 @@ class TestAttributes:
     def test_identifier_values(self, identifiers, error) -> None:
         with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(data=PATH, 
-                                         identifiers=identifiers
+                                         identifiers=identifiers,
+                                         k=2
                                          )
 
     @pytest.mark.parametrize(
@@ -45,13 +46,14 @@ class TestAttributes:
     def test_quasi_identifier_values(self, qidentifiers, error) -> None:
         with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(data=PATH, 
-                                         quasi_identifiers=qidentifiers
+                                         quasi_identifiers=qidentifiers,
+                                         k=2
                                          )
 
     @pytest.mark.parametrize(
         "sensitives,error",
         [
-            ([], False),  # Default
+            ([], ValidationError),  # Default
             (["Disease"], False),  # One Sensitive
             (
                 [
@@ -89,5 +91,6 @@ class TestAttributes:
     def test_insensitive_values(self, insensitives, error) -> None:
         with pytest.raises(error) if error else contextlib.nullcontext():
             config = AnonymizationConfig(data=PATH, 
-                                         insensitive_attributes=insensitives, 
+                                         insensitive_attributes=insensitives,
+                                         k=2 
                                          )
