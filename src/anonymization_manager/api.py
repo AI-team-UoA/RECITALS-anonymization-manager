@@ -2,11 +2,12 @@
 REST API for the AnonymizationManager.
 """
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
-from .core import AnonymizationManager
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+
 from .config import AnonymizationConfig
+from .core import AnonymizationManager
 
 app = FastAPI()
 

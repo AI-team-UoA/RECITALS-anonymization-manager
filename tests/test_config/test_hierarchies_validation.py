@@ -23,28 +23,28 @@ class TestHierarchies:
                     "age": "age.csv"  # Hierarchy File Does Not Exist
                 },
                 ["age"],
-                FileNotFoundError,
+                ConfigurationError,
             ),
             (
                 {
                     "age": AGE_PATH  # Hierarchy Quasi Identifier Not Defined
                 },
                 [],
-                ValueError,
+                ConfigurationError,
             ),
             (
                 {
                     123: AGE_PATH  # Quasi Identifier Not A String
                 },
                 ["age"],
-                ValidationError,
+                ConfigurationError,
             ),
             (
                 {
                     "age": 123  # Hierarchy Path Not A String
                 },
                 ["age"],
-                ValidationError,
+                ConfigurationError,
             ),
         ],
     )

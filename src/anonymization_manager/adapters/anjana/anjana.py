@@ -8,6 +8,7 @@ import pandas as pd
 from anjana.anonymity import k_anonymity, l_diversity, t_closeness, utils
 
 from anonymization_manager.config import AnonymizationConfig
+from anonymization_manager.exceptions import BackendError
 
 
 class AnjanaResult:
@@ -188,6 +189,10 @@ class AnjanaAnonymizer:
 
         Returns:
             AnjanaResult: An instance of the wrapper class AnjanaResult.
+        
+        Raises:
+            BackendError:
+                If anjana engine fails during anonymization.
         """
         # TODO add function that handles multiple file-types (common among adapters)
         ## TODO add filetype check (do not assume csv)
@@ -221,42 +226,48 @@ class AnjanaAnonymizer:
         ##### Start of anonymization pipeline #####
         start = time.perf_counter()
 
-        # k-anonymity
-        if k is None:
-            k = 1
-        elif k > 1:
-            data = k_anonymity(
-                data, ident, quasi_ident, k, supp_level, hierarchies
-            )
+        try:
+            # k-anonymity
+            if k is None:
+                k = 1
+            elif k > 1:
+                data = k_anonymity(
+                    data, ident, quasi_ident, k, supp_level, hierarchies
+                )
 
-        # l-diversity
-        if l is not None:
-            l = int(l)
-            data = l_diversity(
-                data,
-                ident,
-                quasi_ident,
-                sens_att,
-                k,
-                l,
-                supp_level,
-                hierarchies,
-            )
+            # l-diversity
+            if l is not None:
+                l = int(l)
+                data = l_diversity(
+                    data,
+                    ident,
+                    quasi_ident,
+                    sens_att,
+                    k,
+                    l,
+                    supp_level,
+                    hierarchies,
+                )
 
-        # t-closeness
-        if t is not None:
-            data = t_closeness(
-                data,
-                ident,
-                quasi_ident,
-                sens_att,
-                k,
-                t,
-                supp_level,
-                hierarchies,
-            )
+            # t-closeness
+            if t is not None:
+                data = t_closeness(
+                    data,
+                    ident,
+                    quasi_ident,
+                    sens_att,
+                    k,
+                    t,
+                    supp_level,
+                    hierarchies,
+                )
+        except Exception as e:
+            raise BackendError(
+                f"Anjana failed during anonymization: {e}", backend="anjana"
+            ) from e
 
         end = time.perf_counter()
         elapsed_ms = int((end - start) * 1000)
 
         return AnjanaResult(data, raw_data, config, elapsed_ms)
+

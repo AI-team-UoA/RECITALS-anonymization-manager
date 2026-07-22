@@ -5,9 +5,12 @@ from typing import Annotated, Any, Dict, List, Literal, Optional
 from pydantic import (
     BaseModel,
     Field,
+    ValidationError,
     field_validator,
     model_validator,
 )
+
+from anonymization_manager.exceptions import ConfigurationError
 
 MetricType = Literal["loss", 
                      "aecs", 
@@ -105,6 +108,12 @@ class AnonymizationConfig(BaseModel):
     backend: Optional[BackendType] = "arx"
     attribute_weights: Optional[Dict[str, Annotated[float, Field(ge=0)]]] = None
 
+    def __init__(self, **data: Any) -> None:
+        try:
+            super().__init__(**data)
+        except ValidationError as e:
+            raise ConfigurationError(str(e)) from e
+
     @classmethod
     def from_json(cls, json_path: str):
         """
@@ -144,11 +153,14 @@ class AnonymizationConfig(BaseModel):
             "sensitive_attributes": self.sensitive_attributes,
             "insensitive_attributes": self.insensitive_attributes,
         }
+
         # --- Checks that the attribute names do not overlap.
         all_attrs = sum(attr_list.values(), [])
-        if len(all_attrs) != len(set(all_attrs)):
+        duplicates = {a for a in all_attrs if all_attrs.count(a) > 1}
+        if duplicates:
             raise ValueError(
-                f"Attribute names must be unique across all types!"
+                f"Attribute names must be unique across all types! "
+                f"Duplicates: {sorted(duplicates)}"
             )
         
         return self
@@ -163,11 +175,11 @@ class AnonymizationConfig(BaseModel):
             - Dataset file exists at the given path
 
         Raises:
-            FileNotFoundError: If the file does not exist at the given path.
+            ValueError: If the file does not exist at the given path.
         """
         # --- Checks that the dataset file exists.
         if not os.path.exists(path):
-            raise FileNotFoundError(
+            raise ValueError(
                 f"The dataset could not be located at {path!r}!"
             )
         return path
@@ -182,8 +194,9 @@ class AnonymizationConfig(BaseModel):
             - Each hierarchy file exists at the specified path
 
         Raises:
-            ValueError: If a key is not a quasi-identifier.
-            FileNotFoundError: If any hierarchy file cannot be located at the given path.
+            ValueError:
+                If a key is not a quasi-identifier, or if any hierarchy
+                file cannot be located at the given path.
         """
         # --- Checks if the hierarchies are valid ---
         for qid, hierarchy_path in self.hierarchies.items():
@@ -195,7 +208,7 @@ class AnonymizationConfig(BaseModel):
 
             # --- Checks that the hierarchy path exists.
             if not os.path.exists(hierarchy_path):
-                raise FileNotFoundError(
+                raise ValueError(
                     f"Cannot create hierarchy for {qid!r}, the path {hierarchy_path!r} could not be located!"
                 )
             
@@ -250,13 +263,13 @@ class AnonymizationConfig(BaseModel):
     @model_validator(mode="after")
     def _validate_backend_compatibility(self) -> "AnonymizationConfig":
         """
-            Validates that ARX-only parameters are not used with the Anjana backend.
+        Validates that ARX-only parameters are not used with the Anjana backend.
 
-            Checks that `quality_metric` and `attribute_weights` are only used when
-            the ARX backend is selected.
+        Checks that `quality_metric` and `attribute_weights` are only used when
+        the ARX backend is selected.
 
-            Raises:
-                ValueError: If anjana is used with the `quality_metric` or `attribute_weights`.
+        Raises:
+            ValueError: If anjana is used with the `quality_metric` or `attribute_weights`.
         """
         if self.backend == "anjana":
             if self.quality_metric is not None:
@@ -269,3 +282,21 @@ class AnonymizationConfig(BaseModel):
                 )
         
         return self
+
+    def uses_arx(self) -> bool:
+        """
+        Returns whether the ARX backend is selected.
+
+        Returns:
+            bool: True if the configuration uses ARX.
+        """
+        return self.backend is None or self.backend == "arx"
+
+    def uses_anjana(self) -> bool:
+        """
+        Returns whether the Anjana backend is selected.
+
+        Returns:
+            bool: True if the configuration uses Anjana.
+        """
+        return self.backend == "anjana"

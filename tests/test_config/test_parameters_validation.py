@@ -8,11 +8,11 @@ class TestParameters:
             (1, None),  # Smallest Valid
             (10, None),  # Typical Valid
             (50, None),  # Larger Valid
-            (-1, ValidationError),  # Negative
-            (0, ValidationError),  # Zero
-            (0.5, ValidationError),  # Float
+            (-1, ConfigurationError),  # Negative
+            (0, ConfigurationError),  # Zero
+            (0.5, ConfigurationError),  # Float
             ("10", None),  # String
-            ([], ValidationError),  # List
+            ([], ConfigurationError),  # List
         ],
     )
     def test_k_values(self, k, error):
@@ -25,11 +25,11 @@ class TestParameters:
             (1, None),  # Smallest Valid
             (10, None),  # Typical Valid
             (50, None),  # Larger Valid
-            (-1, ValidationError),  # Negative
-            (0, ValidationError),  # Zero
-            (0.5, ValidationError),  # Float
+            (-1, ConfigurationError),  # Negative
+            (0, ConfigurationError),  # Zero
+            (0.5, ConfigurationError),  # Float
             ("10", None),  # String
-            ([], ValidationError),  # List
+            ([], ConfigurationError),  # List
         ],
     )
     def test_l_values(self, l, error):
@@ -44,10 +44,10 @@ class TestParameters:
             (0.0, None),  # Smallest Valid
             (1.0, None),  # Largest Valid
             (0.55, None),  # Typical Valid
-            (-1, ValidationError),  # Negative
-            (2, ValidationError),  # Integer
+            (-1, ConfigurationError),  # Negative
+            (2, ConfigurationError),  # Integer
             ("0.22", None),  # String
-            ([], ValidationError),  # List
+            ([], ConfigurationError),  # List
         ],
     )
     def test_t_values(self, t, error):
@@ -60,17 +60,17 @@ class TestParameters:
         "suppression_limit,error",
         [
             (None, None),  # Default
-            (10, ValidationError),  # Small Valid
-            (55, ValidationError),  # Typical Valid
-            (88, ValidationError),  # Large Valid
+            (10, ConfigurationError),  # Small Valid
+            (55, ConfigurationError),  # Typical Valid
+            (88, ConfigurationError),  # Large Valid
             (0, None),  # Smallest Valid
             (1, None),  # Largest Valid
-            (100, ValidationError),  # Largest Valid
+            (100, ConfigurationError),  # Largest Valid
             (0.68, None),  # Float
-            (111, ValidationError),  # Too Large
-            (-5, ValidationError),  # Negative
-            ("67", ValidationError),  # String
-            ([], ValidationError),  # List
+            (111, ConfigurationError),  # Too Large
+            (-5, ConfigurationError),  # Negative
+            ("67", ConfigurationError),  # String
+            ([], ConfigurationError),  # List
         ],
     )
     def test_suppression_values(self, suppression_limit, error):
@@ -86,8 +86,8 @@ class TestParameters:
             (None, None),  # None Is Not Accepted
             ("arx", None),  # Arx
             ("anjana", None),  # Anjana
-            ("foo", ValidationError),  # Invalid String
-            ([], ValidationError),  # List
+            ("foo", ConfigurationError),  # Invalid String
+            ([], ConfigurationError),  # List
         ],
     )
     def test_backend_values(self, backend, error):
@@ -101,10 +101,10 @@ class TestParameters:
     @pytest.mark.parametrize(
         "attribute_weights,error",
         [
-            (1, ValidationError),             # Int is not valid
-            ({1,1}, ValidationError),         # Attribute name not a string
-            ({"foo":"bar"}, ValidationError), # Weight not a number
-            ({"foo":-0.5}, ValidationError), # Negative weight not allowed
+            (1, ConfigurationError),             # Int is not valid
+            ({1,1}, ConfigurationError),         # Attribute name not a string
+            ({"foo":"bar"}, ConfigurationError), # Weight not a number
+            ({"foo":-0.5}, ConfigurationError), # Negative weight not allowed
             ({"foo":2, "bar":0.2}, None), # Valid weights
         ],
     )

@@ -1,19 +1,12 @@
 import os
+from typing import Any
 
 import jpype
 import pandas as pd
-from typing import Any
 from jpype import JClass
 
 from anonymization_manager.config import AnonymizationConfig
-
-
-class ARXAnonymizerException(Exception):
-    """
-    This class is responsible for handling ARX related exceptions
-    """
-
-    pass
+from anonymization_manager.exceptions import BackendError, ConfigurationError
 
 
 class ARXResult:
@@ -359,15 +352,22 @@ class ARXAnonymizer:
         Loads the ARX Java library and starts the JVM if not already running.
 
         Raises:
-            FileNotFoundError: If the ARX Jar file is not found.
+            BackendError: If the ARX Jar file is not found.
         """
         libarx = os.path.join(os.path.dirname(__file__), "libarx-3.9.2.jar")
 
         if not os.path.exists(libarx):
-            raise FileNotFoundError(f"Could not locate libarx at {libarx}")
+            raise BackendError(
+                f"Could not locate libarx at {libarx}", backend="arx"
+            )
 
         if not jpype.isJVMStarted():
-            jpype.startJVM(classpath=[libarx])
+            try:
+                jpype.startJVM(classpath=[libarx])
+            except Exception as e:
+                raise BackendError(
+                    f"Failed to start the JVM: {e}", backend="arx"
+                ) from e
 
     @classmethod
     def _define_attribute_types(
@@ -437,6 +437,11 @@ class ARXAnonymizer:
 
         Returns:
             JClass: The ARXConfiguration object ready for the anonymization.
+        
+        Raises:
+            ConfigurationError:
+                If the quality metric is unknown, the aggregate function is unsupported,
+                or the parameters do not match any overload of the metric constructor.
         """
         # Important types.
         KAnonymity = JClass("org.deidentifier.arx.criteria.KAnonymity")
@@ -499,18 +504,20 @@ class ARXAnonymizer:
             # Resolves the metric constructor.
             create_metric = quality_metric_map.get(name)
             if create_metric is None:
-                raise ValueError(
+                raise ConfigurationError(
                     f"Unsupported quality metric '{name}'!, "
-                    f"Valid options are {list(quality_metric_map)}"
+                    f"Valid options are {list(quality_metric_map)}",
+                    backend="arx"
                 )
             
             # Resolves the aggregate function if present.
             if "function" in params:
                 func_name = params["function"]
                 if func_name not in agg_func_map:
-                    raise ValueError(
+                    raise ConfigurationError(
                         f"Unsupported aggregate function '{func_name}'!, "
-                        f"Valid options are {list(agg_func_map)}"
+                        f"Valid options are {list(agg_func_map)}",
+                        backend="arx"
                     )
                 params["function"] = agg_func_map[func_name]
 
@@ -527,9 +534,10 @@ class ARXAnonymizer:
             
             # Checks if a match was found.
             if match is None:
-                raise ValueError(
+                raise ConfigurationError(
                     f"No overload of '{name}' matches the provided parameter types!, "
-                    f"Check the arx documentation. Available overloads are {create_metric.__doc__}."
+                    f"Check the arx documentation. Available overloads are {create_metric.__doc__}.",
+                    backend="arx"
                 )
             
             # Casts the values to JPype to get exact matching. 
@@ -541,11 +549,12 @@ class ARXAnonymizer:
                 ]
                 configuration.setQualityModel(create_metric(*casted_params))
             except Exception as e:
-                raise ValueError(
+                raise ConfigurationError(
                     f"Invalid quality metric configuration for '{name}'!, "
                     f"Parameters {params} are not valid!, "
-                    f"Reason is {type(e).__name__}: {e}"
-                )
+                    f"Reason is {type(e).__name__}: {e}",
+                    backend="arx"
+                ) from e
             
         # Adds attribute weights.
         if config.attribute_weights is not None:
@@ -587,7 +596,13 @@ class ARXAnonymizer:
         """
         ARXAnonymizer = JClass("org.deidentifier.arx.ARXAnonymizer")
         anonymizer = ARXAnonymizer()
-        return anonymizer.anonymize(data, configuration)
+
+        try:
+            return anonymizer.anonymize(data, configuration)
+        except jpype.JException as e:
+            raise BackendError(
+                f"ARX failed during anonymization: {e.message()}", backend="arx"
+            ) from e
 
     @staticmethod
     def _get_metric_signatures(doc: str) -> list[list[str]]:
@@ -667,9 +682,6 @@ class ARXAnonymizer:
                 return False
             
         return True
-            
-            
-            
     
     @classmethod
     def anonymize(cls, config: AnonymizationConfig) -> ARXResult:

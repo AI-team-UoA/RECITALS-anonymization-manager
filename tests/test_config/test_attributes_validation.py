@@ -16,7 +16,7 @@ class TestAttributes:
                 ],
                 False,
             ),
-            ([1], ValidationError),  # Integer Identifier
+            ([1], ConfigurationError),  # Integer Identifier
         ],
     )
     def test_identifier_values(self, identifiers, error) -> None:
@@ -40,7 +40,7 @@ class TestAttributes:
                 ],
                 False,
             ),
-            ([1], ValidationError),  # Integer
+            ([1], ConfigurationError),  # Integer
         ],
     )
     def test_quasi_identifier_values(self, qidentifiers, error) -> None:
@@ -53,7 +53,7 @@ class TestAttributes:
     @pytest.mark.parametrize(
         "sensitives,error",
         [
-            ([], ValidationError),  # Default
+            ([], ConfigurationError),  # Default
             (["Disease"], False),  # One Sensitive
             (
                 [
@@ -63,7 +63,7 @@ class TestAttributes:
                 ],
                 False,
             ),
-            ([1], ValidationError),  # Integer Sensitive
+            ([1], ConfigurationError),  # Integer Sensitive
         ],
     )
     def test_sensitive_values(self, sensitives, error) -> None:
@@ -85,7 +85,7 @@ class TestAttributes:
                 ],
                 False,
             ),
-            ([1], ValidationError),  # Integer Insensitive
+            ([1], ConfigurationError),  # Integer Insensitive
         ],
     )
     def test_insensitive_values(self, insensitives, error) -> None:
