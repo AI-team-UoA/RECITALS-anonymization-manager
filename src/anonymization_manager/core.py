@@ -6,6 +6,7 @@ from anonymization_manager.adapters.anjana.anjana import (
 )
 from anonymization_manager.adapters.arx.arx import ARXAnonymizer, ARXResult
 from anonymization_manager.config import AnonymizationConfig
+from anonymization_manager.exceptions import *
 
 
 class AnonymizedData:
@@ -59,12 +60,10 @@ class AnonymizationManager:
             AnonymizedData: A unified wrapper around the backend-specific result object.
         
         Raises:
-            Exception: If the underlying anonymization engine fails.
+            BackendError:
+                If the underlying anonymization engine fails during execution.
         """
-        if config.backend == None or config.backend == "arx":
+        if config.uses_arx():
             return AnonymizedData(ARXAnonymizer.anonymize(config))
-        elif config.backend == "anjana":
+        if config.uses_anjana():
             return AnonymizedData(AnjanaAnonymizer.anonymize(config))
-        else:
-            logger.warning(f"Unsupported backend: {config.backend}, using ARX")
-            return AnonymizedData(ARXAnonymizer.anonymize(config))
