@@ -5,6 +5,11 @@ import pytest
 from pydantic import ValidationError
 
 from anonymization_manager import *
+from anonymization_manager.exceptions import (
+    AnonymizationError,
+    BackendError,
+    ConfigurationError,
+)
 
 TEST_DIR = Path(__file__).parent
 PATH = str(TEST_DIR / "test_dataset/data/adult.csv")

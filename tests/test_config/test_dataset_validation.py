@@ -6,8 +6,8 @@ class TestDataset:
         "dataset,error",
         [
             (PATH, None),  # Exists.
-            ("dummy", FileNotFoundError),  # Does Not Exists.
-            (123, ValidationError),  # Integer
+            ("dummy", ConfigurationError),  # Does Not Exists.
+            (123, ConfigurationError),  # Integer
         ],
     )
     def test_dataset(self, dataset, error) -> None:
