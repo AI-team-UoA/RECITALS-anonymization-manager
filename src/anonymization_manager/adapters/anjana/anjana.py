@@ -8,7 +8,7 @@ import pandas as pd
 from anjana.anonymity import k_anonymity, l_diversity, t_closeness, utils
 
 from anonymization_manager.config import AnonymizationConfig
-from anonymization_manager.exceptions import BackendError
+from anonymization_manager.exceptions import BackendError, NoSolutionError
 
 
 class AnjanaResult:
@@ -266,6 +266,15 @@ class AnjanaAnonymizer:
                 f"Anjana failed during anonymization: {e}", backend="anjana"
             ) from e
 
+        # Anjana returns an empty dataframe when no solution exists.
+        if data.empty:
+            raise NoSolutionError(
+                "No transformation satisfies the requested privacy models "
+                "within the suppression limit. Try relaxing k, l, or t, "
+                "increasing the suppression limit, or providing deeper hierarchies.",
+                backend="anjana"
+            )
+        
         end = time.perf_counter()
         elapsed_ms = int((end - start) * 1000)
 

@@ -4,6 +4,13 @@ Exception types for the anonymization manager.
 All errors raised derive from the AnonymizationError class.
 """
 
+__all__ = [
+    "AnonymizationError",
+    "ConfigurationError",
+    "BackendError",
+    "NoSolutionError",
+]
+
 class AnonymizationError(Exception):
     """
     Base class for all anonymization related errors.
@@ -36,5 +43,14 @@ class BackendError(AnonymizationError):
     The underlying anonymization engine failed during execution.
 
     Errors of this kind occur at the anonymization phase, after a configuration was accepted but
-    the anonymization backend crashed.
+    the anonymization backend crashed, or could not produce a result.
+    """
+
+class NoSolutionError(BackendError):
+    """
+    No anonymization satisfies the requested privacy models.
+
+    In this case, the backend ran successfully, but no transformation satisfied the
+    privacy models within the suppression limit. Typically fixable by relaxing k, l, or t,
+    increasing the suppression limit, or providing deeper hierarchies.
     """

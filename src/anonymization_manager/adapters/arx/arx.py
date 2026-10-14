@@ -6,7 +6,11 @@ import pandas as pd
 from jpype import JClass
 
 from anonymization_manager.config import AnonymizationConfig
-from anonymization_manager.exceptions import BackendError, ConfigurationError
+from anonymization_manager.exceptions import (
+    BackendError,
+    ConfigurationError,
+    NoSolutionError,
+)
 
 
 class ARXResult:
@@ -593,16 +597,31 @@ class ARXAnonymizer:
         Returns:
             JClass:
                 The ARX Java result object containing the anonymized data and metrics.
+        
+        Raises:
+            BackendError: If ARX fails during anonymization.
+            NoSolutionError: If no transformation satisfies the privacy models.
         """
         ARXAnonymizer = JClass("org.deidentifier.arx.ARXAnonymizer")
         anonymizer = ARXAnonymizer()
 
         try:
-            return anonymizer.anonymize(data, configuration)
+            result = anonymizer.anonymize(data, configuration)
         except jpype.JException as e:
             raise BackendError(
                 f"ARX failed during anonymization: {e.message()}", backend="arx"
             ) from e
+
+        # ARX returns a result without output when no solution exists.
+        if not result.isResultAvailable():
+            raise NoSolutionError(
+                "No transformation satisfies the requested privacy models "
+                "within the suppression limit. Try relaxing k, l, or t, "
+                "increasing the suppression limit, or providing deeper hierarchies.",
+                backend="arx"
+            )
+
+        return result
 
     @staticmethod
     def _get_metric_signatures(doc: str) -> list[list[str]]:
