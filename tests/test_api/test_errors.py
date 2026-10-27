@@ -94,3 +94,59 @@ class TestValidationErrors:
 
         for err in response.json()["detail"]:
             assert not err["message"].startswith("Value error, ")
+
+class TestAnonymizationErrors:
+    def test_configuration_error_returns_400(self, monkeypatch) -> None:
+        _fail_with(monkeypatch, ConfigurationError("bad metric", backend="arx"))
+
+        response = client.post("/anonymize", json=_valid_body())
+
+        assert response.status_code == 400
+        assert response.json() == {
+            "error": "ConfigurationError",
+            "detail": "bad metric",
+            "backend": "arx"
+        }
+
+    @pytest.mark.parametrize("backend", ["arx", "anjana"])
+    def test_no_solution_returns_422(self, small_data, backend) -> None:
+        # salary-class has only 2 distinct values, so l=7 is impossible.
+        body = {
+            "data": small_data,
+            "quasi_identifiers": ["age", "sex"],
+            "sensitive_attributes": ["salary-class"],
+            "hierarchies": {"age": AGE_PATH, "sex": SEX_PATH},
+            "l": 7,
+            "suppression_limit": 0.5,
+            "backend": backend,
+        }
+        response = client.post("/anonymize", json=body)
+
+        assert response.status_code == 422
+        content = response.json()
+        assert content["error"] == "NoSolutionError"
+        assert content["backend"] == backend
+
+    def test_backend_error_returns_500(self, monkeypatch) -> None:
+        _fail_with(monkeypatch, BackendError("JVM crashed", backend="arx"))
+
+        response = client.post("/anonymize", json=_valid_body())
+
+        assert response.status_code == 500
+        assert response.json() == {
+            "error": "BackendError",
+            "detail": "JVM crashed",
+            "backend": "arx",
+        }
+
+    def test_unexpected_error_hides_details(self, monkeypatch) -> None:
+        _fail_with(monkeypatch, RuntimeError("secret server side error"))
+
+        response = client.post("/anonymize", json=_valid_body())
+
+        assert response.status_code == 500
+        assert response.json() == {
+            "error": "InternalServerError",
+            "detail": "An unexpected error occurred.",
+        }
+        assert "secret" not in response.text
