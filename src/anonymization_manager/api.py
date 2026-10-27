@@ -6,7 +6,9 @@ from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 
+from .adapters.arx.arx import ARXAnonymizer
 from .config import AnonymizationConfig
 from .core import AnonymizationManager
 from .exceptions import (
@@ -15,6 +17,10 @@ from .exceptions import (
     ConfigurationError, 
     NoSolutionError,
 )
+
+# Starts the JVM, this has to be done in the main thread. Starting the JVM
+# from a worker thread where requests run hangs forever.
+ARXAnonymizer._load_arx_library()
 
 app = FastAPI()
 
@@ -38,13 +44,23 @@ async def request_validation_handler(request: Request, ex: RequestValidationErro
     Returns:
         JSONResponse: A 400 response listing each validation error.
     """
-    messages = [
-        {
-            "field": ".".join(str(p) for p in err["loc"] if p != "body"),
-            "message": err["msg"].removeprefix("Value error, "),
-        }
-        for err in ex.errors()
-    ]
+    messages = []
+    for err in ex.errors():
+        cause = err.get("ctx", {}).get("error")
+        if isinstance(cause, ConfigurationError) and isinstance(
+            cause.__cause__, ValidationError
+        ):
+            errors = cause.__cause__.errors()
+        else:
+            errors = [err]
+
+        for e in errors:
+            messages.append(
+                {
+                    "field": ".".join(str(p) for p in e["loc"] if p != "body"),
+                    "message": e["msg"].removeprefix("Value error, "),
+                }
+            )
     return _error_response(400, "ValidationError", messages)
 
 
