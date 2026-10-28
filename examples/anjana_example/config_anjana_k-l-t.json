@@ -33,6 +33,6 @@
   "k": 10,
   "l": 2,
   "t": 0.5,
-  "suppression_limit": 50,
+  "suppression_limit": 0.5,
   "backend": "anjana"
 }
