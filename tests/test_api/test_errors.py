@@ -1,8 +1,8 @@
 from fastapi.testclient import TestClient
 
-from tests.common import *
 from anonymization_manager.api import app
 from anonymization_manager.core import AnonymizationManager
+from tests.common import *
 
 client = TestClient(app, raise_server_exceptions=False)
 
