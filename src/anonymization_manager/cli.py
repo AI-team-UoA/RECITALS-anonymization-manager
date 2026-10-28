@@ -3,9 +3,14 @@ Command-line interface for Anonymization Manager.
 
 Showcases main AnonymizationManager, AnonymizationConfig functionalities and
 extra AnonymizedData statistics.
+
+User-facing output is printed to the terminal. Audit events are written to the 
+log file (see anonymization_manager.log).
 """
 
 import argparse
+import json
+import sys
 from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
@@ -14,6 +19,8 @@ import pandas as pd
 from loguru import logger
 
 from anonymization_manager import AnonymizationConfig, AnonymizationManager
+from anonymization_manager.exceptions import AnonymizationError
+from anonymization_manager.log import setup_logging
 
 
 @dataclass
@@ -38,6 +45,7 @@ def _parse_arguments() -> tuple[Arguments, AnonymizationConfig]:
     parser.add_argument(
         "-c",
         "--config",
+        required=True,
         type=str,
         help="Relative path to the json configuration file",
     )
@@ -95,14 +103,34 @@ def _generate_path(config) -> str:
     filename = "_".join(parts) + ".csv"
     return str(results_dir / filename)
 
+def _fail(message: str) -> None:
+    """Records a failed run in the log, tells the user, and exits."""
+    logger.error("CLI run failed: {}", message)
+    print(f"Error: {message}", file=sys.stderr)
+    sys.exit(1)
 
 def main():
-    args, config = _parse_arguments()
+    setup_logging()
 
-    data = AnonymizationManager.anonymize(config)
+    try:
+        args, config = _parse_arguments()
+    except FileNotFoundError as ex:
+        _fail(f"Config file not found: {ex.filename}")
+    except json.JSONDecodeError as ex:
+        _fail(f"Config file is not valid JSON: {ex}")
+    except AnonymizationError as ex:
+        _fail(f"Invalid configuration: {ex}")
+
+    logger.info("CLI run started with config file {}", args.config_path)
+
+    try:
+        data = AnonymizationManager.anonymize(config)
+    except AnonymizationError as ex:
+        _fail(str(ex))
 
     time = data.get_anonymization_time()
-    logger.success(
+
+    print(
         f"Data anonymized successfully! Elapsed time: {timedelta(seconds=time / 1000)}"
     )
 
@@ -112,20 +140,21 @@ def main():
         path = _generate_path(config)
 
     data.store_as_csv(path)
-    logger.info(f"Anonymized data stored in {path}")
+    logger.info("Anonymized data stored in {}", Path(path).resolve())
+    print(f"Anonymized data stored in {path}")
 
     entries_num = 10
-    logger.info(f"Top {entries_num} entries:")
+    print(f"Top {entries_num} entries:")
     anon_data: pd.DataFrame = data.get_anonymized_data_as_dataframe()
     print(anon_data.head(n=entries_num))
 
     trans = data.get_transformations()
-    logger.info("Transformations applied:")
+    print("Transformations applied:")
     for key, value in trans.items():
         print(f"{key}: {value}")
 
     return
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     main()

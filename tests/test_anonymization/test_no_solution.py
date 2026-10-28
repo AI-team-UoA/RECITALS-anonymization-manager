@@ -1,5 +1,5 @@
-from tests.common import *
 from anonymization_manager.exceptions import NoSolutionError
+from tests.common import *
 
 
 class TestNoSolution:

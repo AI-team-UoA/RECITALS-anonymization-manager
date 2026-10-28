@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from loguru import logger
 
 from anonymization_manager.adapters.anjana.anjana import (
@@ -63,7 +65,19 @@ class AnonymizationManager:
             BackendError:
                 If the underlying anonymization engine fails during execution.
         """
+        logger.info(
+            "Anonymization started in {} with config: {}",
+            Path.cwd(),
+            config.model_dump_json(exclude_none=True),
+        )
+
         if config.uses_arx():
-            return AnonymizedData(ARXAnonymizer.anonymize(config))
-        if config.uses_anjana():
-            return AnonymizedData(AnjanaAnonymizer.anonymize(config))
+            result = AnonymizedData(ARXAnonymizer.anonymize(config))
+        else:
+            result = AnonymizedData(AnjanaAnonymizer.anonymize(config))
+
+        logger.info(
+            "Anonymization finished in {} ms",
+            result.get_anonymization_time(),
+        )
+        return result
