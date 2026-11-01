@@ -2,7 +2,7 @@
 REST API for the AnonymizationManager.
 """
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -10,6 +10,7 @@ from loguru import logger
 from pydantic import ValidationError
 
 from .adapters.arx.arx import ARXAnonymizer
+from .auth import AuthError, Caller, require_permission
 from .config import AnonymizationConfig
 from .core import AnonymizationManager
 from .exceptions import (
@@ -89,6 +90,25 @@ async def request_validation_handler(request: Request, ex: RequestValidationErro
     )
     return _error_response(400, "ValidationError", messages)
 
+_AUTH_ERRORS = {401: "Unauthorized", 403: "Forbidden", 503: "ServiceUnavailable"}
+
+@app.exception_handler(AuthError)
+async def auth_error_handler(request: Request, ex: AuthError):
+    """Handles rejected tokens and missing permissions. Returns 401, 403 or 503."""
+    logger.warning(
+        "Rejected {} {} from {} ({}): {}",
+        request.method,
+        request.url.path,
+        _client(request),
+        ex.status_code,
+        ex.message,
+    )
+
+    response = _error_response(ex.status_code, _AUTH_ERRORS[ex.status_code], ex.message)
+    if ex.status_code == 401:
+        response.headers["WWW-Authenticate"] = "Bearer"
+
+    return response
 
 @app.exception_handler(ConfigurationError)
 async def configuration_error_handler(request: Request, ex: ConfigurationError):
@@ -121,7 +141,7 @@ async def unexpected_error_handler(request: Request, ex: Exception):
 
 
 @app.post("/anonymize")
-def anonymize(config: AnonymizationConfig, request: Request):
+def anonymize(config: AnonymizationConfig, request: Request, caller: Caller = Depends(require_permission)):
     """
     Anonymizes a dataset according to the provided configuration.
 
@@ -135,7 +155,13 @@ def anonymize(config: AnonymizationConfig, request: Request):
               anonymization time.
     """
     client = _client(request)
-    logger.info("Anonymization request from {}", client)
+    logger.info(
+        "Anonymization request from {} (subject={}, client={})", 
+        client, 
+        caller.subject, 
+        caller.client
+    )
+
     result = AnonymizationManager.anonymize(config)
     content={
         "data": result.get_anonymized_data_as_dataframe().to_dict(orient="records"),
