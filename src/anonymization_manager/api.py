@@ -161,6 +161,19 @@ async def unexpected_error_handler(request: Request, ex: Exception):
     return _error_response(500, "InternalServerError", "An unexpected error occurred.")
 
 
+@app.get("/health")
+def health():
+    """
+    Liveness check for Docker and the testbed. Requires no token and is not logged.
+
+    The JVM is started when the module is imported, so if this answers, ARX is loaded.
+
+    Returns:
+        dict: {"status": "ok"}
+    """
+    return {"status": "ok"}
+
+
 @app.post("/anonymize")
 def anonymize(config: AnonymizationConfig, request: Request, caller: Caller = Depends(require_permission)):
     """
