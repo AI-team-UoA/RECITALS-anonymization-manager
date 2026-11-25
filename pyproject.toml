@@ -18,6 +18,7 @@ dependencies = [
     "mkdocstrings[python]>=1.0.4",
     "py4j==0.10.9.9",
     "pydantic>=2.11.10",
+    "pyjwt[crypto]>=2.15.1",
     "pytest>=9.0.0",
     "pytest-xdist>=3.8.0",
     "uvicorn>=0.48.0",
@@ -30,6 +31,7 @@ anonymization-manager = "anonymization_manager.cli:main"
 [dependency-groups]
 dev = [
     "basedpyright>=1.31.4",
+    "httpx>=0.28.1",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.7.6",
     "mypy>=1.18.2",

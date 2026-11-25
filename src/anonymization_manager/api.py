@@ -1,45 +1,181 @@
 """
 REST API for the AnonymizationManager.
 """
-from fastapi import FastAPI, HTTPException, Request
+
+from contextlib import asynccontextmanager
+
+from fastapi import Depends, FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from loguru import logger
+from pydantic import ValidationError
 
+from .adapters.arx.arx import ARXAnonymizer
+from .auth import (
+    AuthConfigurationError,
+    AuthError,
+    Caller,
+    get_settings,
+    require_permission,
+)
 from .config import AnonymizationConfig
 from .core import AnonymizationManager
+from .exceptions import (
+    AnonymizationError,
+    BackendError,
+    ConfigurationError,
+    NoSolutionError,
+)
+from .log import setup_logging
 
-app = FastAPI()
+setup_logging()
 
-@app.exception_handler(FileNotFoundError)
-async def file_not_found_handler(request: Request, ex: FileNotFoundError):
-    """
-    Handles file-related errors raised during configuration validation.
+# Starts the JVM, this has to be done in the main thread. Starting the JVM
+# from a worker thread where requests run hangs forever.
+logger.info("Starting the JVM and loading the ARX library")
+ARXAnonymizer._load_arx_library()
 
-    Args:
-        request (Request): The incoming request that triggered the error.
-        ex (FileNotFoundError): The raised exception.
-    
-        Returns:
-            JSONResponse: A 400 response containing the error message.
-    """
-    return JSONResponse(status_code=400, content={"detail":str(ex)})
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Checks the auth settings before the API accepts any request."""
+    try:
+        settings = get_settings()
+    except AuthConfigurationError as ex:
+        logger.critical("Startup aborted: {}", ex)
+        raise
+    logger.info(
+        "Accepting tokens from {} for audience {}", settings.issuer, settings.audience
+    )
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
+def _client(request: Request) -> str:
+    """Returns the client address of a request, for the audit log."""
+    return request.client.host if request.client else "unknown"
+
+def _error_response(status_code: int, error: str, detail, backend: str | None = None) -> JSONResponse:
+    """Builds an error response with a uniform format for every error."""
+    content = {"error": error, "detail": detail}
+    if backend:
+        content["backend"] = backend
+    return JSONResponse(status_code=status_code, content=content)
+
+
+def _anonymization_error_response(
+       request: Request, status_code: int, ex: AnonymizationError
+) -> JSONResponse:
+    logger.log(
+        "ERROR" if status_code >= 500 else "WARNING",
+        "Request from {} failed with {} ({}): {}",
+        _client(request),
+        type(ex).__name__,
+        status_code,
+        ex,
+    )
+    return _error_response(status_code, type(ex).__name__, ex.message, ex.backend)
+
 
 @app.exception_handler(RequestValidationError)
-async def validation_fail_handler(request: Request, ex: Exception):
+async def request_validation_handler(request: Request, ex: RequestValidationError):
     """
-    Anonymizes a dataset according to the provided configuration.
+    Handles invalid request bodies (wrong types, missing files, invalid privacy requests).
 
-    Args:
-        config (AnonymizationConfig): The anonymization configuration.
-    
-    Re
+    Returns:
+        JSONResponse: A 400 response listing each validation error.
     """
-    messages = [err["msg"] for err in ex.errors()]
-    return JSONResponse(status_code=400, content={"detail":messages})
+    messages = []
+    for err in ex.errors():
+        cause = err.get("ctx", {}).get("error")
+        if isinstance(cause, ConfigurationError) and isinstance(
+            cause.__cause__, ValidationError
+        ):
+            errors = cause.__cause__.errors()
+        else:
+            errors = [err]
+
+        for e in errors:
+            messages.append(
+                {
+                    "field": ".".join(str(p) for p in e["loc"] if p != "body"),
+                    "message": e["msg"].removeprefix("Value error, "),
+                }
+            )
+    logger.warning(
+        "Rejected invalid request from {} to {}: {} | body: {}",
+        _client(request),
+        request.url.path,
+        messages,
+        ex.body,
+    )
+    return _error_response(400, "ValidationError", messages)
+
+_AUTH_ERRORS = {401: "Unauthorized", 403: "Forbidden", 503: "ServiceUnavailable"}
+
+@app.exception_handler(AuthError)
+async def auth_error_handler(request: Request, ex: AuthError):
+    """Handles rejected tokens and missing permissions. Returns 401, 403 or 503."""
+    logger.warning(
+        "Rejected {} {} from {} ({}): {}",
+        request.method,
+        request.url.path,
+        _client(request),
+        ex.status_code,
+        ex.message,
+    )
+
+    response = _error_response(ex.status_code, _AUTH_ERRORS[ex.status_code], ex.message)
+    if ex.status_code == 401:
+        response.headers["WWW-Authenticate"] = "Bearer"
+
+    return response
+
+@app.exception_handler(ConfigurationError)
+async def configuration_error_handler(request: Request, ex: ConfigurationError):
+    """Handles invalid configurations found by a backend. Returns 400."""
+    return _anonymization_error_response(request, 400, ex)
+
+
+@app.exception_handler(NoSolutionError)
+async def no_solution_handler(request: Request, ex: NoSolutionError):
+    """Handles runs where no anonymization satisfies the privacy models. Returns 422."""
+    return _anonymization_error_response(request, 422, ex)
+
+
+@app.exception_handler(BackendError)
+async def backend_error_handler(request: Request, ex: BackendError):
+    """Handles failures of the anonymization engine. Returns 500."""
+    return _anonymization_error_response(request, 500, ex)
+
+
+@app.exception_handler(Exception)
+async def unexpected_error_handler(request: Request, ex: Exception):
+    """Handles any other error. Returns 500 without internal details."""
+    logger.opt(exception=ex).error(
+        "Unexpected error while handling {} {} from {}",
+        request.method,
+        request.url.path,
+        _client(request),
+    )
+    return _error_response(500, "InternalServerError", "An unexpected error occurred.")
+
+
+@app.get("/health")
+def health():
+    """
+    Liveness check for Docker and the testbed. Requires no token and is not logged.
+
+    The JVM is started when the module is imported, so if this answers, ARX is loaded.
+
+    Returns:
+        dict: {"status": "ok"}
+    """
+    return {"status": "ok"}
+
 
 @app.post("/anonymize")
-def anonymize(config: AnonymizationConfig):
+def anonymize(config: AnonymizationConfig, request: Request, caller: Caller = Depends(require_permission)):
     """
     Anonymizes a dataset according to the provided configuration.
 
@@ -52,16 +188,26 @@ def anonymize(config: AnonymizationConfig):
             - metadata: statistics describing the transformation, including the
               anonymization time.
     """
-    try:
-        result = AnonymizationManager.anonymize(config)
-        content={
-            "data": result.get_anonymized_data_as_dataframe().to_dict(orient="records"),
-            "metadata": {
-                "anonymization_time_ms" : result.get_anonymization_time(),
-                "average_equivalence_class_size" : result.get_average_equivalence_class_size(),
-                "transformations" : result.get_transformations()
-            }                      
-        }
-        return JSONResponse(content=jsonable_encoder(content))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error occured: {str(e)}")
+    client = _client(request)
+    logger.info(
+        "Anonymization request from {} (subject={}, client={})", 
+        client, 
+        caller.subject, 
+        caller.client
+    )
+
+    result = AnonymizationManager.anonymize(config)
+    content={
+        "data": result.get_anonymized_data_as_dataframe().to_dict(orient="records"),
+        "metadata": {
+            "anonymization_time_ms" : result.get_anonymization_time(),
+            "average_equivalence_class_size" : result.get_average_equivalence_class_size(),
+            "transformations" : result.get_transformations(),
+        },                      
+    }
+    logger.info(
+        "Request from {} completed, returned {} records",
+        client,
+        len(content["data"])
+    )
+    return JSONResponse(content=jsonable_encoder(content))

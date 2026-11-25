@@ -10,3 +10,4 @@ bin
 test-results.xml
 coverage.xml
 .coverage
+logs/
