@@ -6,6 +6,18 @@ from tests.common import *
 
 client = TestClient(app, raise_server_exceptions=False)
 
+from anonymization_manager.auth import Caller, require_permission
+
+
+@pytest.fixture(autouse=True)
+def authenticated():
+    """Skips token validation, these tests are about anonymization errors."""
+    app.dependency_overrides[require_permission] = lambda: Caller(
+        subject="test", client="test", permissions=frozenset({"anon.execute"})
+    )
+    yield
+    app.dependency_overrides.pop(require_permission, None)
+    
 @pytest.fixture(scope="module")
 def small_data(tmp_path_factory) -> str:
     """A 1000-row copy of the adult dataset"""
