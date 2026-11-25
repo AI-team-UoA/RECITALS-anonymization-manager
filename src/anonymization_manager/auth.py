@@ -43,6 +43,14 @@ class AuthError(Exception):
         self.status_code = status_code
         self.message = message
 
+class AuthConfigurationError(RuntimeError):
+    """
+    The authentication settings are missing or invalid.
+
+    Raised when the API starts, so a misconfigured deployment fails immediately
+    instead of answering every request with 500.
+    """
+
 @dataclass(frozen=True)
 class Caller:
     """The authenticated user or service behind a request."""
@@ -64,7 +72,10 @@ def get_settings() -> Settings:
 
     issuer = os.getenv(ISSUER_ENV)
     if not issuer:
-        raise RuntimeError(f"{ISSUER_ENV} is not set")
+        raise AuthConfigurationError(
+            f"{ISSUER_ENV} is not set. Set it to the Keycloak realm URL, "
+            "e.g. http://localhost:8080/realms/recitals"
+        )
     
     issuer = issuer.rstrip("/")
     return Settings(

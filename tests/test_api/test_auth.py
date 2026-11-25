@@ -126,3 +126,16 @@ def test_keycloak_unreachable_returns_503(monkeypatch) -> None:
     assert response.json()["error"] == "ServiceUnavailable"
 
 
+
+
+def test_missing_issuer_fails_startup(monkeypatch) -> None:
+    monkeypatch.delenv(auth.ISSUER_ENV, raising=False)
+    auth.get_settings.cache_clear()
+    with pytest.raises(auth.AuthConfigurationError, match=auth.ISSUER_ENV):
+        with TestClient(app):
+            pass
+
+
+def test_startup_succeeds_with_issuer() -> None:
+    with TestClient(app):  # the keycloak fixture sets the issuer
+        pass

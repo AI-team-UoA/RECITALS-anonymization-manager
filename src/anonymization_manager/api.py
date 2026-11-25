@@ -2,6 +2,8 @@
 REST API for the AnonymizationManager.
 """
 
+from contextlib import asynccontextmanager
+
 from fastapi import Depends, FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -10,7 +12,13 @@ from loguru import logger
 from pydantic import ValidationError
 
 from .adapters.arx.arx import ARXAnonymizer
-from .auth import AuthError, Caller, require_permission
+from .auth import (
+    AuthConfigurationError,
+    AuthError,
+    Caller,
+    get_settings,
+    require_permission,
+)
 from .config import AnonymizationConfig
 from .core import AnonymizationManager
 from .exceptions import (
@@ -28,7 +36,20 @@ setup_logging()
 logger.info("Starting the JVM and loading the ARX library")
 ARXAnonymizer._load_arx_library()
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Checks the auth settings before the API accepts any request."""
+    try:
+        settings = get_settings()
+    except AuthConfigurationError as ex:
+        logger.critical("Startup aborted: {}", ex)
+        raise
+    logger.info(
+        "Accepting tokens from {} for audience {}", settings.issuer, settings.audience
+    )
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 def _client(request: Request) -> str:
     """Returns the client address of a request, for the audit log."""
